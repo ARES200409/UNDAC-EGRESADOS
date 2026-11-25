@@ -1,0 +1,188 @@
+/* ===============================================================
+   NEXO UNDAC V9.2 — EXPERIENCIA INSTITUCIONAL INTEGRADA
+   Mantiene los colores y píxeles originales de los emblemas.
+   Fotografías de la galería del proyecto; datos siempre desde DB.
+   =============================================================== */
+:root {
+ --n92-navy:#091f3d; --n92-blue:#175dd6; --n92-turquoise:#069b9a;
+ --n92-gold:#eca63f; --n92-purple:#8051bf; --n92-ink:#172b47;
+ --n92-paper:#f3f6fc; --n92-border:#dce5f1;
+ --n92-radius:18px; --n92-shadow:0 14px 32px rgba(16,44,85,.09);
+}
+/* Accessible workspace navigation */
+body.obs-shell{ background:var(--v9-bg); color:var(--v9-ink); }
+body.obs-shell .obs-head { background:linear-gradient(108deg,#08234a,#113b68)!important; }
+body.obs-shell .obs-head-inner { width:100%; max-width:none; padding:12px clamp(20px,3vw,44px); min-height:80px!important; }
+body.obs-shell .obs-brand-symbol.nexo-v92-brand-image {border:0!important; background:rgba(255,255,255,.10); width:54px; height:54px; flex:0 0 54px; padding:4px; display:grid; place-items:center; border-radius:12px!important;}
+.nexo-v92-brand-image img {width:100%;height:100%;object-fit:contain;display:block;}
+.obs-brand-title {letter-spacing:-.035em;}
+.nexo-v92-workspace {display:grid;grid-template-columns:minmax(236px,270px) minmax(0,1fr);width:100%;align-items:stretch;min-height:calc(100vh - 140px);}
+.nexo-v92-sidebar {background:linear-gradient(178deg,#0c2850 0%,#0b2342 56%,#091a35 100%);color:#fff; padding:25px 13px 24px; position:relative;display:flex; flex-direction:column;gap:15px;border-right:1px solid #284466;}
+.nexo-v92-sidebar-heading {padding:10px 16px 18px;border-bottom:1px solid rgba(255,255,255,.14);display:grid;gap:4px;color:#fff;}
+.nexo-v92-sidebar-heading strong {font-size:1.13rem;font-weight:820;letter-spacing:-.02em;line-height:1.25;}
+.nexo-v92-sidebar-heading small {font-size:.73rem;color:#b2cce6;}
+.nexo-v92-mini {color:#7ee2d8; letter-spacing:.13em; font-size:.66rem; font-weight:850;}
+.nexo-v92-sidebar .obs-nav-wrap{background:transparent!important;border:0!important;width:100%;}
+.nexo-v92-sidebar .obs-nav{max-width:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px;overflow:visible;align-items:stretch;}
+.nexo-v92-sidebar .obs-nav a {position:relative; color:#d2e3f5; border:1px solid transparent;border-radius:11px;min-height:45px;padding:11px 13px;display:flex;align-items:center;gap:12px;font-size:.82rem;line-height:1.4;white-space:normal;font-weight:690;}
+.nexo-v92-sidebar .obs-nav a i {width:21px;text-align:center;font-size:1.17rem;color:#8fc9ec;flex:none;}
+.nexo-v92-sidebar .obs-nav a:hover {background:rgba(255,255,255,.12);color:white;border-color:rgba(255,255,255,.12);}
+.nexo-v92-sidebar .obs-nav a[aria-current="page"] {background:linear-gradient(115deg,#1267db,#1685dc);color:#fff;border-color:#4fa5ee;box-shadow:0 8px 22px rgba(3,21,45,.3);}
+.nexo-v92-sidebar .obs-nav a[aria-current="page"] i{color:white;}
+.nexo-v92-sidebar-bottom {margin-top:auto;border:1px solid rgba(180,208,234,.18);border-radius:14px;background:rgba(255,255,255,.06);padding:12px;display:flex;gap:10px;align-items:center;color:#ebf5ff;font-size:.68rem;line-height:1.4;}
+.nexo-v92-sidebar-bottom img{width:45px;height:45px;object-fit:contain;border-radius:50%;background:#fff;flex:none;}
+.nexo-v92-sidebar-bottom small{font-size:.62rem;color:#adcae5;}
+.nexo-v92-stage{min-width:0;display:flex;flex-direction:column;}
+.nexo-v92-stage .obs-context,.nexo-v92-stage .obs-main,.nexo-v92-stage .obs-flashes,.nexo-v92-stage .obs-footer-inner{max-width:1550px;width:100%;}
+.nexo-v92-stage .obs-context {padding:20px clamp(19px,2.6vw,43px) 0;}
+.nexo-v92-stage .obs-main {padding:19px clamp(19px,2.6vw,43px) 42px;width:100%; min-height:calc(100vh - 275px);}
+.nexo-v92-stage .obs-flashes{padding:0 clamp(19px,2.6vw,43px);}
+.nexo-v92-stage .obs-footer {margin-top:auto;}
+.nexo-v92-stage .obs-footer-inner{padding:16px clamp(19px,2.6vw,43px);}
+.obs-role-bar {padding:7px clamp(20px,3vw,44px);background:var(--v9-accent-pale);border-bottom:2px solid var(--v9-accent);}
+.nexo-v92-menu-trigger{display:none;align-items:center;justify-content:center;background:rgba(255,255,255,.10);color:white;border:1px solid rgba(255,255,255,.3);border-radius:10px;width:42px;height:42px;}
+/* A genuine brand; no re-illustrated emblems */
+.nexo-v92-public-mark{display:inline-grid!important;place-items:center;background:transparent!important;border:0!important;padding:0!important;}
+.nexo-v92-public-mark img{width:56px;height:56px;object-fit:contain;}
+.nexo-v92-identity-strip{display:inline-flex;gap:12px;align-items:center;max-width:430px;padding:10px 16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.21);border-radius:16px;margin:8px 0 18px;box-shadow:0 8px 26px rgba(0,0,0,.08);}
+.nexo-v92-identity-strip img{width:48px;height:48px;object-fit:contain;flex:none;}
+.nexo-v92-identity-strip span{font-size:.75rem;font-weight:800;line-height:1.35;}
+.nexo-v92-identity-strip span small{display:block;opacity:.76;font-size:.67rem;margin-top:2px;}
+.nexo-public .nexo-brand{gap:12px;}
+.nexo-public .nexo-brand-mark{width:55px;height:55px;}
+.nexo-public .nexo-footer-credits img{object-fit:contain;background:white;border-radius:50%;padding:3px;}
+/* Photos & expressive hero cards (source photo assets bundled locally) */
+.v91-panel .nexo-v92-photo-hero {min-height:284px;position:relative; overflow:hidden;border-radius:22px;box-shadow:0 17px 38px rgba(12,40,77,.11);}
+.v91-panel .v91-admin-hero.nexo-v92-photo-hero {background:linear-gradient(95deg,rgba(6,33,79,.97),rgba(11,46,87,.94) 54%,rgba(15,47,86,.50) 100%),url('../img/hero_bg3.jpg') center right /cover no-repeat!important;}
+.v91-panel .v91-admin-stamp{backdrop-filter:blur(9px); background:rgba(255,255,255,.11);}
+.v91-panel .v91-utsag-hero.nexo-v92-photo-hero {padding:clamp(20px,3vw,31px);background:linear-gradient(99deg,rgba(227,252,250,.97),rgba(236,255,251,.91) 64%,rgba(236,255,251,.57)),url('../img/hero_bg.jpg') center/cover no-repeat;border:1px solid #bbe0e5;align-items:center;}
+.v91-panel .v91-utsag-hero .v91-utsag-coverage{background:rgba(255,255,255,.93);box-shadow:var(--n92-shadow);backdrop-filter:blur(6px);}
+.v91-panel .v91-utsag-hero .v91-btn-outline{background:#fff;color:#075b64;border-color:#9bd1d1;}
+.v91-panel .v91-coord-hero.nexo-v92-photo-hero{background:linear-gradient(107deg,rgba(255,247,234,.97),rgba(255,242,218,.92) 68%,rgba(255,242,218,.55)),url('../img/hero_bg2.jpg') center/cover no-repeat!important;}
+.v91-panel .v91-docente-hero.nexo-v92-photo-hero{background:linear-gradient(100deg,rgba(251,247,255,.98),rgba(246,238,255,.93) 65%,rgba(246,238,255,.60)),url('../img/hero_bg3.jpg') center/cover no-repeat!important;}
+.v91-panel .v91-docente-portrait{background:linear-gradient(130deg,rgba(76,42,131,.90),rgba(101,73,174,.76)),url('../img/hero_bg3.jpg') center/cover no-repeat;box-shadow:0 8px 22px rgba(72,49,100,.15);}
+.v91-panel .v91-docente h1{font-size:clamp(2.05rem,4.2vw,3.8rem);}
+/* Role-specific content density and readability */
+.v91-panel h1{letter-spacing:-.055em;font-size:clamp(2rem,3.5vw,3.7rem);}
+.v91-panel h2{letter-spacing:-.028em;}
+.v91-panel .v91-card,.v91-panel .v91-stat{box-shadow:var(--n92-shadow);border-color:var(--n92-border);}
+.v91-panel .v91-card{border-radius:17px;}
+.v91-panel .v91-stat{position:relative;overflow:hidden;min-height:136px;background:var(--v9-surface);padding:20px;}
+.v91-panel .v91-stat::after{content:'';position:absolute;right:-27px;top:-39px;width:91px;height:91px;border-radius:100%;background:var(--v9-accent-pale);opacity:.8;pointer-events:none;}
+.v91-panel .v91-stat>strong{position:relative;z-index:1;font-size:clamp(2.05rem,3vw,3rem);}
+.v91-panel .v91-kicker{font-size:.66rem;letter-spacing:.115em;}
+.v91-panel .v91-btn:focus-visible,.v91-panel a:focus-visible{outline:3px solid #f9ba53;outline-offset:3px;}
+.v91-panel .v91-btn:hover{transform:translateY(-2px);}
+.v91-panel .v91-card h2{font-size:clamp(1.12rem,1.7vw,1.4rem);}
+/* Meaningful distinct primary accent for cards and actions */
+body.obs-shell[data-nexo-role="administrador"] {--v9-accent:#155ed2;--v9-accent-pale:#e9f1ff;}
+body.obs-shell[data-nexo-role="utsag"] {--v9-accent:#007e7e;--v9-accent-pale:#e5f8f5;}
+body.obs-shell[data-nexo-role="coordinador"] {--v9-accent:#a35d0b;--v9-accent-pale:#fff2df;}
+body.obs-shell[data-nexo-role="docente_responsable"] {--v9-accent:#7650ac;--v9-accent-pale:#f2ebfb;}
+body.obs-shell[data-nexo-role="egresado"] {--v9-accent:#175dd6;--v9-accent-pale:#e9f1fe;}
+/* Gradient KPI cards and activity tables */
+.obs-shell .card{box-shadow:var(--n92-shadow);}
+.obs-shell .card-header{font-weight:760;}
+.obs-shell .table-responsive{box-shadow:0 3px 16px rgba(7,47,91,.035);}
+.obs-shell .table thead th{font-size:.72rem;letter-spacing:.055em;padding:13px 15px!important;}
+.obs-shell .table tbody td{padding:13px 15px!important;}
+.obs-shell .table{--bs-table-bg:transparent;--bs-table-color:var(--v9-ink);--bs-table-border-color:var(--v9-line);}
+.obs-shell .form-select,.obs-shell .form-control{min-height:46px;}
+.obs-shell .form-select:focus,.obs-shell .form-control:focus{outline:2px solid var(--v9-accent);outline-offset:1px;}
+.obs-shell .btn-primary {color:#fff!important;}
+.obs-shell .btn-outline-primary:hover{color:#fff!important;}
+.obs-shell .text-muted{color:var(--v9-muted)!important;}
+.obs-shell .card .text-dark{color:var(--v9-ink)!important;}
+.obs-shell .card .bg-light,.obs-shell .card-header.bg-white{background:var(--v9-accent-pale)!important;}
+.obs-shell .card .bg-white{background:var(--v9-surface)!important;}
+/* Personal dashboard for a graduate: current user's actual profile fields */
+.nexo-v92-egresado-hero{margin:2px 0 24px;position:relative;isolation:isolate;overflow:hidden;border-radius:21px;padding:clamp(22px,3.5vw,42px);color:#fff;background:linear-gradient(100deg,rgba(7,34,79,.97) 1%,rgba(11,61,122,.92) 62%,rgba(3,40,90,.46)),url('../img/hero_bg3.jpg') center/cover no-repeat;display:grid;grid-template-columns:minmax(0,1.55fr) minmax(190px,.65fr);align-items:center;gap:25px;box-shadow:0 17px 33px rgba(13,42,85,.18);}
+.nexo-v92-egresado-hero h1{font-size:clamp(1.9rem,3vw,3.35rem);font-weight:840;letter-spacing:-.06em;color:#fff;line-height:1.13;margin:16px 0 12px;max-width:650px;}
+.nexo-v92-egresado-hero h1 span{color:#5ef1e3;}
+.nexo-v92-egresado-hero p{color:#e5effa;max-width:650px;font-size:.93rem;line-height:1.7;margin:0;}
+.nexo-v92-smallcaps{font-size:.70rem;letter-spacing:.13em;font-weight:820;color:#95e9fa;display:inline-flex;align-items:center;gap:8px;}
+.nexo-v92-button-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;}
+.nexo-v92-button{display:inline-flex;gap:9px;align-items:center;justify-content:center;text-decoration:none!important;border-radius:11px;border:1px solid transparent;padding:11px 17px;font-weight:800;font-size:.82rem;min-height:43px;}
+.nexo-v92-button:hover{transform:translateY(-1px)}
+.nexo-v92-button-white{background:#fff;color:#113f78!important;}.nexo-v92-button-white:hover{background:#e8f5ff;}
+.nexo-v92-button-transparent{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.50);color:white!important;}.nexo-v92-button-transparent:hover{background:rgba(255,255,255,.20);}
+.nexo-v92-button-primary{background:#1664d6;color:white!important;}
+.nexo-v92-egresado-highlight{padding:22px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:17px;display:grid;gap:6px;backdrop-filter:blur(6px);}
+.nexo-v92-egresado-highlight>i{font-size:2rem;color:#5ef1e3;}
+.nexo-v92-egresado-highlight span{font-size:.74rem;color:#d9f3ff;}
+.nexo-v92-egresado-highlight strong{font-size:1.48rem;color:white;line-height:1.15;}
+.nexo-v92-egresado-highlight small{font-size:.73rem;color:#bed5e9;}
+/* Survey section: do not show actions users cannot execute */
+.nexo-v92-module-banner{display:flex;justify-content:space-between;align-items:center;gap:15px;border-radius:17px;margin:0 0 22px;padding:27px 29px;color:#fff;background:linear-gradient(110deg,#533590,#7052bd 73%,#987acb);}
+.nexo-v92-module-banner span{font-size:.67rem;letter-spacing:.13em;font-weight:850;color:#dccbfa;}
+.nexo-v92-module-banner h1{font-weight:820;font-size:clamp(1.55rem,2.6vw,2.35rem);letter-spacing:-.04em;line-height:1.15;margin:10px 0;color:#fff;}
+.nexo-v92-module-banner p{margin:0;color:#f0e9fb;font-size:.83rem;}
+.nexo-v92-module-banner>i{font-size:4.2rem;opacity:.30;}
+.nexo-v92-error{max-width:660px;margin:7vh auto;text-align:center;border:1px solid var(--v9-line);padding:48px 30px;border-radius:18px;background:var(--v9-surface);}
+.nexo-v92-error>i{display:block;color:var(--v9-accent);font-size:3.5rem;margin-bottom:10px;}
+.nexo-v92-error>span{font-size:.65rem;font-weight:850;letter-spacing:.14em;color:var(--v9-accent);}
+.nexo-v92-error h1{font-size:2rem;font-weight:840;margin:10px 0;}
+.nexo-v92-error p{color:var(--v9-muted);font-size:.95rem;margin:0 0 20px;}
+/* Public and login branding */
+.nexo-public .nexo-public-header{box-shadow:0 6px 24px rgba(9,35,68,.14);}
+.nexo-public .nexo-public-top{min-height:82px;}
+.nexo-public .nexo-landing{background:linear-gradient(123deg,#0b2f61,#0a4e70);}
+.nexo-public .nexo-landing h1{letter-spacing:-.05em;}
+.nexo-public .nexo-landing-media{border-radius:18px;}
+.nexo-public .nexo-public-stat{border-top:4px solid #1979d9;}
+.nexo-public .nexo-public-stat:nth-child(2){border-top-color:#00aaa5;}
+.nexo-public .nexo-public-stat:nth-child(3){border-top-color:#e6ac4d;}
+.nexo-auth .card-login{box-shadow:0 28px 75px rgba(0,21,55,.36);border:1px solid rgba(255,255,255,.25);max-width:455px;border-radius:23px;}
+.nexo-auth .card-top{background:linear-gradient(124deg,#093365,#0f56a7);padding:27px 28px;}
+.nexo-auth .card-top img.nexo-v92-login-logo{height:82px;width:82px;object-fit:contain;margin:0 auto 12px;display:block;}
+.nexo-auth .card-top h5{font-size:1.3rem;font-weight:850;letter-spacing:-.04em;}
+.nexo-auth .btn-ingresar{background:#1563d9;border-radius:10px;padding:13px;}
+.nexo-auth .btn-ingresar:hover{background:#094aab;}
+.nexo-auth .form-control:focus,.nexo-auth .form-select:focus{border-color:#175dd6;box-shadow:0 0 0 3px rgba(23,93,214,.14);}
+/* Dark: high contrast, not dark navy on dark navy */
+html[data-theme="dark"] body.obs-shell{--v9-bg:#0b1627;--v9-surface:#192b42;--v9-raised:#223751;--v9-ink:#edf5ff;--v9-muted:#c1d0e0;--v9-line:#344d69;}
+html[data-theme="dark"] body.obs-shell[data-nexo-role="administrador"]{--v9-accent:#80b3ff;--v9-accent-pale:#273d5a;}
+html[data-theme="dark"] body.obs-shell[data-nexo-role="utsag"]{--v9-accent:#83e3d9;--v9-accent-pale:#1c474c;}
+html[data-theme="dark"] body.obs-shell[data-nexo-role="coordinador"]{--v9-accent:#ffc77c;--v9-accent-pale:#503a25;}
+html[data-theme="dark"] body.obs-shell[data-nexo-role="docente_responsable"]{--v9-accent:#d4affc;--v9-accent-pale:#403253;}
+html[data-theme="dark"] body.obs-shell[data-nexo-role="egresado"]{--v9-accent:#9dc4ff;--v9-accent-pale:#284361;}
+html[data-theme="dark"] .v91-panel .v91-utsag-hero.nexo-v92-photo-hero{background:linear-gradient(105deg,rgba(22,47,61,.97),rgba(24,63,75,.92) 70%,rgba(24,63,75,.65)),url('../img/hero_bg.jpg') center/cover no-repeat;border-color:#37596d;}
+html[data-theme="dark"] .v91-panel .v91-utsag-hero .v91-utsag-coverage{background:rgba(29,53,66,.94);}
+html[data-theme="dark"] .v91-panel .v91-utsag-hero .v91-btn-outline{background:#17313e;color:#e3fffa;border-color:#527b7b;}
+html[data-theme="dark"] .v91-panel .v91-coord-hero.nexo-v92-photo-hero{background:linear-gradient(105deg,rgba(55,43,36,.98),rgba(63,46,30,.91) 70%,rgba(65,47,32,.62)),url('../img/hero_bg2.jpg') center/cover no-repeat!important;}
+html[data-theme="dark"] .v91-panel .v91-docente-hero.nexo-v92-photo-hero{background:linear-gradient(105deg,rgba(35,31,54,.98),rgba(50,39,76,.91) 70%,rgba(50,39,76,.62)),url('../img/hero_bg3.jpg') center/cover no-repeat!important;}
+html[data-theme="dark"] .v91-panel .v91-stat,html[data-theme="dark"] .v91-panel .v91-card{border-color:var(--v9-line);}
+html[data-theme="dark"] .obs-shell .card .bg-light,html[data-theme="dark"] .obs-shell .card-header.bg-white{background:var(--v9-raised)!important;}
+html[data-theme="dark"] .obs-shell .form-control,html[data-theme="dark"] .obs-shell .form-select{color:var(--v9-ink);background:var(--v9-raised);}
+html[data-theme="dark"] .obs-shell .form-control::placeholder{color:#adc2d5;}
+html[data-theme="dark"] .obs-shell .table tbody tr:hover{background:var(--v9-accent-pale);}
+html[data-theme="dark"] .nexo-v92-stage .text-dark{color:var(--v9-ink)!important;}
+html[data-theme="dark"] .obs-shell .btn-light{background:#29425f;color:#eaf4ff;border-color:#57728a;}
+html[data-theme="dark"] .obs-shell .btn-outline-secondary{color:#e3effa;border-color:#66809b;}
+html[data-theme="dark"] .obs-shell .btn-outline-secondary:hover{background:#415c79;color:#fff;}
+/* Narrow screens: accessible menu drawer and no overflow */
+@media(max-width:1180px){.nexo-v92-workspace{grid-template-columns:minmax(218px,230px) minmax(0,1fr)}.nexo-v92-sidebar{padding-left:9px;padding-right:9px}.nexo-v92-stage .obs-main{padding-left:20px;padding-right:20px}}
+@media(max-width:900px){
+ .nexo-v92-menu-trigger{display:inline-flex;}
+ .nexo-v92-workspace{display:block;}
+ .nexo-v92-sidebar{position:fixed;top:0;left:0;bottom:0;width:min(86vw,310px);z-index:1200;overflow:auto;transform:translateX(-110%);transition:transform .22s ease;box-shadow:10px 0 36px rgba(0,0,0,.35);}
+ body.nexo-v92-sidebar-open .nexo-v92-sidebar{transform:translateX(0);}
+ body.nexo-v92-sidebar-open:before{content:'';position:fixed;inset:0;background:rgba(3,16,39,.56);z-index:1190;}
+ .nexo-v92-stage .obs-main{padding:20px 18px 40px;}
+ .nexo-v92-stage .obs-context{padding:19px 18px 0;}
+ .nexo-v92-stage .obs-flashes{padding:0 18px;}
+ .nexo-v92-stage .obs-footer-inner{padding:17px 18px;}
+ .v91-panel .v91-utsag-hero.nexo-v92-photo-hero{grid-template-columns:1fr;}
+}
+@media(max-width:660px){
+ .nexo-v92-sidebar{width:min(88vw,290px);}
+ .nexo-v92-egresado-hero{grid-template-columns:1fr;}
+ .nexo-v92-egresado-highlight{max-width:100%;}
+ .nexo-v92-module-banner{padding:22px;}
+ .nexo-v92-module-banner>i{display:none;}
+ .nexo-v92-stage .obs-head-inner{padding-left:15px;padding-right:15px;}
+ .nexo-v92-stage .obs-main{padding:16px;}
+ .nexo-v92-identity-strip{max-width:100%;}
+ .v91-panel .nexo-v92-photo-hero{min-height:auto;}
+}
+@media(prefers-reduced-motion:reduce){.nexo-v92-sidebar,.v91-panel .v91-btn,.nexo-v92-button{transition:none!important;}}

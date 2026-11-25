@@ -1,0 +1,11 @@
+{
+  "compiled_python": "OK",
+  "jinja_templates": 57,
+  "flask_routes": 72,
+  "invalid_url_for": [],
+  "scope": "Ingeniería de Sistemas y Computación",
+  "curricula_observada": "17A4SI",
+  "real_database_test": "NO EJECUTADA (requiere MySQL del usuario)",
+  "logos_originales": true,
+  "no_user_env": true
+}

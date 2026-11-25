@@ -1,0 +1,53 @@
+{# Gráficos de ámbito Systems. Estos porcentajes describen datos registrados; NO desempleo. #}
+<section class="nexosi-analytics" aria-label="Análisis académico y laboral de Sistemas">
+  <div class="nexosi-section-intro">
+    <div><span class="nexosi-eyebrow"><i class="bi bi-bar-chart-line"></i> INDICADORES BASADOS EN MYSQL</span>
+    <h2>Radiografía de Ingeniería de Sistemas</h2>
+    <p>Los gráficos muestran únicamente egresados de los programas autorizados para este rol. La ausencia de datos no representa desempleo.</p></div>
+    <a href="{{ url_for('admin.empleabilidad') }}" class="nexosi-link-btn"><i class="bi bi-graph-up-arrow"></i> KPI laborales</a>
+  </div>
+  <div class="nexosi-stat-row">
+    <article class="nexosi-mini-stat"><span><i class="bi bi-people"></i> Padrón de Sistemas</span><strong>{{ graficos.total }}</strong><small>egresados registrados en la base</small></article>
+    <article class="nexosi-mini-stat"><span><i class="bi bi-person-check"></i> Acceso al sistema</span><strong>{{ graficos.cuentas }}</strong><small>cuentas activas asociadas</small></article>
+    <article class="nexosi-mini-stat"><span><i class="bi bi-briefcase"></i> Empleo actual</span><strong>{{ graficos.empleos }}</strong><small>reportes declarados como actuales</small></article>
+    <article class="nexosi-mini-stat"><span><i class="bi bi-clipboard2-check"></i> Participación</span><strong>{{ graficos.participantes_encuestas }}</strong><small>egresados con respuestas a encuestas</small></article>
+  </div>
+  <div class="nexosi-chart-grid">
+    <article class="nexosi-chart-card">
+      <div class="nexosi-card-head"><div><span class="nexosi-eyebrow">01 / EVOLUCIÓN</span><h3>Promociones con año de egreso</h3></div><i class="bi bi-bar-chart"></i></div>
+      {% if graficos.promociones %}
+        <div class="nexosi-vertical-bars" role="img" aria-label="Egresados por año de egreso">
+          {% for a in graficos.promociones %}
+          <div class="nexosi-bar-column" title="{{ a.anio }}: {{ a.total }} egresados"><strong>{{ a.total }}</strong><div class="nexosi-bar-track"><div class="nexosi-bar-fill" style="height:{{ a.pct }}%"></div></div><small>{{ a.anio }}</small></div>
+          {% endfor %}
+        </div>
+      {% else %}<div class="nexosi-data-empty"><i class="bi bi-calendar2-minus"></i><strong>Aún no hay años de egreso</strong><span>Se completará al registrar los datos académicos verificados.</span></div>{% endif %}
+    </article>
+    <article class="nexosi-chart-card">
+      <div class="nexosi-card-head"><div><span class="nexosi-eyebrow">02 / COBERTURA</span><h3>Cuentas activas del padrón</h3></div><i class="bi bi-pie-chart"></i></div>
+      {% if graficos.total %}
+      <div class="nexosi-donut-layout"><div class="nexosi-donut" style="--donut-deg:{{ (graficos.porc_cuentas * 3.6)|round(1) }}deg"><div><strong>{{ graficos.porc_cuentas }}%</strong><small>con cuenta</small></div></div>
+        <div class="nexosi-donut-desc"><div><span class="nexosi-dot nexosi-dot-blue"></span> Con cuenta <strong>{{ graficos.cuentas }}</strong></div><div><span class="nexosi-dot nexosi-dot-grey"></span> Sin cuenta activa <strong>{{ graficos.total-graficos.cuentas }}</strong></div><p>Cobertura de acceso, no tasa de empleabilidad.</p></div></div>
+      {% else %}<div class="nexosi-data-empty"><i class="bi bi-person-plus"></i><strong>Sin egresados incorporados</strong><span>La API confirma identidades, pero no incorpora al padrón hasta completar el registro.</span></div>{% endif %}
+    </article>
+    <article class="nexosi-chart-card">
+      <div class="nexosi-card-head"><div><span class="nexosi-eyebrow">03 / ACADÉMICO</span><h3>Distribución por currícula</h3></div><i class="bi bi-diagram-3"></i></div>
+      {% if graficos.curriculas %}
+        <div class="nexosi-horizontal-bars">
+          {% for c in graficos.curriculas %}<div class="nexosi-h-row"><div class="nexosi-h-label"><span>{{ c.nombre }}</span><strong>{{ c.total }}</strong></div><div class="nexosi-h-track"><span style="width:{{ c.pct }}%"></span></div></div>{% endfor %}
+        </div>
+      {% else %}<div class="nexosi-data-empty"><i class="bi bi-bookmark-x"></i><strong>Sin datos por currícula</strong><span>El plan 17A4SI puede registrarse con su año de inicio oficialmente comprobado.</span></div>{% endif %}
+    </article>
+    <article class="nexosi-chart-card">
+      <div class="nexosi-card-head"><div><span class="nexosi-eyebrow">04 / LABORAL</span><h3>Empleo actual declarado</h3></div><i class="bi bi-briefcase"></i></div>
+      {% if graficos.total %}
+        <div class="nexosi-donut-layout"><div class="nexosi-donut nexosi-donut-teal" style="--donut-deg:{{ (graficos.porc_empleo_reportado * 3.6)|round(1) }}deg"><div><strong>{{ graficos.porc_empleo_reportado }}%</strong><small>reportado</small></div></div>
+        <div class="nexosi-donut-desc"><div><span class="nexosi-dot nexosi-dot-teal"></span> Con empleo actual informado <strong>{{ graficos.empleos }}</strong></div><div><span class="nexosi-dot nexosi-dot-grey"></span> Sin información de empleo actual <strong>{{ graficos.sin_empleo_informado }}</strong></div><p>No informar empleo no equivale a estar desempleado.</p></div></div>
+      {% else %}<div class="nexosi-data-empty"><i class="bi bi-briefcase"></i><strong>Sin registros laborales</strong><span>No se muestran porcentajes con denominador cero.</span></div>{% endif %}
+    </article>
+  </div>
+  {% if graficos.habilidades %}
+  <article class="nexosi-chart-card nexosi-skills"><div class="nexosi-card-head"><div><span class="nexosi-eyebrow">05 / PERFIL PROFESIONAL</span><h3>Habilidades declaradas con más frecuencia</h3></div><i class="bi bi-code-square"></i></div>
+   <div class="nexosi-horizontal-bars nexosi-skill-grid">{% for h in graficos.habilidades %}<div class="nexosi-h-row"><div class="nexosi-h-label"><span>{{ h.nombre }}</span><strong>{{ h.total }}</strong></div><div class="nexosi-h-track"><span style="width:{{ h.pct }}%"></span></div></div>{% endfor %}</div>
+  </article>{% endif %}
+</section>

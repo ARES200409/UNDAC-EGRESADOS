@@ -1,0 +1,112 @@
+<!-- app/templates/auth/restablecer_contrasena.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva contraseña — Egresados UNDAC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: url("{{ url_for('static', filename='img/hero_bg2.jpg') }}") center/cover no-repeat fixed;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body::before {
+            content: ''; position: fixed; inset: 0;
+            background: rgba(0,20,50,.72); z-index: 0;
+        }
+        .wrap { position: relative; z-index: 1; width: 100%; padding: 24px; }
+        .card-login {
+            max-width: 420px; margin: 0 auto;
+            background: rgba(255,255,255,.97);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+            overflow: hidden;
+        }
+        .card-top {
+            background: #003876; padding: 24px 24px 20px;
+            text-align: center; color: #fff;
+        }
+        .card-top h5 { font-weight: 700; font-size: 1.05rem; margin-bottom: 2px; }
+        .card-top small { opacity: .75; font-size: .78rem; }
+        .card-body-custom { padding: 24px 28px 20px; }
+        .form-label { font-size: .85rem; font-weight: 600; color: #374151; }
+        .form-control {
+            border-radius: 8px; border: 1.5px solid #e5e7eb;
+            font-size: .9rem; padding: 10px 14px;
+        }
+        .form-control:focus {
+            border-color: #003876;
+            box-shadow: 0 0 0 3px rgba(0,56,118,.1);
+        }
+        .btn-guardar {
+            width: 100%; background: #003876; color: #fff;
+            border: none; border-radius: 8px; padding: 11px;
+            font-weight: 700; font-size: .95rem; cursor: pointer;
+            transition: background .15s;
+        }
+        .btn-guardar:hover { background: #002a5c; }
+        .card-footer-custom {
+            padding: 14px 28px 22px; text-align: center;
+            font-size: .82rem; color: #6b7280;
+        }
+        .card-footer-custom a { color: #003876; font-weight: 600; }
+        .alert { font-size: .85rem; border-radius: 8px; }
+    </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nexo.css') }}">
+<script src="{{ url_for('static', filename='js/tema.js') }}" defer></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/v9_institucional.css') }}">
+</head>
+<body class="nexo-auth"><button type="button" data-theme-toggle class="nexo-auth-theme" aria-label="Cambiar apariencia"><i class="bi bi-moon-stars" data-theme-icon></i><span data-theme-label>Tema</span></button>
+
+<div class="wrap">
+    <div class="card-login">
+        <div class="card-top">
+            <h5><i class="bi bi-lock-fill me-2"></i>Nueva contraseña</h5>
+            <small>Crea una contraseña segura</small>
+        </div>
+        <div class="card-body-custom">
+            {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+            <div class="alert alert-{{ categoria }} alert-dismissible fade show py-2 mb-3">
+                {{ mensaje }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+
+            <div class="alert alert-info py-2 mb-3" style="font-size:.82rem;">
+                <i class="bi bi-info-circle me-1"></i>
+                Mínimo 8 caracteres.
+            </div>
+
+            <form method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="form-label">Nueva contraseña</label>
+                    <input type="password" name="contrasena" class="form-control" required
+                           minlength="8" placeholder="Mínimo 8 caracteres" autofocus>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label">Confirmar contraseña</label>
+                    <input type="password" name="confirmar" class="form-control" required
+                           placeholder="Repite la contraseña">
+                </div>
+                <button type="submit" class="btn-guardar">
+                    <i class="bi bi-check-lg me-2"></i>Guardar nueva contraseña
+                </button>
+            </form>
+        </div>
+        <div class="card-footer-custom">
+            <a href="{{ url_for('auth.login') }}">
+                <i class="bi bi-arrow-left me-1"></i>Volver al login
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

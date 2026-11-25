@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block titulo %}{{ encuesta.nombre }}{% endblock %}
+{% block contenido %}
+<section class="nexo-form-hero">
+  <div class="nexo-form-hero-content"><div class="nexo-form-hero-top"><a class="nexo-form-hero-back" href="{{ url_for('egresado.encuesta') }}" aria-label="Volver"><i class="bi bi-arrow-left"></i> Volver</a><span class="nexo-form-eyebrow"><i class="bi bi-clipboard2-check" aria-hidden="true"></i> SEGUIMIENTO DE EGRESADOS</span></div>
+   <h1>Tu experiencia importa</h1><p>Tus respuestas permiten conocer la trayectoria profesional de los egresados de Sistemas.</p><div class="nexo-form-hero-chips"><span><i class="bi bi-check-circle" aria-hidden="true"></i> Una respuesta por encuesta</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Datos declarados</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Revisión antes del envío</span></div>
+  </div><div class="nexo-form-hero-art"><img src="{{ url_for('static', filename='img/ia_seguimiento_digital.webp') }}" alt="Ilustración digital de acompañamiento académico y profesional" loading="lazy"></div>
+</section>
+
+
+{% if encuesta.descripcion %}
+<p class="text-muted">{{ encuesta.descripcion }}</p>
+{% endif %}
+
+<div class="alert alert-info small">
+    <i class="bi bi-info-circle me-1"></i>
+    Podrás responder esta encuesta <strong>una sola vez</strong>. Revisa tus respuestas antes de enviar.
+</div>
+
+<form class="nexo-form-v107" data-nexo-primary-form="true" method="POST">
+<div class="nexo-form-progress" data-nexo-form-progress aria-live="polite"><span><i class="bi bi-clipboard-check" aria-hidden="true"></i> Completa los campos obligatorios</span><span data-nexo-progress-count></span></div>
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="card">
+        <div class="card-body">
+            {% for p in preguntas %}
+            <section class="nexo-survey-question">
+<div class="nexo-survey-question-index">Pregunta {{ loop.index }} de {{ preguntas|length }}</div>
+                <label class="form-label fw-semibold">
+                    {{ loop.index }}. {{ p.texto }}
+                    {% if p.obligatoria %}<span class="text-danger">*</span>{% endif %}
+                </label>
+
+                {% if p.tipo == 'texto' %}
+                    <textarea name="pregunta_{{ p.id_pregunta }}" class="form-control" rows="2"
+                              {{ 'required' if p.obligatoria }}></textarea>
+
+                {% elif p.tipo == 'numero' %}
+                    <input type="number" name="pregunta_{{ p.id_pregunta }}" class="form-control"
+                           {{ 'required' if p.obligatoria }}>
+
+                {% elif p.tipo == 'si_no' %}
+                    <div class="d-flex gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="pregunta_{{ p.id_pregunta }}"
+                                   value="si" id="p{{ p.id_pregunta }}_si" {{ 'required' if p.obligatoria }}>
+                            <label class="form-check-label" for="p{{ p.id_pregunta }}_si">Sí</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="pregunta_{{ p.id_pregunta }}"
+                                   value="no" id="p{{ p.id_pregunta }}_no">
+                            <label class="form-check-label" for="p{{ p.id_pregunta }}_no">No</label>
+                        </div>
+                    </div>
+
+                {% elif p.tipo == 'opcion_unica' %}
+                    {% for o in p.opciones %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="pregunta_{{ p.id_pregunta }}"
+                               value="{{ o.id_opcion }}" id="op{{ o.id_opcion }}"
+                               {{ 'required' if p.obligatoria }}>
+                        <label class="form-check-label" for="op{{ o.id_opcion }}">{{ o.texto }}</label>
+                    </div>
+                    {% endfor %}
+
+                {% elif p.tipo == 'opcion_multiple' %}
+                    {% for o in p.opciones %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="pregunta_{{ p.id_pregunta }}"
+                               value="{{ o.id_opcion }}" id="op{{ o.id_opcion }}">
+                        <label class="form-check-label" for="op{{ o.id_opcion }}">{{ o.texto }}</label>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+</section>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-send-check me-1"></i>Enviar respuestas
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

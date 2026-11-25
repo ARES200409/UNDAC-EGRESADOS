@@ -1,0 +1,187 @@
+{% extends 'base_public.html' %}
+{% block title %}Inicio | NEXO UNDAC{% endblock %}
+{% block content %}
+
+<!-- BIENVENIDA INSTITUCIONAL / CARRUSEL DE FOTOGRAFÍAS -->
+<section class="nexo-landing nexo-landing-v5" aria-labelledby="titulo-landing">
+  <div class="nexo-landing-copy">
+    <span class="nexo-eyebrow"><span class="nexo-live-dot"></span> Universidad Nacional Daniel Alcides Carrión</span>
+    <p class="nexo-landing-index">COMUNIDAD · TRAYECTORIA · OPORTUNIDADES</p>
+    <div class="nexo-v92-identity-strip"><img src="{{ url_for('static', filename='img/logo_undac_original.png') }}" alt="Escudo UNDAC" width="48" height="48"><span>Universidad Nacional Daniel Alcides Carrión <small>Ingeniería de Sistemas y Computación · Pasco, Perú</small></span></div>
+    <h1 id="titulo-landing">El vínculo con tu universidad <em>continúa después del egreso.</em></h1>
+    <p class="nexo-landing-lead">Un espacio para egresados de Ingeniería de Sistemas y Computación: actualiza tu trayectoria, explora oportunidades y participa en el seguimiento universitario.</p>
+    <div class="nexo-actions">
+      <a class="nexo-action-primary" href="{{ url_for('auth.verificar') }}">Registrarme como egresado <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+      <a class="nexo-action-outline" href="{{ url_for('auth.login') }}">Ya tengo una cuenta <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    </div>
+    <div class="nexo-landing-micro"><i class="bi bi-shield-check" aria-hidden="true"></i> Registro condicionado a la verificación académica. La consulta de la API no sustituye la validación de identidad y titularidad de la cuenta.</div>
+  </div>
+  <div class="nexo-landing-media nexo-carousel" data-nexo-carousel aria-roledescription="carrusel" aria-label="Fotografías de la universidad">
+    <div class="nexo-carousel-slides">
+      <figure class="nexo-carousel-slide is-active" aria-hidden="false">
+        <img src="{{ url_for('static', filename='img/hero_bg3.jpg') }}" alt="Vista del entorno universitario en Pasco" fetchpriority="high">
+        <figcaption>Una comunidad conectada</figcaption>
+      </figure>
+      <figure class="nexo-carousel-slide" aria-hidden="true">
+        <img src="{{ url_for('static', filename='img/hero_bg.jpg') }}" alt="Imagen de infraestructura universitaria" loading="lazy">
+        <figcaption>Tu trayectoria sigue creciendo</figcaption>
+      </figure>
+      <figure class="nexo-carousel-slide" aria-hidden="true">
+        <img src="{{ url_for('static', filename='img/hero_bg2.jpg') }}" alt="Otra vista de la institución universitaria" loading="lazy">
+        <figcaption>Conocimiento, experiencia y futuro</figcaption>
+      </figure>
+    </div>
+    <div class="nexo-carousel-shade" aria-hidden="true"></div>
+    <div class="nexo-carousel-topline"><span>GALERÍA UNIVERSITARIA</span><span data-nexo-count>01 / 03</span></div>
+    <div class="nexo-carousel-bottom">
+      <div><span>UNDAC · PASCO</span><strong data-nexo-caption>Una comunidad conectada</strong></div>
+      <div class="nexo-carousel-buttons">
+        <button type="button" data-nexo-prev aria-label="Fotografía anterior"><i class="bi bi-arrow-left" aria-hidden="true"></i></button>
+        <button type="button" data-nexo-next aria-label="Fotografía siguiente"><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
+    <div class="nexo-carousel-dots" aria-label="Elegir fotografía">
+      <button type="button" class="is-active" data-nexo-dot="0" aria-label="Ver fotografía 1" aria-current="true"></button>
+      <button type="button" data-nexo-dot="1" aria-label="Ver fotografía 2"></button>
+      <button type="button" data-nexo-dot="2" aria-label="Ver fotografía 3"></button>
+    </div>
+  </div>
+</section>
+
+<!-- INDICADORES REALES DISPONIBLES EN MYSQL -->
+<section class="nexo-public-stats" aria-label="Indicadores registrados">
+  <div class="nexo-public-stat"><span>EGRESADOS EN EL SISTEMA</span><strong>{{ total_egresados or 0 }}</strong><small>Registros disponibles en MySQL</small></div>
+  <div class="nexo-public-stat"><span>OPORTUNIDADES ACTIVAS</span><strong>{{ ofertas or 0 }}</strong><small>Convocatorias publicadas</small></div>
+  <div class="nexo-public-stat nexo-stat-context"><span>ALCANCE INSTITUCIONAL</span><strong>Solo Sistemas</strong><small>Seguimiento académico y laboral en una sola plataforma</small></div>
+</section>
+
+<!-- BIBLIOTECA VISUAL / ESCENAS CONCEPTUALES GENERADAS CON IA -->
+<section class="nexo-ia-section" aria-labelledby="nexo-ia-formacion-title">
+  <div class="nexo-ia-section-head">
+    <div><span class="nexo-ia-eyebrow">Formación · Tecnología · Comunidad</span><h2 id="nexo-ia-formacion-title">Sistemas que conectan personas y oportunidades.</h2></div>
+    <p>La formación, el acompañamiento académico y las oportunidades profesionales forman parte de un mismo recorrido.</p>
+  </div>
+  <div class="nexo-ia-gallery">
+    <figure class="nexo-ia-media-card"><img src="{{ url_for('static', filename='img/ia_equipos_sistemas.webp') }}" loading="lazy" alt="Ilustración generada con IA de estudiantes trabajando en un laboratorio de computación"><figcaption><b>Formación y tecnología</b><small>De la experiencia universitaria a las competencias profesionales.</small></figcaption></figure>
+    <figure class="nexo-ia-media-card"><img src="{{ url_for('static', filename='img/ia_mentoria_academica.webp') }}" loading="lazy" alt="Ilustración IA de acompañamiento académico en un equipo de trabajo"><figcaption><b>Seguimiento académico</b><small>Información que ayuda a conocer la trayectoria del egresado.</small></figcaption></figure>
+    <figure class="nexo-ia-media-card"><img src="{{ url_for('static', filename='img/ia_entrevista_profesional.webp') }}" loading="lazy" alt="Ilustración IA de una entrevista laboral"><figcaption><b>Vinculación profesional</b><small>Conexión con ofertas, empleos y experiencias laborales.</small></figcaption></figure>
+  </div>
+  <p class="nexo-ia-illustration-note"><i class="bi bi-stars" aria-hidden="true"></i> Imágenes conceptuales creadas con IA; no representan personas ni ambientes específicos de la UNDAC.</p>
+</section>
+<hr class="nexo-ia-divider" aria-hidden="true">
+
+<!-- ACCESO AL SISTEMA, COMO EN EL PROYECTO ORIGINAL -->
+<section id="conoce-el-sistema" class="nexo-v5-access container-fluid px-lg-5 px-3">
+  <div class="nexo-v5-headline">
+    <div><p class="nexo-section-eyebrow">01 / CONOCE NEXO</p><h2>Un sistema, distintas experiencias.</h2></div>
+    <p>El acceso se adapta al tipo de usuario. Registra tu cuenta como egresado verificado o ingresa con las credenciales asignadas.</p>
+  </div>
+  <div class="nexo-v5-access-grid">
+    <div class="nexo-v6-access-visual" aria-label="Ejemplo visual del acceso actualizado a NEXO UNDAC">
+      <div class="nexo-v6-app-window">
+        <div class="nexo-v6-app-bar"><div class="nexo-v6-window-dots"><span></span><span></span><span></span></div><span>ACCESO INSTITUCIONAL</span><i class="bi bi-shield-check" aria-hidden="true"></i></div>
+        <div class="nexo-v6-app-content">
+          <span class="nexo-v6-mini-mark"><i class="bi bi-mortarboard" aria-hidden="true"></i></span>
+          <span class="nexo-v6-mini-caption">PLATAFORMA INSTITUCIONAL</span>
+          <h3>Bienvenido a NEXO UNDAC</h3>
+          <p>Accede a tu espacio académico y profesional.</p>
+          <div class="nexo-v6-mock-field"><span>Correo institucional</span><strong>tu.correo@ejemplo.com</strong></div>
+          <div class="nexo-v6-mock-field"><span>Contraseña</span><strong>••••••••••</strong></div>
+          <a href="{{ url_for('auth.login') }}" class="nexo-v6-demo-button">Ir al inicio de sesión <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+          <small>Vista ilustrativa del acceso · el formulario real se abre al hacer clic.</small>
+        </div>
+      </div>
+      <div class="nexo-v6-app-floating" aria-hidden="true"><i class="bi bi-check-circle-fill"></i><div><strong>Acceso por roles</strong><span>Personal y egresados</span></div></div>
+    </div>
+    <div class="nexo-v5-access-copy">
+      <div class="nexo-v5-access-icon"><i class="bi bi-person-lock" aria-hidden="true"></i></div>
+      <h3>Ingresa a tu espacio institucional</h3>
+      <p>Accede con tu cuenta para consultar la información que corresponde a tu rol, actualizar tus datos y utilizar las herramientas disponibles.</p>
+      <ol class="nexo-v5-steps">
+        <li><span>01</span><div><strong>Verifica tu identidad</strong><small>Si eres egresado nuevo, comienza por la consulta académica.</small></div></li>
+        <li><span>02</span><div><strong>Activa tu cuenta</strong><small>Completa la validación y establece tus credenciales.</small></div></li>
+        <li><span>03</span><div><strong>Utiliza tu espacio</strong><small>Ingresa a tu perfil o a la gestión institucional según tu rol.</small></div></li>
+      </ol>
+      <div class="nexo-v5-access-actions">
+        <a class="nexo-action-primary" href="{{ url_for('auth.login') }}">Ingresar al sistema <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+        <a class="nexo-action-outline" href="{{ url_for('auth.verificar') }}">Soy egresado nuevo</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ENLACES DE VERIFICACIÓN Y UBICACIÓN (V6) -->
+<section class="nexo-v6-resources container-fluid px-lg-5 px-3" aria-labelledby="recursos-v6-titulo">
+  <div class="nexo-v6-resources-title">
+    <p class="nexo-section-eyebrow">02 / SERVICIOS OFICIALES</p>
+    <h2 id="recursos-v6-titulo">Accesos que te acompañan.</h2>
+    <p>Consultas externas que complementan el seguimiento institucional de egresados.</p>
+  </div>
+  <div class="nexo-v6-resource-grid">
+    <article class="nexo-v6-resource">
+      <span class="nexo-v6-resource-icon"><i class="bi bi-award" aria-hidden="true"></i></span>
+      <div><span class="nexo-v6-resource-kicker">SUNEDU · Consulta externa</span>
+      <h3>Verifica tu grado o título universitario</h3>
+      <p>Consulta si tu grado de bachiller o título profesional está inscrito en el Registro Nacional de Grados y Títulos.</p>
+      <small>Esta consulta <strong>no certifica la condición de egresado</strong> ni sustituye la verificación académica de la UNDAC.</small></div>
+      <a href="https://enlinea.sunedu.gob.pe/" target="_blank" rel="noopener noreferrer" class="nexo-v6-resource-link" aria-label="Abrir consulta de grados y títulos en SUNEDU">Consultar SUNEDU <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>
+    </article>
+    <article class="nexo-v6-resource">
+      <span class="nexo-v6-resource-icon"><i class="bi bi-geo-alt" aria-hidden="true"></i></span>
+      <div><span class="nexo-v6-resource-kicker">UNDAC · Ubicación</span>
+      <h3>Encuentra la ciudad universitaria</h3>
+      <p>Av. Daniel Alcides Carrión s/n, San Juan - Yanacancha, Pasco, Perú.</p>
+      <small>El enlace abre una <strong>búsqueda de ubicación</strong> en Google Maps para que puedas elegir la entrada o ruta adecuada.</small></div>
+      <a href="https://www.google.com/maps/search/?api=1&amp;query=Universidad%20Nacional%20Daniel%20Alcides%20Carri%C3%B3n%20Ciudad%20Universitaria%20Pasco" target="_blank" rel="noopener noreferrer" class="nexo-v6-resource-link" aria-label="Buscar universidad en Google Maps">Abrir Google Maps <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i></a>
+    </article>
+  </div>
+</section>
+
+<section class="nexo-ia-section" aria-label="Seguimiento digital de egresados">
+  <div class="nexo-ia-split">
+    <div class="nexo-ia-split-photo"><img src="{{ url_for('static', filename='img/ia_seguimiento_digital.webp') }}" alt="Escena conceptual IA de egresados que revisan información de seguimiento en un portátil" loading="lazy"></div>
+    <div class="nexo-ia-split-copy"><span class="nexo-ia-eyebrow">Seguimiento responsable</span><h2>Tu trayectoria tiene valor, incluso después de egresar.</h2><p>Actualiza tus datos, registra experiencia profesional y responde encuestas. Las cifras institucionales se calculan con los registros disponibles, no con imágenes ilustrativas.</p><a href="{{ url_for('public.quienes_somos') }}">Conoce la plataforma <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+  </div>
+</section>
+<!-- RECURSOS DEL EGRESADO -->
+<section class="nexo-public-section container-fluid px-lg-5 px-3 py-5" aria-labelledby="servicios-titulo">
+  <p class="nexo-section-eyebrow">03 / ACOMPAÑAMIENTO</p>
+  <div class="nexo-section-line"><h2 id="servicios-titulo">Tu trayectoria, en un solo lugar.</h2><p>Herramientas para acompañar el recorrido académico y profesional después del egreso.</p></div>
+  <div class="nexo-feature-grid">
+    <article><div class="nexo-feature-id">01 <i class="bi bi-person-vcard" aria-hidden="true"></i></div><h3>Identidad profesional</h3><p>Perfil, fotografía, estudios, certificados y currículum.</p></article>
+    <article><div class="nexo-feature-id">02 <i class="bi bi-briefcase" aria-hidden="true"></i></div><h3>Trayectoria laboral</h3><p>Experiencia profesional, actualización de empleos y oportunidades.</p></article>
+    <article><div class="nexo-feature-id">03 <i class="bi bi-graph-up-arrow" aria-hidden="true"></i></div><h3>Observatorio</h3><p>Indicadores y reportes a partir de la información institucional disponible.</p></article>
+  </div>
+</section>
+
+<!-- VISTAS POR ROL: DESCRIPCIONES, NO IMITACIÓN DE PANELES PRIVADOS -->
+<section id="roles" class="nexo-v5-roles container-fluid px-lg-5 px-3">
+  <div class="nexo-v5-headline"><div><p class="nexo-section-eyebrow">04 / ACCESOS POR RESPONSABILIDAD</p><h2>Una plataforma para cinco perfiles.</h2></div><p>Cada rol utiliza las herramientas que le corresponden. Estas descripciones muestran el alcance previsto, no información de cuentas reales.</p></div>
+  <div class="nexo-v5-role-grid">
+    <article><span><i class="bi bi-shield-check"></i> 01</span><h3>Administrador</h3><p>Gestión general, usuarios, facultades, reportes y configuración.</p></article>
+    <article><span><i class="bi bi-diagram-3"></i> 02</span><h3>UTSAG</h3><p>Seguimiento institucional, consolidación de datos y evaluación.</p></article>
+    <article><span><i class="bi bi-buildings"></i> 03</span><h3>Coordinador</h3><p>Gestión y seguimiento dentro de su facultad asignada.</p></article>
+    <article><span><i class="bi bi-journal-check"></i> 04</span><h3>Docente responsable</h3><p>Consulta y seguimiento de su programa académico autorizado.</p></article>
+    <article><span><i class="bi bi-mortarboard"></i> 05</span><h3>Egresado</h3><p>Perfil propio, formación, empleos, certificados y encuestas.</p></article>
+  </div>
+</section>
+
+<!-- BOLSA LABORAL -->
+<section class="nexo-v5-opportunities container-fluid px-lg-5 px-3" aria-labelledby="oportunidades-titulo">
+  <div class="nexo-v5-opportunities-copy"><p class="nexo-section-eyebrow">05 / DESARROLLO PROFESIONAL</p><h2 id="oportunidades-titulo">Tu siguiente oportunidad comienza aquí.</h2><p>Consulta las ofertas publicadas en la plataforma y explora las oportunidades disponibles para Ingeniería de Sistemas y Computación.</p><a class="nexo-action-primary" href="{{ url_for('public.ofertas') }}">Explorar oportunidades <i class="bi bi-arrow-up-right"></i></a></div>
+  <div class="nexo-v5-opportunities-shot"><img src="{{ url_for('static', filename='img/ia_empleo_profesional.webp') }}" alt="Ilustración IA de egresados conversando sobre oportunidades profesionales" loading="lazy"><span>Ilustración conceptual generada con IA · no representa una contratación real</span></div>
+</section>
+
+<!-- CONTACTO Y COMUNIDAD -->
+<section id="contacto" class="nexo-v5-community container-fluid px-lg-5 px-3">
+  <div><p class="nexo-section-eyebrow">06 / COMUNIDAD Y CONTACTO</p><h2>Seguimos conectados.</h2><p>Consulta las noticias, los recursos institucionales y la información de contacto publicada por la universidad.</p></div>
+  <div class="nexo-v5-community-links">
+    <a href="https://www.facebook.com/sistemaspasco/" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i><span><strong>Comunidad de Sistemas</strong><small>Página de Facebook enlazada en el proyecto original</small></span><i class="bi bi-arrow-up-right"></i></a>
+    <a href="https://undac.edu.pe/" target="_blank" rel="noopener noreferrer"><i class="bi bi-globe2"></i><span><strong>Portal de la UNDAC</strong><small>Noticias, trámites y servicios institucionales</small></span><i class="bi bi-arrow-up-right"></i></a>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Universidad%20Nacional%20Daniel%20Alcides%20Carri%C3%B3n%20Ciudad%20Universitaria%20Pasco" target="_blank" rel="noopener noreferrer"><i class="bi bi-map"></i><span><strong>Visita la ciudad universitaria</strong><small>Buscar en Google Maps · Yanacancha, Pasco</small></span><i class="bi bi-arrow-up-right"></i></a>
+    <a href="mailto:atencion@undac.edu.pe"><i class="bi bi-envelope"></i><span><strong>Correo de atención institucional</strong><small>atencion@undac.edu.pe</small></span><i class="bi bi-arrow-up-right"></i></a>
+  </div>
+</section>
+
+{% endblock %}

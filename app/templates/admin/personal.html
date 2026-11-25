@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block titulo %}Cuentas y roles · Sistemas UNDAC{% endblock %}
+{% block contenido %}
+<div class="staff-v102">
+  <div class="staff-v102-hero">
+    <div>
+      <div class="staff-v102-kicker"><i class="bi bi-person-gear"></i> ADMINISTRACIÓN DE ACCESOS · NEXO SISTEMAS</div>
+      <h1>Cuentas, roles y <span>ámbito académico.</span></h1>
+      <p>Gestiona las cuentas institucionales y revisa qué facultad o programa tiene asignado cada responsable. El cambio de alcance nunca reasigna personas automáticamente.</p>
+    </div>
+    <a href="{{ url_for('admin.nuevo_personal') }}" class="staff-v102-new-account" aria-label="Crear una nueva cuenta de personal"><i class="bi bi-person-plus" aria-hidden="true"></i><span>Nueva cuenta</span></a>
+  </div>
+  {% if not catalogo_sistemas_preparado %}
+  <div class="alert alert-warning staff-v102-notice" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <div><strong>Falta preparar Facultad de Ingeniería y el programa de Sistemas.</strong>
+    <p>El catálogo anterior no se convierte automáticamente. Ejecuta en la terminal <code>python preparar_facultad_sistemas.py --aplicar</code> para crear únicamente esos dos registros. No requiere el año de inicio de la currícula.</p></div>
+  </div>
+  {% endif %}
+  {% set fuera_total = fuera_ambito.values() | select('equalto', true) | list | length %}
+  <div class="staff-v102-stats">
+    <div class="staff-v102-stat"><i class="bi bi-people"></i><span>Cuentas institucionales</span><strong>{{ lista|length }}</strong><small>Usuarios que ya existen en MySQL</small></div>
+    <div class="staff-v102-stat"><i class="bi bi-mortarboard"></i><span>Asignaciones de Sistemas</span><strong>{{ asignados_sistemas.values() | select('equalto', true) | list | length }}</strong><small>Con facultad o programa del nuevo ámbito</small></div>
+    <div class="staff-v102-stat is-warning"><i class="bi bi-exclamation-circle"></i><span>Asignaciones por revisar</span><strong>{{ fuera_total }}</strong><small>Cuentas vinculadas a programas anteriores</small></div>
+  </div>
+  <div class="staff-v102-content">
+    <div class="staff-v102-heading">
+      <div><h2>Personal del sistema</h2><p>Los roles Administrador y UTSAG no requieren asignación directa a una facultad.</p></div>
+      <span class="staff-v102-context">Ámbito activo: Ingeniería de Sistemas y Computación</span>
+    </div>
+    {% if lista %}
+    <div class="table-responsive">
+      <table class="table align-middle staff-v102-table">
+        <thead><tr><th>Personal</th><th>Correo</th><th>Responsabilidad</th><th>Facultad / programa asignado</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead>
+        <tbody>
+        {% for persona, usuario in lista %}
+          {% set fuera = fuera_ambito.get(persona.id_personal, false) %}
+          <tr>
+            <td><strong>{{ persona.nombre_completo() }}</strong></td>
+            <td class="staff-v102-email">{{ usuario.correo }}</td>
+            <td>{% for rol in usuario.roles %}<span class="staff-v102-role role-{{ rol.nombre }}">{{ rol.nombre | replace('_',' ') | title }}</span>{% endfor %}</td>
+            <td>
+              {% set activas = persona.asignaciones | selectattr('estado', 'equalto', 'activo') | list %}
+              {% if activas %}
+                {% for a in activas %}
+                  {% if a.facultad %}
+                    <span class="staff-v102-scope {{ 'is-old' if a.id_facultad not in ids_fac_sistemas else 'is-current' }}"><i class="bi bi-building"></i>{{ a.facultad.nombre }}</span>
+                  {% endif %}
+                  {% if a.programa %}
+                    <span class="staff-v102-scope {{ 'is-old' if a.id_programa not in ids_prog_sistemas else 'is-current' }}"><i class="bi bi-mortarboard"></i>{{ a.programa.nombre }}</span>
+                  {% endif %}
+                {% endfor %}
+                {% if fuera %}<div class="staff-v102-warning"><i class="bi bi-exclamation-triangle"></i>Asignación fuera del alcance de Sistemas</div>{% endif %}
+              {% else %}
+                <span class="staff-v102-neutral">Ámbito institucional o sin asignación específica</span>
+              {% endif %}
+            </td>
+            <td><span class="badge {{ 'bg-success' if persona.estado == 'activo' else 'bg-secondary' }}">{{ persona.estado | title }}</span></td>
+            <td class="text-end">
+              <div class="d-flex justify-content-end align-items-center gap-2">
+                <a href="{{ url_for('admin.editar_personal', id=persona.id_personal) }}" class="btn btn-sm {{ 'btn-warning' if fuera else 'btn-outline-primary' }}" title="{{ 'Revisar asignación' if fuera else 'Editar cuenta' }}"><i class="bi bi-pencil-square me-1"></i>{{ 'Revisar' if fuera else 'Editar' }}</a>
+                {% if persona.id_personal != current_user.id_personal and persona.id_personal != 1 %}
+                <form method="POST" action="{{ url_for('admin.toggle_personal', id=persona.id_personal) }}" class="d-inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-sm btn-outline-secondary" title="{{ 'Desactivar cuenta' if persona.estado == 'activo' else 'Activar cuenta' }}"><i class="bi {{ 'bi-pause-circle' if persona.estado == 'activo' else 'bi-play-circle' }}"></i></button>
+                </form>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="staff-v102-empty"><i class="bi bi-people"></i><p>No hay cuentas de personal disponibles.</p></div>
+    {% endif %}
+  </div>
+  <p class="staff-v102-footnote"><i class="bi bi-info-circle"></i> Un cambio de nombre o tema visual no modifica los permisos. Edita expresamente las asignaciones que deban pasar a Sistemas y conserva las demás como registros históricos.</p>
+</div>
+{% endblock %}

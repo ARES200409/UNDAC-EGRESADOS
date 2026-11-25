@@ -1,0 +1,49 @@
+{% extends 'base_public.html' %}
+{% block title %}La plataforma · NEXO UNDAC Sistemas{% endblock %}
+{% block head_extra %}<meta name="description" content="Conoce NEXO UNDAC, plataforma de seguimiento de egresados de Ingeniería de Sistemas y Computación.">{% endblock %}
+{% block content %}
+<section class="nexosi-public-hero" aria-labelledby="nexosi-about-title">
+  <div class="nexosi-public-hero-copy"><span class="nexosi-public-kicker"><i class="bi bi-mortarboard"></i> UNDAC · INGENIERÍA DE SISTEMAS Y COMPUTACIÓN</span>
+    <h1 id="nexosi-about-title">El vínculo con nuestra escuela <em>continúa.</em></h1>
+    <p>NEXO UNDAC es un espacio académico y profesional para mantener el contacto con los egresados, conocer sus trayectorias y conectar nuevas oportunidades.</p>
+    <div class="nexosi-public-buttons"><a href="{{ url_for('auth.verificar') }}" class="nexosi-main-btn">Soy egresado <i class="bi bi-arrow-right"></i></a><a href="{{ url_for('public.ofertas') }}" class="nexosi-alt-btn">Explorar oportunidades</a></div>
+    <div class="nexosi-hero-tags"><span><i class="bi bi-shield-check"></i> Validación académica</span><span><i class="bi bi-bar-chart"></i> Indicadores responsables</span><span><i class="bi bi-briefcase"></i> Vinculación laboral</span></div>
+  </div><div class="nexosi-public-hero-photo" role="img" aria-label="Imagen de contexto universitario en Pasco"><img src="{{ url_for('static', filename='img/hero_bg3.jpg') }}" alt="Vista de infraestructura y entorno universitario" loading="eager"></div>
+</section>
+<section class="nexosi-page-section" aria-labelledby="nexosi-purpose-title">
+  <div class="nexosi-public-heading"><span class="nexosi-rule">01 / PROPÓSITO</span><h2 id="nexosi-purpose-title">Tecnología al servicio del seguimiento</h2><p>Un mismo sistema, responsabilidades claras para quienes acompañan a nuestros egresados.</p></div>
+  <div class="nexosi-purpose-grid">
+    <article class="nexosi-purpose-card"><div class="nexosi-purpose-icon"><i class="bi bi-bullseye"></i></div><h3>Nuestra misión</h3><p>Facilitar información actualizada y herramientas digitales para que los egresados de Sistemas mantengan una relación activa con su escuela y sus oportunidades profesionales.</p></article>
+    <article class="nexosi-purpose-card"><div class="nexosi-purpose-icon"><i class="bi bi-lightbulb"></i></div><h3>Nuestra visión</h3><p>Ser una plataforma de referencia para el seguimiento responsable de trayectorias académicas y laborales, con indicadores que contribuyan a mejorar la formación profesional.</p></article>
+  </div>
+</section>
+<div class="nexo-ia-about-gallery" aria-label="Formación y acompañamiento profesional">
+  <div class="nexo-ia-section-head"><div><span class="nexo-ia-eyebrow">Un proyecto con propósito</span><h2>De la universidad al mundo profesional.</h2></div><p>Escenas ilustrativas de aprendizaje, análisis de datos y orientación laboral que expresan la finalidad de la plataforma.</p></div>
+  <div class="nexo-ia-gallery">
+    <figure class="nexo-ia-media-card"><img src="{{ url_for('static', filename='img/ia_formacion_laboratorio.webp') }}" alt="Escena IA de formación tecnológica" loading="lazy"><figcaption><b>Aprender</b><small>Una formación que continúa evolucionando.</small></figcaption></figure>
+    <figure class="nexo-ia-media-card"><img src="{{ url_for('static', filename='img/ia_analitica_tecnologica.webp') }}" alt="Escena IA de análisis digital" loading="lazy"><figcaption><b>Comprender</b><small>Datos para orientar las decisiones de seguimiento.</small></figcaption></figure>
+    <figure class="nexo-ia-media-card"><img src="{{ url_for('static', filename='img/ia_vinculacion_empresarial.webp') }}" alt="Escena IA de conversación profesional" loading="lazy"><figcaption><b>Conectar</b><small>Oportunidades para seguir creciendo profesionalmente.</small></figcaption></figure>
+  </div><p class="nexo-ia-illustration-note">Imágenes generadas con IA. No son fotografías oficiales de la universidad.</p>
+</div>
+<section class="nexosi-public-soft-band" aria-labelledby="nexosi-process-title">
+  <div class="nexosi-page-section"><div class="nexosi-public-heading"><span class="nexosi-rule">02 / CÓMO FUNCIONA</span><h2 id="nexosi-process-title">Un recorrido sencillo, desde el egreso</h2></div>
+    <div class="nexosi-process-grid">
+      <article><span>01</span><i class="bi bi-person-vcard"></i><h3>Verifica</h3><p>Consulta tu condición de egresado mediante la integración académica disponible.</p></article>
+      <article><span>02</span><i class="bi bi-journal-richtext"></i><h3>Actualiza</h3><p>Completa tu perfil, experiencia, habilidades, certificados y CV.</p></article>
+      <article><span>03</span><i class="bi bi-search-heart"></i><h3>Descubre</h3><p>Explora convocatorias y guarda o registra postulaciones según la fuente.</p></article>
+      <article><span>04</span><i class="bi bi-clipboard-data"></i><h3>Participa</h3><p>Responde encuestas y actualiza voluntariamente tus resultados laborales.</p></article>
+    </div>
+  </div>
+</section>
+<section class="nexosi-page-section" aria-labelledby="nexosi-roles-title">
+  <div class="nexosi-public-heading"><span class="nexosi-rule">03 / RESPONSABILIDADES</span><h2 id="nexosi-roles-title">Una plataforma. Cinco experiencias.</h2><p>Cada cuenta dispone de herramientas alineadas a sus responsabilidades.</p></div>
+  <div class="nexosi-roles-grid">
+    <article><i class="bi bi-shield-check"></i><h3>Administrador</h3><p>Gestiona usuarios, catálogos académicos y funcionamiento técnico.</p></article>
+    <article><i class="bi bi-graph-up-arrow"></i><h3>UTSAG</h3><p>Analiza cobertura, encuestas e inserción laboral declarada.</p></article>
+    <article><i class="bi bi-diagram-3"></i><h3>Coordinador</h3><p>Supervisa la información del programa académico asignado.</p></article>
+    <article><i class="bi bi-person-video3"></i><h3>Docente responsable</h3><p>Consulta registros y acompaña la actualización de sus egresados.</p></article>
+    <article><i class="bi bi-mortarboard"></i><h3>Egresado</h3><p>Construye su perfil y participa en el seguimiento profesional.</p></article>
+  </div>
+</section>
+<section class="nexosi-page-section nexosi-cta" aria-labelledby="nexosi-cta-title"><div><span>COMUNIDAD DE SISTEMAS · UNDAC</span><h2 id="nexosi-cta-title">Tu trayectoria merece seguir conectada.</h2><p>Regístrate con tu información académica y accede a tus herramientas de seguimiento.</p></div><a class="nexosi-main-btn" href="{{ url_for('auth.verificar') }}">Comenzar verificación <i class="bi bi-arrow-up-right"></i></a></section>
+{% endblock %}

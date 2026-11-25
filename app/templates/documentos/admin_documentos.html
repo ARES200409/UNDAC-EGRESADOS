@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block titulo %}Validación documental · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Administración / Revisión y validación de documentos{% endblock %}
+
+{% block contenido %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="bi bi-file-earmark-check me-2"></i>Validación Documental Institucional</h3>
+        <p class="text-muted small mb-0">Revisa, valida u observa los documentos cargados por los egresados dentro de tu ámbito autorizado.</p>
+    </div>
+</div>
+
+<div class="nexo-card mb-4">
+    <form method="GET" action="{{ url_for('documentos.admin_documentos') }}" class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label class="form-label small fw-semibold">Buscar egresado / documento</label>
+            <input type="text" name="buscar" class="form-control form-control-sm" value="{{ filtros.buscar }}" placeholder="Nombre, DNI o título...">
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-semibold">Facultad</label>
+            <select name="id_facultad" class="form-select form-select-sm">
+                <option value="">Todas</option>
+                {% for f in facultades %}
+                <option value="{{ f.id_facultad }}" {{ 'selected' if filtros.id_facultad == f.id_facultad }}>{{ f.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-semibold">Programa</label>
+            <select name="id_programa" class="form-select form-select-sm">
+                <option value="">Todos</option>
+                {% for p in programas %}
+                <option value="{{ p.id_programa }}" {{ 'selected' if filtros.id_programa == p.id_programa }}>{{ p.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-semibold">Categoría</label>
+            <select name="categoria" class="form-select form-select-sm">
+                <option value="">Todas</option>
+                {% for k, v in categorias %}
+                <option value="{{ k }}" {{ 'selected' if filtros.categoria == k }}>{{ v }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label small fw-semibold">Estado</label>
+            <select name="estado" class="form-select form-select-sm">
+                <option value="">Todos</option>
+                {% for k, v in estados.items() %}
+                <option value="{{ k }}" {{ 'selected' if filtros.estado == k }}>{{ v }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-1 d-grid">
+            <button type="submit" class="btn btn-primary btn-sm">Filtrar</button>
+        </div>
+    </form>
+</div>
+
+<div class="nexo-card">
+    {% if docs %}
+    <div class="table-responsive">
+        <table class="table align-middle table-hover mb-0">
+            <thead>
+                <tr class="small text-muted text-uppercase">
+                    <th>Egresado</th>
+                    <th>Documento</th>
+                    <th>Categoría</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in docs %}
+                <tr>
+                    <td>
+                        <div class="fw-semibold">{{ d.egresado.nombre_completo() }}</div>
+                        <small class="text-muted">DNI {{ d.egresado.dni }} · {{ d.egresado.curricula.programa.nombre if d.egresado.curricula else '' }}</small>
+                    </td>
+                    <td>
+                        <div class="fw-bold">{{ d.nombre }}</div>
+                        <small class="text-muted">{{ d.institucion_emisora or 'Sin institución' }} · {{ (d.tamano_bytes / 1024)|round(1) }} KB</small>
+                        {% if d.observaciones %}
+                        <div class="small text-danger">Obs: {{ d.observaciones }}</div>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge bg-light text-dark border">{{ categorias_dict.get(d.categoria, d.categoria) }}</span></td>
+                    <td><span class="nexo-doc-badge is-{{ d.estado_validacion }}">{{ estados.get(d.estado_validacion, d.estado_validacion) }}</span></td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('documentos.descargar_documento', id_doc=d.id_documento, ver=1) }}" target="_blank" class="btn btn-outline-primary" title="Ver archivo">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('documentos.descargar_documento', id_doc=d.id_documento) }}" class="btn btn-outline-secondary" title="Descargar">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            {% if current_user.rol_activo_nombre() in ('administrador', 'utsag', 'coordinador') %}
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalRevisar{{ d.id_documento }}">
+                                <i class="bi bi-check2-square me-1"></i>Revisar
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+
+                <div class="modal fade" id="modalRevisar{{ d.id_documento }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <form method="POST" action="{{ url_for('documentos.revisar_documento', id_doc=d.id_documento) }}" class="modal-content">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="modal-header">
+                                <h6 class="modal-title fw-bold">Revisar documento: {{ d.nombre }}</h6>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">Nuevo estado</label>
+                                    <select name="estado_validacion" class="form-select" required>
+                                        <option value="en_revision" {{ 'selected' if d.estado_validacion == 'en_revision' }}>En revisión</option>
+                                        <option value="validado" {{ 'selected' if d.estado_validacion == 'validado' }}>Validado</option>
+                                        <option value="observado" {{ 'selected' if d.estado_validacion == 'observado' }}>Observado (requiere motivo)</option>
+                                        <option value="rechazado" {{ 'selected' if d.estado_validacion == 'rechazado' }}>Rechazado (requiere motivo)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="form-label fw-semibold">Observaciones / Motivo</label>
+                                    <textarea name="observaciones" class="form-control" rows="3" maxlength="500" placeholder="Obligatorio si se observa o rechaza...">{{ d.observaciones or '' }}</textarea>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Guardar dictamen</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">No se encontraron documentos para los filtros aplicados.</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+/* NEXO UNDAC Sistemas V10.1: biblioteca visual de fotografías IA ilustrativas.
+   Todas las fotos son recursos conceptuales generados por IA, no fotografías documentales UNDAC.
+   La interfaz mantiene menú horizontal y logos originales. */
+:root{--ia-navy:#063c77;--ia-blue:#0b73d9;--ia-cyan:#19bde5;--ia-white:#fff;--ia-soft:#eff9ff}
+html{scroll-behavior:smooth} body{overflow-x:hidden}
+/* Portada: arregla textos oscuros sobre el hero azul en modo CLARO */
+html[data-theme="light"] body.nexo-public .nexo-landing,
+html[data-theme="dark"] body.nexo-public .nexo-landing{background:linear-gradient(118deg,#032851 0%,#075a99 68%,#08779e 100%)!important}
+body.nexo-public .nexo-landing-copy h1, body.nexo-public .nexo-landing-copy h1 em,
+body.nexo-public .nexo-landing-copy .nexo-eyebrow,
+body.nexo-public .nexo-landing-copy .nexo-landing-index,
+body.nexo-public .nexo-landing-copy .nexo-landing-lead,
+body.nexo-public .nexo-landing-copy .nexo-landing-micro,
+body.nexo-public .nexo-landing-copy .nexo-v92-identity-strip,
+body.nexo-public .nexo-landing-copy .nexo-v92-identity-strip span,
+body.nexo-public .nexo-landing-copy .nexo-v92-identity-strip small{color:#fff!important;text-shadow:0 1px 2px #01234e2b}
+body.nexo-public .nexo-landing-copy h1 em{color:#80e9fa!important}
+body.nexo-public .nexo-landing-copy .nexo-landing-lead{color:#e3f4ff!important}
+body.nexo-public .nexo-landing-copy .nexo-v92-identity-strip{background:#fff2!important;border:1px solid #ffffff54!important}
+body.nexo-public .nexo-landing-copy .nexo-v92-identity-strip small{color:#d4f0fc!important}
+body.nexo-public .nexo-landing-copy .nexo-actions a{font-weight:800}
+body.nexo-public .nexo-landing-copy .nexo-action-outline{color:#fff!important;border-color:#a9e7ff!important}
+/* Banner y fotografías con contenido real, no decorado vacío */
+.nexo-ia-section{padding:clamp(40px,5vw,76px) clamp(20px,4vw,70px);margin:0 auto;max-width:1510px}
+.nexo-ia-section-head{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-bottom:24px}
+.nexo-ia-eyebrow{display:inline-flex;align-items:center;gap:9px;color:#047db5;font-size:.76rem;font-weight:850;letter-spacing:.11em;text-transform:uppercase;margin-bottom:11px}
+.nexo-ia-eyebrow:before{content:"";width:28px;height:3px;border-radius:6px;background:#0ac4db}
+.nexo-ia-section h2,.nexo-ia-about-gallery h2{color:#0a386c;font-size:clamp(1.55rem,2.8vw,2.7rem);font-weight:850;letter-spacing:-.035em;line-height:1.15;margin:0 0 12px}
+.nexo-ia-section-head p{max-width:490px;color:#55748a;line-height:1.7;margin:0}
+.nexo-ia-gallery{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.nexo-ia-media-card{position:relative;overflow:hidden;border-radius:19px;min-height:255px;background:#0b437b;border:1px solid #d9ebf9;box-shadow:0 10px 30px #033c7213;isolation:isolate}
+.nexo-ia-media-card img{display:block;width:100%;height:100%;min-height:255px;object-fit:cover;transition:transform .4s ease}
+.nexo-ia-media-card:hover img{transform:scale(1.035)}
+.nexo-ia-media-card:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(0deg,#042a55e9,transparent);z-index:1;pointer-events:none}
+.nexo-ia-media-card figcaption{position:absolute;left:19px;right:19px;bottom:17px;z-index:2;color:#fff;display:grid;gap:6px}
+.nexo-ia-media-card figcaption b{font-size:1.12rem;color:#fff}
+.nexo-ia-media-card figcaption small{color:#e4f8ff;line-height:1.5}
+.nexo-ia-illustration-note{font-size:.7rem;color:#71879a;margin-top:15px}
+.nexo-ia-divider{border:0;height:3px;background:linear-gradient(90deg,transparent,#14b6e3,#0368c8,transparent);opacity:.65;margin:0}
+.nexo-ia-split{display:grid;grid-template-columns:1fr 1fr;gap:0;overflow:hidden;border-radius:22px;border:1px solid #d8eaf7;background:linear-gradient(120deg,#f6fcff,#e8f8ff);box-shadow:0 10px 25px #053b6b10}
+.nexo-ia-split-photo{min-height:330px;position:relative}
+.nexo-ia-split-photo img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover;display:block}
+.nexo-ia-split-copy{padding:clamp(28px,4vw,63px);display:flex;flex-direction:column;justify-content:center;align-items:flex-start}
+.nexo-ia-split-copy p{line-height:1.8;color:#516f86;margin:0 0 18px}
+.nexo-ia-split-copy a{display:inline-flex;gap:9px;align-items:center;padding:12px 18px;border-radius:11px;background:#0b74d5;color:white;text-decoration:none;font-weight:750}
+.nexo-ia-split-copy a:hover{color:white;background:#0555a4}
+.nexo-ia-banner{position:relative;border-radius:20px;overflow:hidden;background:#075aa5;isolation:isolate;min-height:245px;display:flex;align-items:center;border:1px solid #dceefa}
+.nexo-ia-banner img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.nexo-ia-banner:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#053061f2 0%,#053f79cc 46%,transparent 95%);z-index:-1}
+.nexo-ia-banner-copy{max-width:720px;padding:35px clamp(24px,4vw,58px);color:white}
+.nexo-ia-banner h1,.nexo-ia-banner h2{color:white!important;font-size:clamp(1.65rem,2.7vw,2.55rem);font-weight:850;margin:7px 0 12px;line-height:1.16}
+.nexo-ia-banner p{color:#e7f7ff!important;line-height:1.65;margin:0}
+.nexo-ia-banner-label{color:#83ebff;text-transform:uppercase;letter-spacing:.12em;font-weight:850;font-size:.74rem}
+.nexo-ia-about-gallery{max-width:1420px;margin:0 auto;padding:15px clamp(20px,4vw,58px) 65px}
+.nexo-ia-about-gallery .nexo-ia-gallery{grid-template-columns:1fr 1fr 1fr}
+.nexo-ia-mini-profile{margin:18px 0 26px;display:grid;grid-template-columns:minmax(260px,.85fr) 1.15fr;border:1px solid #d4e8f7;border-radius:17px;overflow:hidden;background:#f2faff}
+.nexo-ia-mini-profile img{width:100%;height:100%;min-height:180px;object-fit:cover}
+.nexo-ia-mini-profile>div{padding:22px 27px;display:flex;flex-direction:column;justify-content:center;gap:10px}
+.nexo-ia-mini-profile h3{color:#0a3f76;font-size:1.2rem;font-weight:800;margin:0}
+.nexo-ia-mini-profile p{color:#55748a;font-size:.89rem;margin:0;line-height:1.6}
+.nexo-ia-mini-profile a{font-weight:800;color:#005ba9}
+.nexo-ia-role-story{display:grid;grid-template-columns:minmax(190px, .9fr) 1.35fr;min-height:150px;align-items:stretch;gap:0;border:1px solid #d4eafb;border-radius:16px;overflow:hidden;background:#f3faff;margin:18px 0 24px}
+.nexo-ia-role-story img{width:100%;height:100%;object-fit:cover;max-height:190px}
+.nexo-ia-role-story div{padding:18px 25px;display:flex;flex-direction:column;justify-content:center}
+.nexo-ia-role-story span{color:#0278be;font-weight:850;text-transform:uppercase;letter-spacing:.1em;font-size:.71rem;margin-bottom:8px}
+.nexo-ia-role-story h2{font-size:clamp(1.05rem,1.7vw,1.46rem);font-weight:850;margin:0 0 8px;color:#0b427a}
+.nexo-ia-role-story p{font-size:.85rem;color:#55718a;line-height:1.6;margin:0}
+/* Formulario y elementos visuales seguros en modo oscuro. */
+html[data-theme="dark"] .nexo-ia-section h2,
+html[data-theme="dark"] .nexo-ia-split-copy h2,
+html[data-theme="dark"] .nexo-ia-about-gallery h2{color:#e8f6ff}
+html[data-theme="dark"] .nexo-ia-split,
+html[data-theme="dark"] .nexo-ia-mini-profile,
+html[data-theme="dark"] .nexo-ia-role-story{background:#173147;border-color:#395a72}
+html[data-theme="dark"] .nexo-ia-split-copy p,
+html[data-theme="dark"] .nexo-ia-mini-profile p,
+html[data-theme="dark"] .nexo-ia-role-story p{color:#bed9e8}
+html[data-theme="dark"] .nexo-ia-role-story h2,
+html[data-theme="dark"] .nexo-ia-mini-profile h3{color:#e9f7ff}
+html[data-theme="dark"] .nexo-ia-section-head p{color:#bdd9e9}
+html[data-theme="dark"] .nexo-ia-eyebrow{color:#62d4f3}
+/* En páginas públicas con tema claro: garantizar buena lectura del hero y encabezados. */
+html[data-theme="light"] body.nexo-public .nexo-ia-section,
+html[data-theme="light"] body.nexo-public .nexo-ia-about-gallery{color:#183d60}
+@media(max-width:950px){.nexo-ia-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.nexo-ia-about-gallery .nexo-ia-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:740px){.nexo-ia-section-head{display:block}.nexo-ia-section-head p{margin-top:12px}.nexo-ia-split,.nexo-ia-mini-profile,.nexo-ia-role-story{grid-template-columns:1fr}.nexo-ia-split-photo{min-height:240px}.nexo-ia-role-story img{height:175px;max-height:none}.nexo-ia-gallery,.nexo-ia-about-gallery .nexo-ia-gallery{grid-template-columns:1fr}.nexo-ia-section{padding:38px 18px}.nexo-ia-banner{min-height:210px}}
+@media(prefers-reduced-motion:reduce){.nexo-ia-media-card img{transition:none!important}.nexo-ia-media-card:hover img{transform:none}}
+
+/* En tarjetas panorámicas conservamos a las personas visibles hacia la derecha. */
+.nexo-ia-media-card img,.nexo-ia-role-story img{object-position:76% center}

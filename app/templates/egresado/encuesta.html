@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block titulo %}Encuestas{% endblock %}
+{% block contenido %}
+<section class="nexo-form-hero">
+  <div class="nexo-form-hero-content"><div class="nexo-form-hero-top"><span class="nexo-form-eyebrow"><i class="bi bi-clipboard2-check" aria-hidden="true"></i> TU VOZ IMPORTA</span></div>
+   <h1>Encuestas de seguimiento</h1><p>Comparte voluntariamente tu experiencia profesional para ayudar a mejorar el acompañamiento a egresados.</p><div class="nexo-form-hero-chips"><span><i class="bi bi-check-circle" aria-hidden="true"></i> Seguimiento Sistemas</span><span><i class="bi bi-info-circle" aria-hidden="true"></i> {% if encuestas %}{{ encuestas|length }} encuesta(s) disponible(s){% else %}Sin encuestas disponibles{% endif %}</span></div>
+  </div><div class="nexo-form-hero-art"><img src="{{ url_for('static', filename='img/ia_seguimiento_digital.webp') }}" alt="Ilustración digital de acompañamiento académico y profesional" loading="lazy"></div>
+</section>
+
+<h4 class="mb-4"><i class="bi bi-clipboard-check me-2"></i>Encuestas de seguimiento</h4>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% if encuestas %}
+        <div class="list-group list-group-flush">
+            {% for enc in encuestas %}
+            <a href="{{ url_for('egresado.responder_encuesta', id=enc.id_encuesta) }}"
+               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-semibold">{{ enc.nombre }}</div>
+                    {% if enc.descripcion %}
+                    <div class="text-muted small">{{ enc.descripcion }}</div>
+                    {% endif %}
+                </div>
+                <span class="badge bg-primary">Responder</span>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="nexo-v107-empty"><span class="nexo-v107-empty-icon"><i class="bi bi-check-circle" aria-hidden="true"></i></span>
+            <h3>No tienes encuestas pendientes</h3><p>Cuando se publique una nueva encuesta disponible para ti, la encontrarás aquí.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

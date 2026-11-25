@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block titulo %}Candidatos · {{ oferta.titulo }}{% endblock %}
+{% block subtitulo %}Empresa / Evaluación de postulantes{% endblock %}
+
+{% block contenido %}
+<div class="mb-3">
+    <a href="{{ url_for('empresa.panel') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Volver a mis vacantes
+    </a>
+</div>
+
+<div class="nexo-card mb-4">
+    <h4 class="fw-bold mb-1">{{ oferta.titulo }}</h4>
+    <p class="text-muted small mb-0">
+        Por protección de datos personales (Ley N.° 29733), solo puedes consultar la información profesional y los documentos expresamente autorizados por cada postulante.
+    </p>
+</div>
+
+<div class="nexo-card">
+    {% if postulaciones %}
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr class="small text-muted text-uppercase">
+                    <th>Postulante</th>
+                    <th>Mensaje y Perfil</th>
+                    <th>Documentos autorizados</th>
+                    <th>Estado</th>
+                    <th class="text-end">Evaluación</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in postulaciones %}
+                {% set egr = p.egresado %}
+                {% set docs_aut = docs_por_post.get(p.id_postulacion, []) %}
+                <tr>
+                    <td>
+                        <div class="fw-bold">{{ egr.nombre_completo() }}</div>
+                        <small class="text-muted">{{ egr.curricula.programa.nombre if egr.curricula else '' }} · {{ egr.nivel_maximo|capitalize }}</small>
+                    </td>
+                    <td class="small" style="max-width: 300px;">
+                        {% if p.mensaje %}<div class="mb-1">"{{ p.mensaje }}"</div>{% endif %}
+                        {% if egr.perfil_publico and egr.titulo_cv %}
+                        <span class="text-primary fw-semibold">{{ egr.titulo_cv }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if docs_aut %}
+                            {% for d in docs_aut %}
+                            <div class="mb-1">
+                                <a href="{{ url_for('documentos.descargar_documento', id_doc=d.id_documento) }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-file-earmark-arrow-down me-1"></i>{{ d.nombre }}
+                                </a>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <span class="text-muted small">Sin documentos compartidos</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-secondary">{{ estados.get(p.estado, p.estado) }}</span>
+                    </td>
+                    <td class="text-end" style="min-width: 240px;">
+                        {% if p.estado == 'retirada' %}
+                        <span class="text-muted small">Retirada por el egresado</span>
+                        {% else %}
+                        <form method="POST" action="{{ url_for('empresa.cambiar_estado_postulacion', id_postulacion=p.id_postulacion) }}" class="d-flex flex-column gap-1">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <select name="estado" class="form-select form-select-sm">
+                                {% for k, v in estados.items() %}
+                                <option value="{{ k }}" {{ 'selected' if p.estado == k }}>{{ v }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="text" name="observacion_empresa" class="form-control form-control-sm" maxlength="500" placeholder="Nota opcional..." value="{{ p.observacion_empresa or '' }}">
+                            <button type="submit" class="btn btn-primary btn-sm">Actualizar estado</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">Todavía no hay postulaciones para esta vacante.</div>
+    {% endif %}
+</div>
+{% endblock %}

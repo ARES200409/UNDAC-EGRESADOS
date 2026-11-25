@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block titulo %}Portal Empresarial · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Empresa / Panel de empleador{% endblock %}
+
+{% block contenido %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="bi bi-building me-2"></i>{{ empresa.nombre_display() }}</h3>
+        <p class="text-muted small mb-0">RUC {{ empresa.ruc or 'No registrado' }} · Gestiona tus vacantes laborales y revisa candidatos autorizados.</p>
+    </div>
+    <a href="{{ url_for('empresa.nueva_oferta') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Publicar nueva vacante
+    </a>
+</div>
+
+<div class="nexo-kpi-grid">
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Vacantes activas</div>
+        <div class="kpi-value">{{ kpi.ofertas_activas }}</div>
+    </div>
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Total publicadas</div>
+        <div class="kpi-value">{{ kpi.ofertas_total }}</div>
+    </div>
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Postulaciones recibidas</div>
+        <div class="kpi-value text-primary">{{ kpi.postulaciones_total }}</div>
+    </div>
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">En evaluación</div>
+        <div class="kpi-value text-warning">{{ kpi.en_proceso }}</div>
+    </div>
+</div>
+
+<div class="nexo-card">
+    <h5 class="fw-bold mb-3">Mis convocatorias publicadas</h5>
+    {% if ofertas %}
+    <div class="table-responsive">
+        <table class="table align-middle table-hover mb-0">
+            <thead>
+                <tr class="small text-muted text-uppercase">
+                    <th>Puesto</th>
+                    <th>Modalidad / Ubicación</th>
+                    <th>Cierre</th>
+                    <th>Postulantes</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in ofertas %}
+                <tr>
+                    <td>
+                        <div class="fw-bold">{{ o.titulo }}</div>
+                        <small class="text-muted">{{ o.tipo_oferta or 'Empleo' }} · {{ o.remuneracion or 'Remuneración a tratar' }}</small>
+                    </td>
+                    <td class="small">{{ o.modalidad or 'Por definir' }} · {{ o.ubicacion or 'Perú' }}</td>
+                    <td class="small">{{ o.fecha_vencimiento.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        <a href="{{ url_for('empresa.ver_postulaciones', id_oferta=o.id_oferta) }}" class="badge bg-primary text-decoration-none">
+                            {{ conteo_por_oferta.get(o.id_oferta, 0) }} postulante(s)
+                        </a>
+                    </td>
+                    <td>
+                        <span class="badge {{ 'bg-success' if o.activa == 1 else 'bg-secondary' }}">
+                            {{ 'Activa' if o.activa == 1 else 'Cerrada' }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <a href="{{ url_for('empresa.ver_postulaciones', id_oferta=o.id_oferta) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-people me-1"></i>Ver candidatos
+                        </a>
+                        <form method="POST" action="{{ url_for('empresa.toggle_oferta', id_oferta=o.id_oferta) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">
+                                {{ 'Cerrar' if o.activa == 1 else 'Reactivar' }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+        <p class="mb-3">Aún no has publicado vacantes en la bolsa laboral.</p>
+        <a href="{{ url_for('empresa.nueva_oferta') }}" class="btn btn-primary btn-sm">Publicar primera vacante</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,161 @@
+<!-- app/templates/auth/registro.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear cuenta — Egresados UNDAC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: url("{{ url_for('static', filename='img/hero_bg2.jpg') }}") center/cover no-repeat fixed;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background: rgba(0, 20, 50, 0.72);
+            z-index: 0;
+        }
+        .wrap { position: relative; z-index: 1; width: 100%; padding: 24px; }
+        .card-login {
+            max-width: 460px;
+            margin: 0 auto;
+            background: rgba(255,255,255,.97);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+            overflow: hidden;
+        }
+        .card-top {
+            background: #003876;
+            padding: 24px 24px 20px;
+            text-align: center;
+            color: #fff;
+        }
+        .card-top h5 { font-weight: 700; font-size: 1.05rem; margin-bottom: 2px; }
+        .card-top small { opacity: .75; font-size: .78rem; }
+        .steps {
+            display: flex; justify-content: center;
+            gap: 6px; margin-top: 14px;
+        }
+        .step {
+            width: 28px; height: 5px; border-radius: 3px;
+            background: rgba(255,255,255,.3);
+        }
+        .step.active { background: #fff; }
+        .card-body-custom { padding: 24px 28px 20px; }
+        .form-label { font-size: .85rem; font-weight: 600; color: #374151; }
+        .form-control {
+            border-radius: 8px; border: 1.5px solid #e5e7eb;
+            font-size: .9rem; padding: 10px 14px;
+        }
+        .form-control:focus {
+            border-color: #003876;
+            box-shadow: 0 0 0 3px rgba(0,56,118,.1);
+        }
+        .btn-crear {
+            width: 100%; background: #003876; color: #fff;
+            border: none; border-radius: 8px; padding: 11px;
+            font-weight: 700; font-size: .95rem; cursor: pointer;
+            transition: background .15s;
+        }
+        .btn-crear:hover { background: #002a5c; }
+        .card-footer-custom {
+            padding: 14px 28px 22px;
+            text-align: center;
+            font-size: .82rem; color: #6b7280;
+        }
+        .card-footer-custom a { color: #003876; font-weight: 600; }
+        .btn-inicio {
+            position: fixed; top: 18px; left: 18px; z-index: 10;
+            background: rgba(255,255,255,.15);
+            border: 1.5px solid rgba(255,255,255,.4);
+            color: #fff; border-radius: 10px;
+            padding: 7px 16px; font-size: .83rem; font-weight: 600;
+            text-decoration: none; backdrop-filter: blur(6px);
+            transition: background .15s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-inicio:hover { background: rgba(255,255,255,.25); color: #fff; }
+        .alert { font-size: .85rem; border-radius: 8px; }
+    </style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/nexo.css') }}">
+<script src="{{ url_for('static', filename='js/tema.js') }}" defer></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/v9_institucional.css') }}">
+</head>
+<body class="nexo-auth"><button type="button" data-theme-toggle class="nexo-auth-theme" aria-label="Cambiar apariencia"><i class="bi bi-moon-stars" data-theme-icon></i><span data-theme-label>Tema</span></button>
+
+<a href="{{ url_for('public.index') }}" class="btn-inicio">
+    <i class="bi bi-arrow-left"></i> Inicio
+</a>
+
+<div class="wrap">
+    <div class="card-login">
+        <div class="card-top">
+            <h5><i class="bi bi-lock-fill me-2"></i>Crear contraseña</h5>
+            <small>Paso final para activar tu cuenta</small>
+            <div class="steps">
+                <div class="step"></div>
+                <div class="step active"></div>
+            </div>
+        </div>
+        <div class="card-body-custom">
+            {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+            <div class="alert alert-{{ categoria }} alert-dismissible fade show py-2 mb-3">
+                {{ mensaje }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+
+            <div class="alert alert-info py-2 mb-3" style="font-size:.82rem;">
+                <i class="bi bi-info-circle me-1"></i>
+                Verifica tu correo institucional. Lo usarás para iniciar sesión.
+            </div>
+
+            <form method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.correo.label(class="form-label") }}
+                    {{ form.correo(class="form-control",
+                       value=form.correo.data or correo_api or '',
+                       placeholder="correo@undac.edu.pe") }}
+                    {% if form.correo.errors %}
+                    <div class="text-danger small mt-1">{{ form.correo.errors[0] }}</div>
+                    {% endif %}
+                    <div class="text-muted mt-1" style="font-size:.75rem;">
+                        Puedes corregirlo si es incorrecto.
+                    </div>
+                </div>
+                <div class="mb-3">
+                    {{ form.contrasena.label(class="form-label") }}
+                    {{ form.contrasena(class="form-control", placeholder="Mínimo 8 caracteres") }}
+                    {% if form.contrasena.errors %}
+                    <div class="text-danger small mt-1">{{ form.contrasena.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <div class="mb-4">
+                    {{ form.confirmar.label(class="form-label") }}
+                    {{ form.confirmar(class="form-control", placeholder="Repite la contraseña") }}
+                    {% if form.confirmar.errors %}
+                    <div class="text-danger small mt-1">{{ form.confirmar.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <button type="submit" class="btn-crear">
+                    <i class="bi bi-check-lg me-2"></i>Crear cuenta
+                </button>
+            </form>
+        </div>
+        <div class="card-footer-custom">
+            ¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

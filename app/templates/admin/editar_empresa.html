@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block titulo %}Editar Empresa{% endblock %}
+
+{% block contenido %}
+<div class="d-flex align-items-center mb-4">
+    <a href="{{ url_for('admin.empresas') }}" class="btn btn-sm btn-outline-secondary me-3">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i>Editar Empresa</h4>
+</div>
+
+{% if error_ruc %}
+<div class="alert alert-danger mb-4" role="alert">
+    <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ error_ruc }}
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('admin.editar_empresa', id=empresa.id_empresa) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% include "admin/_form_empresa.html" %}
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <a href="{{ url_for('admin.empresas') }}" class="btn btn-sm btn-secondary">Cancelar</a>
+                <button type="submit" class="btn btn-sm btn-primary">
+                    <i class="bi bi-save me-1"></i>Actualizar Empresa
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

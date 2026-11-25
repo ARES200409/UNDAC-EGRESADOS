@@ -1,0 +1,20 @@
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.idea/
+.vscode/
+*.log
+instance/
+app/static/uploads/
+app/static/cv_generados/
+app/static/docs/
+app/static/archivos/
+*.sql.bak
+*.sqlite3
+migraciones/backups/

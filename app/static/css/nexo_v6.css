@@ -1,0 +1,109 @@
+/* =========================================================
+   NEXO UNDAC V6 | Arreglos de contraste, iconos y secciones
+   Se carga al final para prevalecer sobre noticias.css
+   Mantiene tema claro/oscuro y estilos V5 existentes.
+   ========================================================= */
+
+/* Contraste transversal: también corrige colores fijos de Bootstrap */
+.nexo-public .text-muted,
+.nexo-public .lead.text-muted { color: var(--n-muted) !important; }
+.nexo-public .card,
+.nexo-public .sin-resultados { background:var(--n-surface); color:var(--n-text);border-color:var(--n-border); }
+.nexo-public .bg-light { background:var(--n-surface) !important; }
+.nexo-public .card .text-muted {color:var(--n-muted) !important}
+html[data-theme="dark"] .nexo-public h1[style*="color"],
+html[data-theme="dark"] .nexo-public h2[style*="color"],
+html[data-theme="dark"] .nexo-public h3[style*="color"],
+html[data-theme="dark"] .nexo-public h5[style*="color"] {color:var(--n-text)!important}
+html[data-theme="dark"] .nexo-public .bg-light p[style*="color"] {color:var(--n-muted)!important}
+
+/* Centros de iconos de valores y misión/visión (antes tenían line-height 70px + padding) */
+.nexo-public .card .rounded-circle.p-3.d-inline-block {
+  display:inline-flex !important;align-items:center!important;justify-content:center!important;
+  padding:0!important;line-height:1!important;vertical-align:middle;
+}
+.nexo-public .card .rounded-circle.p-3.d-inline-block > i {
+  display:inline-flex;align-items:center;justify-content:center;
+  line-height:1!important;margin:0!important;
+}
+.nexo-public .card .rounded-3.p-3:has(>i) {display:flex!important;align-items:center!important;justify-content:center!important;flex-shrink:0}
+.nexo-public .card .rounded-3.p-3 > i {line-height:1}
+
+/* Noticias - colores claros y oscuros: NO mezclar fondo claro con texto blanco */
+.nexo-public .noticias-wrapper {background:var(--n-bg);color:var(--n-text)}
+.nexo-public .noticias-header {border-bottom-color:var(--n-accent);}
+.nexo-public .noticias-header h1 {color:var(--n-text);font-family:'DM Sans',system-ui,sans-serif;letter-spacing:-.045em;}
+.nexo-public .noticias-header p,
+.nexo-public .noticias-info {color:var(--n-muted)}
+.nexo-public .noticias-header .badge:first-child {background:#104e67;color:#fff}
+.nexo-public .noticia-card {background:var(--n-surface);border:1px solid var(--n-border);border-radius:15px;box-shadow:var(--n-elev);transition:transform .18s,box-shadow .18s;}
+.nexo-public .noticia-card:hover {transform:translateY(-3px);box-shadow:0 15px 33px rgba(10,28,38,.12)}
+.nexo-public .noticia-card .img-wrap {background:var(--n-accent-soft)}
+.nexo-public .noticia-card .body h3 {color:var(--n-text)!important;font-family:'DM Sans',system-ui,sans-serif;letter-spacing:-.02em;line-height:1.48}
+.nexo-public .noticia-card .body h3 a {color:var(--n-text)!important}
+.nexo-public .noticia-card .body h3 a:hover {color:var(--n-accent)!important}
+.nexo-public .noticia-card .body .resumen,
+.nexo-public .noticia-card .body .meta {color:var(--n-muted)!important}
+.nexo-public .noticia-card .body .btn-leer {background:#087d7e;color:#fff!important;border-radius:8px;}
+.nexo-public .noticia-card .body .btn-leer:hover {background:#066768}
+.nexo-public .sin-resultados h3 {color:var(--n-text)}
+.nexo-public .sin-resultados p {color:var(--n-muted)}
+.nexo-public .noticias-paginacion {border-top-color:var(--n-border)}
+.nexo-public .noticias-paginacion button {color:var(--n-text);background:var(--n-surface);border-color:var(--n-border)}
+.nexo-public .noticias-paginacion button.active {background:#087d7e;color:white;border-color:#087d7e}
+.nexo-public .noticias-paginacion button:hover:not(:disabled):not(.active) {background:var(--n-accent-soft);color:var(--n-text)}
+.nexo-public .noticias-paginacion .info-pagina {color:var(--n-muted)}
+html[data-theme="dark"] .nexo-public .noticias-header .badge:first-child {background:#195a72;color:#fff}
+html[data-theme="dark"] .nexo-public .noticia-card {box-shadow:0 14px 32px rgba(0,0,0,.20)}
+
+/* Nueva ilustración del acceso: no depende de capturas antiguas */
+.nexo-v6-access-visual {padding:clamp(14px,3vw,38px);background:radial-gradient(circle at 80% 15%,rgba(116,221,197,.17),transparent 40%),linear-gradient(135deg,#12313b,#091e2b);border-radius:17px;min-height:475px;display:grid;place-items:center;position:relative;isolation:isolate;box-shadow:0 24px 60px rgba(15,50,63,.14)}
+.nexo-v6-access-visual::before{content:"";position:absolute;width:240px;height:240px;left:-40px;bottom:-70px;border:1px solid rgba(180,240,232,.18);border-radius:50%;z-index:-1}
+.nexo-v6-app-window{width:min(100%,465px);margin:auto;border:1px solid rgba(255,255,255,.17);border-radius:18px;overflow:hidden;background:var(--n-surface);color:var(--n-text);box-shadow:0 20px 42px rgba(0,0,0,.16)}
+.nexo-v6-app-bar{height:46px;padding:0 17px;background:var(--n-deep);color:#e0eded;display:flex;align-items:center;gap:15px;font-size:.66rem;letter-spacing:.14em;font-weight:800}
+.nexo-v6-app-bar>i{margin-left:auto;color:#7dd7ce;font-size:1rem}
+.nexo-v6-window-dots{display:flex;align-items:center;gap:5px}
+.nexo-v6-window-dots span{width:8px;height:8px;border-radius:50%;background:#ee9f9f}
+.nexo-v6-window-dots span:nth-child(2){background:#f2d27c}
+.nexo-v6-window-dots span:nth-child(3){background:#88d7c7}
+.nexo-v6-app-content{padding:clamp(24px,3vw,40px);display:flex;align-items:stretch;flex-direction:column}
+.nexo-v6-mini-mark{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--n-accent-soft);color:var(--n-accent);font-size:1.5rem;margin-bottom:16px}
+.nexo-v6-mini-caption{color:var(--n-accent);font-size:.62rem;font-weight:800;letter-spacing:.14em}
+.nexo-v6-app-content h3{font-family:'DM Sans',sans-serif;font-size:1.38rem;font-weight:800;letter-spacing:-.035em;line-height:1.3;color:var(--n-text);margin:7px 0}
+.nexo-v6-app-content p{color:var(--n-muted);font-size:.78rem;margin:0 0 20px}
+.nexo-v6-mock-field{display:flex;flex-direction:column;border:1px solid var(--n-border);border-radius:9px;background:var(--n-bg);padding:10px 14px;margin-bottom:10px;gap:3px}
+.nexo-v6-mock-field span{font-size:.66rem;color:var(--n-muted)}
+.nexo-v6-mock-field strong{font-size:.78rem;font-weight:700;color:var(--n-text)}
+.nexo-v6-demo-button{display:flex;justify-content:center;gap:10px;align-items:center;text-decoration:none;color:#fff!important;background:#087d7e;border-radius:9px;padding:12px;font-size:.78rem;font-weight:800;margin:10px 0}
+.nexo-v6-demo-button:hover{background:#09686b}
+.nexo-v6-app-content>small{font-size:.65rem;text-align:center;color:var(--n-muted);line-height:1.6}
+.nexo-v6-app-floating{position:absolute;right:clamp(12px,3vw,26px);bottom:clamp(12px,3vw,28px);display:flex;gap:10px;align-items:center;background:#fff;border-radius:10px;padding:10px 13px;box-shadow:0 9px 28px rgba(0,0,0,.19);color:#172f39;pointer-events:none}
+.nexo-v6-app-floating>i{font-size:1.3rem;color:#0f9982}
+.nexo-v6-app-floating div{display:flex;flex-direction:column}
+.nexo-v6-app-floating strong{font-size:.74rem}
+.nexo-v6-app-floating span{font-size:.64rem;color:#637780}
+
+/* Recursos: SUNEDU y campus */
+.nexo-v6-resources{padding-top:clamp(46px,6vw,85px);padding-bottom:clamp(55px,7vw,95px);background:var(--n-surface)}
+.nexo-v6-resources-title{max-width:900px;margin-bottom:30px}
+.nexo-v6-resources-title h2{font-family:Georgia,'Times New Roman',serif;font-weight:500;font-size:clamp(2rem,3.25vw,3.5rem);line-height:1.14;letter-spacing:-.045em;color:var(--n-text)}
+.nexo-v6-resources-title>p:last-child{color:var(--n-muted)}
+.nexo-v6-resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.nexo-v6-resource{display:grid;grid-template-columns:60px minmax(0,1fr);gap:12px 19px;align-items:start;padding:clamp(22px,3vw,36px);border:1px solid var(--n-border);background:var(--n-bg);border-radius:13px}
+.nexo-v6-resource-icon{width:53px;height:53px;border-radius:12px;display:grid;place-items:center;background:var(--n-accent-soft);color:var(--n-accent);font-size:1.45rem}
+.nexo-v6-resource-kicker{color:var(--n-accent);font-size:.64rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase}
+.nexo-v6-resource h3{font-family:'DM Sans',sans-serif;font-size:1.2rem;line-height:1.35;color:var(--n-text);font-weight:800;letter-spacing:-.028em;margin:7px 0 12px}
+.nexo-v6-resource p{color:var(--n-muted);font-size:.85rem;line-height:1.75}
+.nexo-v6-resource small{display:block;color:var(--n-muted);font-size:.72rem;line-height:1.6}
+.nexo-v6-resource small strong{font-weight:800;color:var(--n-text)}
+.nexo-v6-resource-link{grid-column:2;justify-self:start;text-decoration:none;font-size:.8rem;font-weight:800;color:var(--n-accent);border-bottom:1px solid currentColor;padding-bottom:5px;display:inline-flex;align-items:center;gap:10px}
+.nexo-v6-resource-link:hover{color:var(--n-text)}
+
+/* Imagen roja: ilustración completa sin cortes */
+.nexo-v5-opportunities-shot img{object-fit:contain;object-position:center;max-height:390px;background:#f01827}
+.nexo-v5-opportunities-shot span{line-height:1.5}
+
+/* Accesibilidad / móvil */
+@media (max-width:950px){.nexo-v6-resource-grid{grid-template-columns:1fr}}
+@media (max-width:650px){.nexo-v6-access-visual{min-height:0;padding:17px 13px 66px}.nexo-v6-app-floating{bottom:10px;right:11px}.nexo-v6-app-content{padding:23px 20px}.nexo-v6-resource{grid-template-columns:44px 1fr;padding:18px;gap:12px}.nexo-v6-resource-icon{width:42px;height:42px;font-size:1.1rem}.nexo-v6-resource-link{grid-column:1/-1}.nexo-v6-resource h3{font-size:1.03rem}}
+@media (prefers-reduced-motion:reduce){.nexo-public .noticia-card{transition:none}}

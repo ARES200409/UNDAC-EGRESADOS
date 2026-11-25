@@ -1,0 +1,91 @@
+<!-- app/templates/egresado/nuevo_grado_titulo.html -->
+{% extends "base.html" %}
+{% block titulo %}Agregar grado o título{% endblock %}
+{% block contenido %}
+<section class="nexo-form-hero">
+  <div class="nexo-form-hero-content"><div class="nexo-form-hero-top"><a class="nexo-form-hero-back" href="{{ url_for('egresado.trayectoria') }}" aria-label="Volver"><i class="bi bi-arrow-left"></i> Volver</a><span class="nexo-form-eyebrow"><i class="bi bi-mortarboard" aria-hidden="true"></i> TRAYECTORIA ACADÉMICA</span></div>
+   <h1>Añade un grado o título</h1><p>Registra únicamente grados o títulos que puedas sustentar mediante una constancia o diploma.</p><div class="nexo-form-hero-chips"><span><i class="bi bi-check-circle" aria-hidden="true"></i> Datos académicos</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Título</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Institución</span></div>
+  </div><div class="nexo-form-hero-art"><img src="{{ url_for('static', filename='img/ia_formacion_laboratorio.webp') }}" alt="Ilustración digital de acompañamiento académico y profesional" loading="lazy"></div>
+</section>
+
+
+<div class="alert alert-info py-2 small mb-4">
+    <i class="bi bi-info-circle me-1"></i>
+    Consulta tu constancia de grado o título en el portal oficial de SUNEDU y copia los datos aquí.
+    La información será declarada por ti y no se verifica automáticamente en SUNEDU.
+    <div class="mt-2">
+        <a href="https://enlinea.sunedu.gob.pe/" target="_blank" class="btn btn-sm btn-outline-primary">
+            <i class="bi bi-box-arrow-up-right me-1"></i>Consultar en SUNEDU en Línea
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form class="nexo-form-v107" data-nexo-primary-form="true" method="POST">
+<div class="nexo-form-progress" data-nexo-form-progress aria-live="polite"><span><i class="bi bi-clipboard-check" aria-hidden="true"></i> Completa los campos obligatorios</span><span data-nexo-progress-count></span></div>
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label class="form-label">Graduado</label>
+                    <input type="text" class="form-control" value="{{ e.nombre_completo() }}" disabled>
+                    <div class="form-text">Se toma automáticamente de tu perfil.</div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">DNI</label>
+                    <input type="text" class="form-control" value="{{ e.dni }}" disabled>
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label">Tipo <span class="text-danger">*</span></label>
+                    <select name="tipo" id="tipo" class="form-select" required>
+                        <option value="">Seleccione</option>
+                        <option value="bachiller">Bachiller</option>
+                        <option value="titulado">Título</option>
+                        <option value="maestria">Maestría</option>
+                        <option value="doctorado">Doctorado</option>
+                        <option value="phd">PhD</option>
+                    </select>
+                </div>
+                <div class="col-sm-8">
+                    <label class="form-label">Grado o título <span class="text-danger">*</span></label>
+                    <input type="text" name="grado_titulo" id="grado_titulo" class="form-control" required placeholder='Ejemplo -> BACHILLER EN: DERECHO / ABOGADO / INGENIERO DE SISTEMAS Y COMPUTACIÓN...'>
+                    <div class="form-text">Se sugiere un texto según el tipo elegido; puedes editarlo si corresponde a otra carrera.</div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Fecha del diploma <span class="text-danger">*</span></label>
+                    <input type="date" name="fecha_obtencion" class="form-control" required>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Institución <span class="text-danger">*</span></label>
+                    <input type="text" name="institucion" class="form-control" required
+                           value="Universidad Nacional Daniel Alcides Carrión">
+                </div>
+            </div>
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-1"></i>Guardar
+                </button>
+                <a href="{{ url_for('egresado.trayectoria') }}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const nombrePrograma = {{ nombre_programa|tojson }};
+
+const sugerencias = {
+    bachiller:  nombrePrograma ? `BACHILLER EN: ${nombrePrograma.toUpperCase()}` : 'BACHILLER EN: ',
+    titulado:   '',   // no existe una fórmula universal — cada carrera tiene su propio título profesional
+    maestria:   '',
+    doctorado:  '',
+    phd:        ''
+};
+document.getElementById('tipo').addEventListener('change', function () {
+    const campo = document.getElementById('grado_titulo');
+    if (!campo.value.trim()) {
+        campo.value = sugerencias[this.value] || '';
+    }
+});
+</script>
+{% endblock %}

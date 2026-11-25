@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block titulo %}Publicar vacante · Portal Empresarial{% endblock %}
+{% block subtitulo %}Empresa / Publicar oferta laboral{% endblock %}
+
+{% block contenido %}
+<div class="mb-3">
+    <a href="{{ url_for('empresa.panel') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Volver al panel
+    </a>
+</div>
+
+<div class="nexo-card" style="max-width: 860px;">
+    <h4 class="fw-bold mb-1"><i class="bi bi-briefcase-fill me-2"></i>Publicar Nueva Oferta Laboral</h4>
+    <p class="text-muted small mb-4">Empresa: <strong>{{ empresa.nombre_display() }}</strong></p>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row g-3">
+            <div class="col-md-8">
+                <label class="form-label fw-semibold">Nombre del puesto *</label>
+                <input type="text" name="titulo" class="form-control" required maxlength="255" placeholder="Ej: Desarrollador Backend Python / Analista de Sistemas" value="{{ form_data.get('titulo', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Fecha de cierre *</label>
+                <input type="date" name="fecha_vencimiento" class="form-control" required value="{{ form_data.get('fecha_vencimiento', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Modalidad</label>
+                <select name="modalidad" class="form-select">
+                    <option value="Presencial">Presencial</option>
+                    <option value="Remoto">Remoto</option>
+                    <option value="Híbrido">Híbrido</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Tipo de contrato / oferta</label>
+                <select name="tipo_oferta" class="form-select">
+                    <option value="Tiempo completo">Tiempo completo</option>
+                    <option value="Tiempo parcial">Tiempo parcial</option>
+                    <option value="Prácticas profesionales">Prácticas profesionales</option>
+                    <option value="Locación de servicios">Locación de servicios</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Ubicación</label>
+                <input type="text" name="ubicacion" class="form-control" maxlength="150" placeholder="Cerro de Pasco / Lima / Remoto">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Carrera requerida</label>
+                <input type="text" name="carrera_requerida" class="form-control" maxlength="150" placeholder="Ej: Ingeniería de Sistemas">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Experiencia requerida</label>
+                <input type="text" name="experiencia_requerida" class="form-control" maxlength="150" placeholder="Ej: 1 año / Sin experiencia">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Remuneración (opcional)</label>
+                <input type="text" name="remuneracion" class="form-control" maxlength="100" placeholder="Ej: S/ 3,000 - S/ 4,000">
+            </div>
+            <div class="col-12">
+                <label class="form-label fw-semibold">Descripción del puesto</label>
+                <textarea name="descripcion" class="form-control" rows="3" placeholder="Resumen de la oportunidad..."></textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Requisitos</label>
+                <textarea name="requisitos" class="form-control" rows="3" placeholder="Competencias, herramientas o estudios..."></textarea>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Funciones principales</label>
+                <textarea name="funciones" class="form-control" rows="3" placeholder="Actividades a desempeñar..."></textarea>
+            </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary fw-semibold">Publicar vacante</button>
+            <a href="{{ url_for('empresa.panel') }}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

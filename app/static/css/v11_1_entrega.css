@@ -1,0 +1,35 @@
+/* NEXO UNDAC V11.1 - ajustes de cierre visual accesibles.
+   Hoja cargada al final para priorizar legibilidad en ambos temas. */
+.v91-panel .v91-program-list>a,
+.v91-panel .v91-program-list>a:visited{
+  background:#f5fbff!important;color:#103a68!important;
+  border:1px solid #b7daf2!important;text-decoration:none!important;
+  min-height:70px;box-shadow:0 2px 5px rgba(11,69,133,.06);
+}
+.v91-panel .v91-program-list>a .v91-program-label strong{color:#0a335c!important;font-weight:800!important}
+.v91-panel .v91-program-list>a .v91-program-label span{color:#315a7d!important}
+.v91-panel .v91-program-list>a>i:last-child{color:#116fb9!important}
+.v91-panel .v91-program-list>a .v91-program-number{background:#0b68ae!important;color:#fff!important}
+.v91-panel .v91-program-list>a:hover{background:#e2f3ff!important;border-color:#198ce2!important}
+html[data-theme="dark"] .v91-panel .v91-program-list>a,
+html[data-theme="dark"] .v91-panel .v91-program-list>a:visited{
+  background:#153751!important;border-color:#416f91!important;color:#ecf8ff!important;
+  box-shadow:none!important;
+}
+html[data-theme="dark"] .v91-panel .v91-program-list>a .v91-program-label strong{color:#f3fbff!important}
+html[data-theme="dark"] .v91-panel .v91-program-list>a .v91-program-label span{color:#c6dff1!important}
+html[data-theme="dark"] .v91-panel .v91-program-list>a .v91-program-number{background:#166da5!important;color:#fff!important}
+html[data-theme="dark"] .v91-panel .v91-program-list>a>i:last-child{color:#78dafa!important}
+html[data-theme="dark"] .v91-panel .v91-program-list>a:hover{background:#205070!important;border-color:#62cbee!important}
+/* Coherencia de acciones y formularios: no confundir enlaces con texto fijo. */
+.obs-shell a:focus-visible,.obs-shell button:focus-visible,
+.obs-shell select:focus-visible,.obs-shell input:focus-visible,
+.obs-shell textarea:focus-visible{outline:3px solid #24b8e8!important;outline-offset:2px}
+html[data-theme="dark"] .obs-shell a:focus-visible,
+html[data-theme="dark"] .obs-shell button:focus-visible{outline-color:#9deaff!important}
+.obs-shell .nexo-form-hero-chips span{font-size:.78rem;line-height:1.5}
+.v11-insights .v11-panel:has(.v11-empty:not([hidden])){min-height:220px}
+.v11-insights .v11-empty:not([hidden]){background:rgba(120,169,207,.05)}
+html[data-theme="dark"] .v11-insights .v11-empty:not([hidden]){background:rgba(150,200,230,.04)}
+.v11-insights .v11-empty[hidden]{display:none!important}
+@media(max-width:650px){.v91-panel .v91-program-list>a{grid-template-columns:40px minmax(0,1fr) 18px;gap:9px;padding:12px}.v91-panel .v91-program-list .v91-program-number{height:40px;width:40px}.v11-insights .v11-panel{padding:15px}}

@@ -1,0 +1,165 @@
+<!-- app/templates/admin/ofertas.html -->
+{% extends "base.html" %}
+{% block titulo %}Bolsa de trabajo{% endblock %}
+
+{% block contenido %}
+<div class="nexo-module-kicker"><span class="nexo-live-dot"></span> UNDAC · Gestión institucional</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0"><i class="bi bi-newspaper me-2"></i>Bolsa de trabajo</h4>
+    <a href="{{ url_for('admin.nueva_oferta') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Nueva oferta
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <!-- Tabs activas/inactivas -->
+            <ul class="nav nav-tabs card-header-tabs border-0">
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if estado == 'activa' }}"
+                       href="{{ url_for('admin.ofertas', estado='activa') }}">
+                        <i class="bi bi-check-circle me-1"></i>Activas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if estado == 'inactiva' }}"
+                       href="{{ url_for('admin.ofertas', estado='inactiva') }}">
+                        <i class="bi bi-archive me-1"></i>Inactivas / Vencidas
+                    </a>
+                </li>
+            </ul>
+            <span class="badge bg-primary">{{ paginacion.total }}</span>
+        </div>
+        <!-- Buscador -->
+        <form method="GET" action="{{ url_for('admin.ofertas') }}" class="d-flex gap-2">
+            <input type="hidden" name="estado" value="{{ estado }}">
+            <input type="text" name="buscar" class="form-control form-control-sm"
+                   placeholder="Buscar por título, empresa o ubicación..."
+                   value="{{ buscar }}">
+            <button type="submit" class="btn btn-sm btn-primary">
+                <i class="bi bi-search"></i>
+            </button>
+            {% if buscar %}
+            <a href="{{ url_for('admin.ofertas', estado=estado) }}"
+               class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-x"></i>
+            </a>
+            {% endif %}
+        </form>
+    </div>
+    <div class="card-body p-0">
+        {% if ofertas %}
+        {% for o in ofertas %}
+        <div class="p-3 border-bottom">
+            <div class="row align-items-center g-3">
+                <div class="col-md-7">
+                    <div class="fw-semibold">{{ o.titulo }}</div>
+                    <div class="text-muted small d-flex flex-wrap gap-2 mt-1">
+                        {% if o.empresa %}
+                        <span><i class="bi bi-building me-1"></i>{{ o.empresa }}</span>
+                        {% endif %}
+                        {% if o.ubicacion %}
+                        <span><i class="bi bi-geo-alt me-1"></i>{{ o.ubicacion }}</span>
+                        {% endif %}
+                        {% if o.modalidad %}
+                        <span><i class="bi bi-laptop me-1"></i>{{ o.modalidad }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="small text-muted mt-1">
+                        Publicada: {{ o.fecha_publicacion.strftime('%d/%m/%Y') if o.fecha_publicacion else '—' }}
+                        {% if o.fecha_vencimiento %}
+                        — Vence: {{ o.fecha_vencimiento.strftime('%d/%m/%Y') }}
+                        {% else %}
+                        — <span class="text-success">Sin vencimiento</span>
+                        {% endif %}
+                    </div>
+                    {% if o.url_original %}
+                    <a href="{{ o.url_original }}" target="_blank"
+                       class="small text-primary">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>Ver enlace
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="col-md-5 d-flex gap-2 flex-wrap justify-content-md-end">
+                    <a href="{{ url_for('admin.editar_oferta', id=o.id_oferta) }}"
+                       class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-pencil me-1"></i>Editar
+                    </a>
+                    <form method="POST"
+                          action="{{ url_for('admin.toggle_oferta', id=o.id_oferta) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="estado" value="{{ estado }}">
+                        <input type="hidden" name="pagina" value="{{ pagina }}">
+                        <button type="button" class="btn btn-sm {{ 'btn-outline-warning' if o.activa else 'btn-outline-success' }}"
+                                onclick="this.closest('form').submit()">
+                            {% if o.activa %}
+                            <i class="bi bi-pause me-1"></i>Desactivar
+                            {% else %}
+                            <i class="bi bi-play me-1"></i>Activar
+                            {% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- Paginación -->
+        {% if paginacion.pages > 1 %}
+        <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top">
+            <small class="text-muted">
+                Mostrando {{ ofertas|length }} de {{ paginacion.total }}
+            </small>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item {{ 'disabled' if not paginacion.has_prev }}">
+                        <a class="page-link"
+                           href="{{ url_for('admin.ofertas', pagina=paginacion.prev_num, buscar=buscar, estado=estado) }}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% for p in paginacion.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if p %}
+                        <li class="page-item {{ 'active' if p == paginacion.page }}">
+                            <a class="page-link"
+                               href="{{ url_for('admin.ofertas', pagina=p, buscar=buscar, estado=estado) }}">
+                                {{ p }}
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item {{ 'disabled' if not paginacion.has_next }}">
+                        <a class="page-link"
+                           href="{{ url_for('admin.ofertas', pagina=paginacion.next_num, buscar=buscar, estado=estado) }}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-newspaper fs-1"></i>
+            <p class="mt-2">
+                {% if buscar %}
+                No se encontraron ofertas con "{{ buscar }}".
+                {% else %}
+                No hay ofertas {{ 'activas' if estado == 'activa' else 'inactivas' }}.
+                {% endif %}
+            </p>
+            {% if estado == 'activa' and not buscar %}
+            <a href="{{ url_for('admin.nueva_oferta') }}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg me-1"></i>Publicar primera oferta
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

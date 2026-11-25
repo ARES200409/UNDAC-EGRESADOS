@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block titulo %}Oportunidades profesionales · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Mi espacio / Oportunidades profesionales{% endblock %}
+{% block contenido %}
+<aside class="nexo-ia-banner" aria-label="Oportunidades para egresados" style="min-height:205px;margin-bottom:24px">
+  <img src="{{ url_for('static', filename='img/ia_empleo_profesional.webp') }}" alt="Ilustración IA de egresados conversando sobre oportunidades de empleo" loading="lazy">
+  <div class="nexo-ia-banner-copy"><span class="nexo-ia-banner-label">Oportunidades laborales</span><h2>Explora, guarda y da seguimiento.</h2><p>Las postulaciones internas y las oportunidades externas tienen procesos distintos.</p></div>
+</aside>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/v8_profesional.css') }}">
+<div class="v8-page">
+  <header class="v8-header">
+    <div><span class="v8-overline">NEXO UNDAC · BOLSA LABORAL</span>
+      <h1>Tu siguiente <em>oportunidad</em></h1>
+      <p>Consulta oportunidades internas y enlaces a convocatorias externas. Guarda las que te interesen y realiza seguimiento de tus postulaciones declaradas.</p>
+    </div>
+    <div class="v8-profile-chip"><i class="bi bi-mortarboard" aria-hidden="true"></i><span>Tu programa<strong>{{ programa_actual or 'Pendiente de identificar' }}</strong></span></div>
+  </header>
+  <section class="v8-stats" aria-label="Indicadores personales">
+    <div><strong>{{ paginacion.total }}</strong><span>Ofertas que coinciden con los filtros</span></div>
+    <div><strong>{{ guardados_total }}</strong><span>Vacantes guardadas</span></div>
+    <div><strong>{{ postulaciones_total }}</strong><span>Postulaciones registradas</span></div>
+  </section>
+  <form method="GET" action="{{ url_for('egresado.ofertas') }}" class="v8-filters">
+    <label><span>Buscar por puesto o competencia</span><input name="q" class="form-control" value="{{ buscar }}" placeholder="Ej. analista, docente, administración"></label>
+    <label><span>Ubicación en Perú</span><input name="ubicacion" class="form-control" value="{{ ubicacion }}" placeholder="Ej. Pasco, Lima, remoto"></label>
+    <button class="btn btn-primary" type="submit"><i class="bi bi-search me-1"></i>Buscar vacantes</button>
+    {% if buscar or ubicacion %}<a class="btn btn-outline-secondary" href="{{ url_for('egresado.ofertas') }}">Limpiar</a>{% endif %}
+  </form>
+  {% if not migracion_v8 %}<div class="alert alert-info">Las ofertas ya se pueden consultar. Para habilitar las funciones de Guardar y Postular debes ejecutar el archivo <code>migracion_v8.sql</code> con una cuenta MySQL administradora.</div>{% endif %}
+  <p class="v8-sources"><i class="bi bi-shield-check"></i> Las convocatorias proceden del personal autorizado. Al abrir un enlace externo, se registra la visita si activaste la migración V9, pero no una postulación ni contratación. <a href="{{ url_for('egresado.mi_seguimiento') }}">Ver mi seguimiento</a>.</p>
+  {% if ofertas %}
+  <div class="v8-jobs">
+    {% for oferta in ofertas %}
+    <article class="v8-job">
+      <div class="v8-job-icon"><i class="bi bi-briefcase-fill"></i></div>
+      <div class="v8-job-content">
+        <div class="v8-job-top"><span class="v8-job-company">{{ oferta.nombre_empresa() }}</span><span class="v8-date">Hasta {{ oferta.fecha_vencimiento.strftime('%d/%m/%Y') }}</span></div>
+        <h2>{{ oferta.titulo }}</h2>
+        <div class="v8-job-tags"><span><i class="bi bi-geo-alt"></i> {{ oferta.ubicacion or 'Ubicación no indicada' }}</span><span><i class="bi bi-laptop"></i> {{ oferta.modalidad or 'Modalidad por confirmar' }}</span><span><i class="bi bi-clock-history"></i> {{ oferta.jornada or 'Horario por confirmar' }}</span></div>
+        {% if oferta.descripcion %}<p>{{ oferta.descripcion[:260] }}{% if oferta.descripcion|length > 260 %}…{% endif %}</p>{% endif %}
+        {% if oferta.requisitos %}<details class="v8-requirements"><summary>Ver requisitos</summary><p>{{ oferta.requisitos }}</p></details>{% endif %}
+        <div class="v8-job-actions">
+          {% if migracion_v8 %}<form method="POST" action="{{ url_for('egresado.guardar_oferta', id_oferta=oferta.id_oferta) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_ofertas }}">
+            <button class="btn btn-outline-secondary btn-sm" type="submit"><i class="bi bi-bookmark{{ '-fill' if oferta.id_oferta in ids_guardadas else '' }} me-1"></i>{{ 'Quitar de guardados' if oferta.id_oferta in ids_guardadas else 'Guardar oferta' }}</button>
+          </form>{% endif %}
+          {% if oferta.url_original %}
+            {% if oferta.url_original.startswith('https://') %}
+              <a class="btn btn-primary btn-sm" target="_blank" rel="noopener noreferrer" href="{{ url_for('egresado.salir_a_oferta', id_oferta=oferta.id_oferta) }}">Abrir convocatoria original <i class="bi bi-box-arrow-up-right ms-1"></i></a>
+            {% else %}<span class="v8-note">El enlace externo necesita validación del administrador.</span>{% endif %}
+          {% elif oferta.id_oferta in ids_postuladas %}
+            <a href="{{ url_for('egresado.mi_seguimiento') }}" class="v8-done"><i class="bi bi-check-circle-fill"></i> Ver estado de mi postulación</a>
+          {% elif migracion_v8 %}
+            <form method="POST" action="{{ url_for('egresado.postular_oferta', id_oferta=oferta.id_oferta) }}" onsubmit="return confirm('¿Confirmas tu postulación interna? El personal autorizado podrá consultar tus datos profesionales.');">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="_csrf" value="{{ csrf_ofertas }}">
+              <input type="hidden" name="mensaje" value="Interés en la convocatoria registrada en NEXO UNDAC">
+              <button class="btn btn-primary btn-sm" type="submit">Registrar postulación <i class="bi bi-arrow-right ms-1"></i></button>
+            </form>
+          {% else %}<span class="v8-note">Postulación interna disponible tras activar la migración V8</span>
+          {% endif %}
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  <div class="v8-pagination">
+    {% if paginacion.has_prev %}<a href="{{ url_for('egresado.ofertas', pagina=paginacion.prev_num, q=buscar, ubicacion=ubicacion) }}" class="btn btn-outline-secondary btn-sm">Anterior</a>{% endif %}
+    <span>Página {{ paginacion.page }} de {{ paginacion.pages }}</span>
+    {% if paginacion.has_next %}<a href="{{ url_for('egresado.ofertas', pagina=paginacion.next_num, q=buscar, ubicacion=ubicacion) }}" class="btn btn-outline-secondary btn-sm">Siguiente</a>{% endif %}
+  </div>
+  {% else %}
+  <div class="v8-empty"><i class="bi bi-search"></i><h2>Aún no hay ofertas para estos criterios</h2><p>Revisa otros términos o consulta las convocatorias que publique el personal de la universidad.</p><a class="btn btn-outline-secondary" href="{{ url_for('egresado.ofertas') }}">Ver todas las ofertas</a></div>
+  {% endif %}
+  <p class="v8-footnote">Las sugerencias y filtros no garantizan compatibilidad profesional ni selección. La información de cada vacante depende de la empresa y de su responsable de publicación.</p>
+</div>
+{% endblock %}

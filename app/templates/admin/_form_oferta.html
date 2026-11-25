@@ -1,0 +1,205 @@
+<!-- app/templates/admin/_form_oferta.html -->
+{%- set o = oferta if oferta is defined and oferta else none -%}
+
+<!-- Información principal -->
+<div class="card mb-3">
+    <div class="card-header bg-primary text-white fw-semibold">
+        <i class="bi bi-newspaper me-2"></i>Información principal
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label">Título <span class="text-danger">*</span></label>
+                <input type="text" name="titulo" class="form-control" required
+                       value="{{ o.titulo if o else '' }}"
+                       placeholder="Ej: Practicante en producción">
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Empresa (del directorio)</label>
+                <select name="id_empresa" class="form-select" id="select-empresa">
+                    <option value="">-- No registrada / Desconocida --</option>
+                    {% for emp in empresas %}
+                    <option value="{{ emp.id_empresa }}"
+                        {{ 'selected' if o and o.id_empresa == emp.id_empresa }}>
+                        {{ emp.nombre_display() }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Nombre de empresa (si no está en la lista)</label>
+                <input type="text" name="empresa" class="form-control"
+                       value="{{ o.empresa if o and o.empresa else '' }}"
+                       placeholder="Ej: Estudio Contable Pérez">
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Tipo de oferta</label>
+                <select name="tipo_oferta" class="form-select">
+                    {% set t_actual = o.tipo_oferta if o and o.tipo_oferta else 'Empleo' %}
+                    {% for t in ['Empleo','Práctica preprofesional','Práctica profesional','Convocatoria'] %}
+                    <option value="{{ t }}" {{ 'selected' if t_actual == t }}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Teléfono de contacto</label>
+                <input type="text" name="telefono" class="form-control"
+                       value="{{ o.telefono if o and o.telefono else '' }}"
+                       placeholder="Ej: 987654321">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Imagen de la oferta -->
+<div class="card mb-3">
+    <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-image me-2"></i>Imagen de la oferta
+    </div>
+    <div class="card-body">
+        <p class="text-muted small mb-2">
+            Si subes una imagen con toda la información de la oferta, no es necesario
+            llenar la descripción, funciones y requisitos de abajo.
+        </p>
+        {% if o and o.ruta_imagen %}
+        <div class="mb-2">
+            <img src="{{ url_for('static', filename=o.ruta_imagen) }}"
+                 alt="Imagen actual" style="max-height:160px;border-radius:8px;">
+        </div>
+        {% endif %}
+        <input type="file" name="imagen" class="form-control" accept=".png,.jpg,.jpeg,.webp">
+    </div>
+</div>
+
+<!-- Condiciones laborales -->
+<div class="card mb-3">
+    <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-card-checklist me-2"></i>Condiciones laborales
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-sm-4">
+                <label class="form-label">Jornada</label>
+                <select name="jornada" class="form-select">
+                    <option value="" {{ 'selected' if not o or not o.jornada else '' }}>Seleccione una opción</option>
+                    <option value="Tiempo completo" {{ 'selected' if o and o.jornada == 'Tiempo completo' else '' }}>Tiempo completo (Full-time)</option>
+                    <option value="Tiempo parcial" {{ 'selected' if o and o.jornada == 'Tiempo parcial' else '' }}>Tiempo parcial (Part-time)</option>
+                    <option value="Por horas" {{ 'selected' if o and o.jornada == 'Por horas' else '' }}>Por horas</option>
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label">Remuneración</label>
+                <input type="text" name="remuneracion" class="form-control"
+                       value="{{ o.remuneracion if o and o.remuneracion else '' }}"
+                       placeholder="Ej: S/ 1,500 - S/ 2,000">
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label">Modalidad</label>
+                <select name="modalidad" class="form-select">
+                    {% set mod_actual = o.modalidad if o and o.modalidad else '' %}
+                    <option value="">Seleccionar</option>
+                    {% for mod in ['Presencial','Remoto','Híbrido'] %}
+                    <option value="{{ mod }}" {{ 'selected' if mod_actual == mod }}>{{ mod }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Lugar de trabajo</label>
+                <input type="text" name="ubicacion" class="form-control"
+                       value="{{ o.ubicacion if o and o.ubicacion else '' }}"
+                       placeholder="Ej: Pasco, Perú">
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Fecha de vencimiento <span class="text-danger">*</span></label>
+                <input type="date" name="fecha_vencimiento" class="form-control" required
+                       value="{{ o.fecha_vencimiento.strftime('%Y-%m-%d') if o and o.fecha_vencimiento else '' }}">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Descripción del puesto -->
+<div class="card mb-3">
+    <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-file-text me-2"></i>Descripción del puesto <span class="text-muted small fw-normal">(opcional si subiste imagen)</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-3">
+            <div class="col-12">
+                <label class="form-label">Descripción general</label>
+                <textarea name="descripcion" class="form-control" rows="2"
+                          placeholder="Resumen breve o introducción de la oferta">{{ o.descripcion if o and o.descripcion else '' }}</textarea>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Funciones</label>
+                <textarea name="funciones" class="form-control" rows="3"
+                          placeholder="Describe las tareas clave del puesto, una por línea">{{ o.funciones if o and o.funciones else '' }}</textarea>
+            </div>
+            <div class="col-12">
+                <label class="form-label">Requisitos</label>
+                <textarea name="requisitos" class="form-control" rows="3"
+                          placeholder="Perfil del candidato (estudios, experiencia), uno por línea">{{ o.requisitos if o and o.requisitos else '' }}</textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gestión de la publicación -->
+<div class="card mb-3">
+    <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-gear me-2"></i>Gestión de la publicación
+    </div>
+    <div class="card-body">
+        <div class="row g-3 align-items-end">
+            <div class="{{ 'col-sm-8' if o else 'col-12' }}">
+                <label class="form-label">URL para más información <span class="text-muted small">(opcional)</span></label>
+                <input type="url" name="url_original" class="form-control"
+                       value="{{ o.url_original if o and o.url_original else '' }}"
+                       placeholder="https://example.com">
+            </div>
+            {% if o %}
+            <div class="col-sm-4">
+                <div class="form-check mb-2">
+                    <input type="checkbox" name="activa" id="activa"
+                           class="form-check-input" {{ 'checked' if o.activa }}>
+                    <label class="form-check-label fw-semibold text-primary" for="activa">Oferta activa</label>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script>
+    new Choices(document.getElementById('select-empresa'), {
+        searchEnabled: true,
+        itemSelectText: '',
+        placeholder: true,
+        placeholderValue: 'Busca una empresa...',
+        noResultsText: 'No se encontró la empresa',
+        shouldSort: false
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectEmpresa  = document.getElementById('select-empresa');
+        const inputNombre    = document.querySelector('input[name="empresa"]');
+
+        function actualizarEstadoNombre() {
+            const valor = selectEmpresa.value;
+            if (valor === '') {
+                // "Desconocida" seleccionada (o nada aún)
+                inputNombre.disabled = false;
+            } else {
+                inputNombre.disabled = true;
+                inputNombre.value = '';
+            }
+        }
+
+        selectEmpresa.addEventListener('change', actualizarEstadoNombre);
+        actualizarEstadoNombre(); // estado inicial al cargar (útil en editar_oferta)
+    });
+    </script>
+{% endblock %}

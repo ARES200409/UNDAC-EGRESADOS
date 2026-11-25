@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block titulo %}Campañas de seguimiento laboral · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Seguimiento laboral / Campañas por períodos{% endblock %}
+
+{% block contenido %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="bi bi-calendar2-check me-2"></i>Campañas de Seguimiento Laboral</h3>
+        <p class="text-muted small mb-0">Configura períodos de seguimiento (al egresar, 6 meses, 1, 2 o 3 años) por facultad o escuela profesional.</p>
+    </div>
+    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuevaCampana">
+        <i class="bi bi-plus-lg me-1"></i>Nueva campaña
+    </button>
+</div>
+
+<div class="nexo-kpi-grid">
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Experiencias registradas</div>
+        <div class="kpi-value">{{ metricas.empleos }}</div>
+    </div>
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Relacionadas a la carrera</div>
+        <div class="kpi-value text-success">{{ metricas.relacionados }}</div>
+    </div>
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Trabajo independiente</div>
+        <div class="kpi-value text-primary">{{ metricas.independientes }}</div>
+    </div>
+</div>
+
+<div class="nexo-card">
+    {% if campanas %}
+    <div class="table-responsive">
+        <table class="table align-middle table-hover mb-0">
+            <thead>
+                <tr class="small text-muted text-uppercase">
+                    <th>Campaña</th>
+                    <th>Período</th>
+                    <th>Vigencia</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in campanas %}
+                <tr>
+                    <td>
+                        <div class="fw-bold">{{ c.nombre }}</div>
+                        {% if c.descripcion %}<small class="text-muted">{{ c.descripcion }}</small>{% endif %}
+                    </td>
+                    <td><span class="badge bg-light text-dark border">{{ periodos_dict.get(c.periodo_tipo, c.periodo_tipo) }}</span></td>
+                    <td class="small">
+                        {{ c.fecha_inicio.strftime('%d/%m/%Y') if c.fecha_inicio else 'Sin inicio' }}
+                        —
+                        {{ c.fecha_fin.strftime('%d/%m/%Y') if c.fecha_fin else 'Sin cierre' }}
+                    </td>
+                    <td>
+                        <span class="badge {{ 'bg-success' if c.estado == 'activa' else 'bg-secondary' if c.estado == 'cerrada' else 'bg-warning text-dark' }}">
+                            {{ c.estado|capitalize }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <form method="POST" action="{{ url_for('admin.cambiar_estado_campana', id_campana=c.id_campana) }}" class="d-inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            {% if c.estado != 'activa' %}
+                            <button name="estado" value="activa" class="btn btn-outline-success btn-sm">Activar</button>
+                            {% endif %}
+                            {% if c.estado == 'activa' %}
+                            <button name="estado" value="cerrada" class="btn btn-outline-secondary btn-sm">Cerrar</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">Aún no se han configurado campañas de seguimiento laboral.</div>
+    {% endif %}
+</div>
+
+<div class="modal fade" id="modalNuevaCampana" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" action="{{ url_for('admin.nueva_campana') }}" class="modal-content">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Nueva campaña de seguimiento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-7">
+                        <label class="form-label fw-semibold">Nombre de la campaña *</label>
+                        <input type="text" name="nombre" class="form-control" required maxlength="200" placeholder="Ej: Seguimiento Cohorte 2025 - 1 año">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold">Período de seguimiento *</label>
+                        <select name="periodo_tipo" class="form-select" required>
+                            {% for k, v in periodos %}
+                            <option value="{{ k }}">{{ v }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Descripción / Objetivo</label>
+                        <input type="text" name="descripcion" class="form-control" maxlength="500">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Facultad objetivo (opcional)</label>
+                        <select name="id_facultad" class="form-select">
+                            <option value="">Todas las facultades</option>
+                            {% for f in facultades %}
+                            <option value="{{ f.id_facultad }}">{{ f.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Programa específico (opcional)</label>
+                        <select name="id_programa" class="form-select">
+                            <option value="">Todos los programas</option>
+                            {% for p in programas %}
+                            <option value="{{ p.id_programa }}">{{ p.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Fecha de inicio</label>
+                        <input type="date" name="fecha_inicio" class="form-control">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Fecha de cierre</label>
+                        <input type="date" name="fecha_fin" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="activar" value="1" id="chk_activar_camp" checked>
+                            <label class="form-check-label small" for="chk_activar_camp">Activar campaña inmediatamente</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary fw-semibold">Crear campaña</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

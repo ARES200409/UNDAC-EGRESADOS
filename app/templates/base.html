@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#111f2b">
+    <script src="{{ url_for('static', filename='js/tema.js') }}" defer></script>
+    <title>{% block titulo %}Observatorio de Egresados · UNDAC{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/v11_institucional.css') }}">
+    <style>
+        /* OBSERVATORIO UNDAC: sistema de diseño sin sidebar */
+        :root {
+            --obs-ink: #182a35;
+            --obs-muted: #697982;
+            --obs-accent: #087e80;
+            --obs-coral: #c9664f;
+            --obs-line: #e1e5e3;
+            --obs-canvas: #f7f7f3;
+            --obs-serif: Georgia, 'Times New Roman', serif;
+        }
+        body.obs-shell { margin: 0; color: var(--obs-ink); background: var(--obs-canvas); font-family: 'Segoe UI', system-ui, sans-serif; }
+        .obs-skip { position: absolute; left: -999px; top: 0; z-index: 2000; background: white; padding: 10px; }
+        .obs-skip:focus { left: 12px; top: 10px; }
+        .obs-head { background: #152631; color: #fff; border-bottom: 3px solid #d2a65a; }
+        .obs-head-inner { max-width: 1500px; margin: auto; min-height: 76px; padding: 12px clamp(20px,4vw,60px); display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+        .obs-brand { display: inline-flex; align-items: center; gap: 15px; text-decoration: none; color: white; min-width: 0; }
+        .obs-brand:hover { color: white; }
+        .obs-brand-symbol { display: grid; place-items: center; border: 1px solid rgba(255,255,255,.42); width: 47px; height: 47px; flex: 0 0 47px; font-family: var(--obs-serif); font-size: 30px; line-height: 1; letter-spacing: -.12em; padding-right: 5px; }
+        .obs-brand-title { display: block; font-weight: 780; letter-spacing: -.035em; font-size: 1.12rem; line-height: 1.2; }
+        .obs-brand-sub { display: block; text-transform: uppercase; font-size: .63rem; letter-spacing: .16em; color: #aac0c6; margin-top: 3px; font-weight: 700; }
+        .obs-head-right { display: flex; align-items: center; gap: 18px; }
+        .obs-institution { color: #bdcdd2; font-size: .74rem; letter-spacing: .02em; }
+        .obs-account { position: relative; }
+        .obs-account summary { cursor: pointer; display: inline-flex; align-items: center; gap: 10px; list-style: none; color: #fff; font-size: .83rem; }
+        .obs-account summary::-webkit-details-marker { display: none; }
+        .obs-avatar { width: 37px; height: 37px; border-radius: 50%; background: #ddbd8e; color: #132836; display: grid; place-items: center; font-weight: 800; }
+        .obs-account-name { max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .obs-account-menu { position: absolute; z-index: 1100; right: 0; top: calc(100% + 15px); min-width: 240px; border: 1px solid var(--obs-line); background: white; padding: 8px; border-radius: 12px; box-shadow: 0 20px 45px rgba(18,38,45,.18); }
+        .obs-account-menu a { display: block; color: var(--obs-ink); text-decoration: none; font-size: .83rem; padding: 11px 12px; border-radius: 7px; }
+        .obs-account-menu a:hover { background: #f0f4f2; }
+        .obs-account-menu .obs-account-meta { color: #677b85; font-size: .74rem; padding: 9px 12px; overflow-wrap: anywhere; }
+        .obs-nav-wrap { background: #fff; border-bottom: 1px solid #dfe5e3; }
+        .obs-nav { max-width: 1500px; padding: 0 clamp(20px,4vw,60px); margin: auto; display: flex; align-items: stretch; gap: 4px; overflow-x: auto; scrollbar-width: thin; }
+        .obs-nav a { color: #597079; font-size: .8rem; font-weight: 650; text-decoration: none; white-space: nowrap; padding: 18px 14px 15px; display: flex; gap: 9px; align-items: center; border-bottom: 3px solid transparent; transition: color .15s, background .15s; }
+        .obs-nav a:hover { color: var(--obs-ink); background: #f8faf9; }
+        .obs-nav a[aria-current="page"] { color: var(--obs-ink); border-bottom-color: var(--obs-accent); }
+        .obs-nav a i { font-size: 1rem; }
+        .obs-context { max-width: 1500px; padding: 18px clamp(20px,4vw,60px) 0; margin: auto; color: #75838a; font-size: .75rem; }
+        .obs-context strong { color: var(--obs-accent); font-weight: 750; }
+        .obs-main { width: min(100%,1500px); margin: 0 auto; padding: 18px clamp(20px,4vw,60px) 60px; min-height: calc(100vh - 260px); }
+        .obs-flashes { max-width: 1500px; margin: 15px auto 0; padding: 0 clamp(20px,4vw,60px); }
+        .obs-flashes .alert { border-radius: 8px; }
+        .obs-footer { border-top: 1px solid #dfe5e3; color: #77848b; font-size: .76rem; }
+        .obs-footer-inner { max-width: 1500px; margin: auto; padding: 20px clamp(20px,4vw,60px); display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+        .obs-footer strong { color: #304955; }
+        .obs-guest-main { width: min(100%,1200px); min-height: calc(100vh - 130px); margin: auto; padding: 12px 18px 32px; }
+        .obs-guest-footer { text-align: center; padding: 18px; font-size: .75rem; color: #75828b; border-top: 1px solid var(--obs-line); }
+        @media (max-width: 767px) {
+            .obs-head-inner { padding: 12px 17px; min-height: 72px; }
+            .obs-brand-symbol { width: 40px; height: 40px; flex-basis: 40px; font-size: 26px; }
+            .obs-brand-title { font-size: .95rem; }
+            .obs-brand-sub { font-size: .55rem; }
+            .obs-head-right { gap: 8px; }
+            .obs-account-name, .obs-institution { display: none; }
+            .obs-nav, .obs-main, .obs-context, .obs-flashes, .obs-footer-inner { padding-left: 17px; padding-right: 17px; }
+            .obs-nav a { padding: 14px 12px 12px; }
+            .obs-main { padding-top: 16px; }
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/v9_institucional.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/v91_paneles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/v92_experiencia.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/v93_horizontal_azul.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexosi_v10.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo_ia_visual.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/v102_asignaciones.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/v107_egresado_forms.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/v11_1_entrega.css') }}?v=11.1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo_chat.css') }}?v=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo_roles_v12.css') }}?v=12.0">
+</head>
+<body class="{{ 'obs-shell' if current_user.is_authenticated else 'app-guest' }}" data-nexo-role="{{ current_user.rol_activo_nombre() if current_user.is_authenticated else 'publico' }}">
+<a class="obs-skip" href="#contenido-principal">Saltar al contenido</a>
+{% if current_user.is_authenticated %}
+{% set rol_activo = current_user.rol_activo_nombre() or '' %}
+{% set pagina = request.endpoint or '' %}
+<header class="obs-head">
+    <div class="obs-head-inner">
+        <a class="obs-brand" href="{{ url_for('egresado.perfil') if current_user.es_egresado() else (url_for('empresa.panel') if rol_activo == 'empresa' else url_for('admin.dashboard')) }}">
+            <span class="obs-brand-symbol nexo-v92-brand-image"><img src="{{ url_for('static', filename='img/logo_undac_original.png') }}" alt="Escudo UNDAC" width="42" height="42"></span>
+            <span>
+                <span class="obs-brand-title">NEXO <span class="v9-brand-accent">UNDAC</span></span>
+                <span class="obs-brand-sub">Sistema institucional de seguimiento de egresados</span>
+            </span>
+        </a>
+        <div class="obs-head-right">
+            <span class="nexo-v93-systems-credit" title="Sistemas y Computación · Equipo desarrollador">
+                <img src="{{ url_for('static', filename='img/logo_sistemas_original.png') }}" alt="Emblema original de Sistemas y Computación" width="44" height="44">
+                <span>Sistemas y Computación<small>Equipo desarrollador</small></span>
+            </span>
+            <span class="obs-institution">Universidad Nacional Daniel Alcides Carrión</span>
+            <button type="button" class="nexo-v92-menu-trigger" data-sidebar-toggle aria-controls="nexo-v92-sidebar" aria-expanded="false" aria-label="Abrir menú principal"><i class="bi bi-list"></i></button>
+            <button type="button" class="nexo-theme-toggle" data-theme-toggle aria-label="Cambiar apariencia" title="Cambiar tema claro u oscuro">
+                <i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i><span class="nexo-theme-label" data-theme-label>Tema</span>
+            </button>
+            <a href="{{ url_for('capacitaciones.mis_notificaciones') }}" class="btn btn-sm btn-outline-light position-relative" aria-label="Notificaciones" title="Notificaciones">
+                <i class="bi bi-bell"></i>
+                {% if notificaciones_no_leidas %}
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">{{ notificaciones_no_leidas }}</span>
+                {% endif %}
+            </a>
+            <details class="obs-account">
+                <summary aria-label="Abrir opciones de cuenta">
+                    <span class="obs-avatar">
+                        {% if foto_usuario_url %}<img src="{{ foto_usuario_url }}" alt="Foto de usuario" class="nexo-avatar-img">
+                        {% else %}<i class="bi bi-person-fill" aria-hidden="true"></i>{% endif %}
+                    </span>
+                    <span class="obs-account-name">{{ current_user.correo }}</span>
+                    <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                </summary>
+                <div class="obs-account-menu">
+                    <div class="obs-account-meta">{{ current_user.correo }}<br>{{ rol_activo | replace('_',' ') | title }}</div>
+                    <a href="{{ url_for('auth.mi_cuenta') }}"><i class="bi bi-person-circle me-2"></i>Mi cuenta y fotografía</a>
+                    <a href="{{ url_for('auth.cambiar_contrasena') }}"><i class="bi bi-shield-lock me-2"></i>Seguridad de cuenta</a>
+                    <a href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a>
+                </div>
+            </details>
+        </div>
+    </div>
+</header>
+<div class="obs-role-bar"><span class="v9-role-label"><i class="bi bi-person-badge"></i> {{ {'administrador':'Administración institucional','utsag':'Seguimiento institucional UTSAG','coordinador':'Coordinación de facultad','docente_responsable':'Seguimiento por programa','egresado':'Mi espacio profesional','empresa':'Portal de empleadores'}.get(rol_activo,'NEXO UNDAC') }}</span><span class="v9-role-hint">Acceso según responsabilidades</span></div>
+<div class="nexo-v93-workspace">
+<div class="nexo-v93-navigation" id="nexo-v92-sidebar" aria-label="Menú de navegación por rol">
+  <div class="nexo-v92-sidebar-heading"><span class="nexo-v92-mini">TU ESPACIO DE TRABAJO</span><strong>{{ {'administrador':'Administración','utsag':'Observatorio UTSAG','coordinador':'Coordinación de facultad','docente_responsable':'Seguimiento por programa','egresado':'Desarrollo profesional','empresa':'Gestión empresarial'}.get(rol_activo, 'NEXO UNDAC') }}</strong><small>Herramientas según tus permisos</small></div>
+<div class="obs-nav-wrap">
+    {% include "includes/_nav_por_rol.html" %}
+</div>
+<div class="nexo-v92-sidebar-bottom">
+  <img src="{{ url_for('static', filename='img/logo_sistemas_original.png') }}" alt="Emblema de Sistemas y Computación" width="42" height="42" loading="lazy">
+  <span>Desarrollado desde Sistemas y Computación<br><small>Universidad Nacional Daniel Alcides Carrión</small></span>
+</div>
+</div>
+<div class="nexo-v93-stage">
+<div class="obs-context"><strong>UNDAC</strong> / {% block subtitulo %}Plataforma institucional{% endblock %}</div>
+{% endif %}
+<div class="{{ 'obs-flashes' if current_user.is_authenticated else 'container' }}">
+    {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+        {% set tipo = 'danger' if categoria in ['error','danger'] else categoria %}
+        <div class="alert alert-{{ tipo }} alert-dismissible fade show mt-3" role="alert">
+            {{ mensaje }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar mensaje"></button>
+        </div>
+    {% endfor %}
+</div>
+<main id="contenido-principal" class="{{ 'obs-main' if current_user.is_authenticated else 'obs-guest-main' }}{{ ' nexo-egresado-v107' if current_user.is_authenticated and current_user.rol_activo_nombre() == 'egresado' else '' }}">
+    {% block contenido %}{% endblock %}
+</main>
+{% if current_user.is_authenticated %}
+<footer class="obs-footer">
+    <div class="obs-footer-inner">
+        <span><strong>UNDAC</strong> · Plataforma NEXO de Seguimiento de Egresados</span>
+        <span>Universidad Nacional Daniel Alcides Carrión · Pasco, Perú</span>
+    </div>
+</footer>
+</div><!-- fin área principal V9.3 -->
+</div><!-- fin área de trabajo V9.3 -->
+{% else %}
+<footer class="obs-guest-footer">Sistema de Seguimiento de Egresados · Universidad Nacional Daniel Alcides Carrión</footer>
+{% endif %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{{ url_for('static', filename='js/v92_interaccion.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/v107_formularios.js') }}" defer></script>
+{% if request.endpoint == 'admin.dashboard' %}
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js" defer></script>
+<script src="{{ url_for('static', filename='js/v11_indicadores.js') }}" defer></script>
+{% elif request.endpoint == 'admin.egresados' %}
+<script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" defer></script>
+{% endif %}
+{% block scripts %}{% endblock %}
+{% include "includes/_nexo_asistente.html" %}
+<script src="{{ url_for('static', filename='js/nexo_chat.js') }}?v=1" defer></script>
+</body>
+</html>

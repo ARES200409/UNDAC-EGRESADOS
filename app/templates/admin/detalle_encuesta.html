@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+{% block titulo %}{{ encuesta.nombre }}{% endblock %}
+{% block contenido %}
+<div class="nexo-module-kicker"><span class="nexo-live-dot"></span> UNDAC · Gestión institucional</div>
+
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('admin.encuestas') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h4 class="mb-0">{{ encuesta.nombre }}</h4>
+            <div class="text-muted small">Año {{ encuesta.anio }} · {{ total_respuestas }} egresado(s) han respondido</div>
+        </div>
+    </div>
+    <div class="d-flex gap-2">
+        <span class="badge fs-6 align-self-center
+            {% if encuesta.estado == 'publicada' %}bg-success
+            {% elif encuesta.estado == 'cerrada' %}bg-secondary
+            {% else %}bg-warning text-dark{% endif %}">
+            {{ encuesta.estado|capitalize }}
+        </span>
+
+        {% if rol_activo in ['administrador', 'utsag'] %}
+            {% if encuesta.estado == 'borrador' %}
+            <form method="POST" action="{{ url_for('admin.publicar_encuesta', id=encuesta.id_encuesta) }}"
+                  data-nexo-confirm="publicar">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-success btn-sm"><i class="bi bi-broadcast me-1"></i>Publicar</button>
+            </form>
+            {% elif encuesta.estado == 'publicada' %}
+            <form method="POST" action="{{ url_for('admin.cerrar_encuesta', id=encuesta.id_encuesta) }}"
+                  data-nexo-confirm="cerrar">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-lock me-1"></i>Cerrar</button>
+            </form>
+            {% endif %}
+            {% if encuesta.estado == 'borrador' and total_respuestas == 0 %}
+            <form method="POST" action="{{ url_for('admin.eliminar_encuesta', id=encuesta.id_encuesta) }}"
+                  data-nexo-confirm="eliminar-encuesta">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+            </form>
+            {% endif %}
+        {% endif %}
+
+        <a href="{{ url_for('admin.resultados_encuesta', id=encuesta.id_encuesta) }}" class="btn btn-primary btn-sm">
+            <i class="bi bi-bar-chart me-1"></i>Ver resultados
+        </a>
+    </div>
+</div>
+
+{% if encuesta.descripcion %}
+<div class="alert alert-light border small mb-4">{{ encuesta.descripcion }}</div>
+{% endif %}
+
+<div class="row g-4">
+    <!-- Esta columna SIEMPRE se muestra, sin importar el rol -->
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header bg-white fw-semibold">
+                <i class="bi bi-list-ol me-2"></i>Preguntas ({{ preguntas|length }})
+            </div>
+            <div class="card-body p-0">
+                {% if preguntas %}
+                <ul class="list-group list-group-flush">
+                    {% for p in preguntas %}
+                    <li class="list-group-item">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="fw-semibold small">
+                                    {{ loop.index }}. {{ p.texto }}
+                                    {% if p.obligatoria %}<span class="text-danger">*</span>{% endif %}
+                                </div>
+                                <span class="badge bg-light text-dark border mt-1">
+                                    {{ p.tipo.replace('_',' ')|capitalize }}
+                                </span>
+                                {% if p.opciones %}
+                                <div class="text-muted small mt-1">
+                                    Opciones: {{ p.opciones|map(attribute='texto')|join(', ') }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% if rol_activo in ['administrador', 'utsag'] and encuesta.estado == 'borrador' %}
+                            <form method="POST"
+                                  action="{{ url_for('admin.eliminar_pregunta', id=encuesta.id_encuesta, id_pregunta=p.id_pregunta) }}"
+                                  data-nexo-confirm="eliminar-pregunta">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-sm btn-outline-danger border-0">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <div class="text-center text-muted py-4 small">Aún no hay preguntas.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Esta columna solo aplica a admin/utsag: agregar preguntas -->
+    {% if rol_activo in ['administrador', 'utsag'] %}
+    <div class="col-lg-5">
+        {% if encuesta.estado == 'borrador' %}
+        <div class="card">
+            <div class="card-header bg-white fw-semibold">
+                <i class="bi bi-plus-circle me-2"></i>Agregar pregunta
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.nueva_pregunta', id=encuesta.id_encuesta) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label class="form-label">Pregunta <span class="text-danger">*</span></label>
+                        <textarea name="texto" class="form-control" rows="2" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Tipo de respuesta <span class="text-danger">*</span></label>
+                        <select name="tipo" id="tipo-pregunta" class="form-select" required>
+                            <option value="texto">Texto libre</option>
+                            <option value="numero">Número</option>
+                            <option value="si_no">Sí / No</option>
+                            <option value="opcion_unica">Opción única</option>
+                            <option value="opcion_multiple">Opción múltiple</option>
+                        </select>
+                    </div>
+                    <div class="mb-3 d-none" id="bloque-opciones">
+                        <label class="form-label">Opciones <span class="text-danger">*</span></label>
+                        <textarea name="opciones" class="form-control" rows="4"
+                                  placeholder="Una opción por línea"></textarea>
+                        <div class="form-text">Mínimo 2 opciones, una por línea.</div>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" name="obligatoria" id="obligatoria" class="form-check-input" checked>
+                        <label class="form-check-label" for="obligatoria">Pregunta obligatoria</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-lg me-1"></i>Agregar pregunta
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-secondary small">
+            <i class="bi bi-lock me-1"></i>
+            Esta encuesta ya fue publicada. No se pueden agregar ni eliminar preguntas.
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+
+<!-- Confirmación institucional: conserva el POST, CSRF y las validaciones de Flask. -->
+<dialog id="nexo-confirmacion-encuesta" class="nexo-confirm-dialog" aria-labelledby="nexo-confirm-titulo" aria-describedby="nexo-confirm-descripcion">
+  <div class="nexo-confirm-top">
+    <span class="nexo-confirm-symbol" aria-hidden="true"><i class="bi bi-shield-check"></i></span>
+    <span class="nexo-confirm-eyebrow">NEXO UNDAC · GESTIÓN DE ENCUESTAS</span>
+    <button class="nexo-confirm-x" type="button" data-confirm-cancel aria-label="Cerrar ventana"><i class="bi bi-x-lg"></i></button>
+  </div>
+  <div class="nexo-confirm-body">
+    <h2 id="nexo-confirm-titulo">Confirmar acción</h2>
+    <p id="nexo-confirm-descripcion"></p>
+    <div class="nexo-confirm-hint" id="nexo-confirm-hint"></div>
+    <div class="nexo-confirm-actions">
+      <button class="nexo-confirm-cancel" type="button" data-confirm-cancel><i class="bi bi-arrow-left"></i> Volver sin cambios</button>
+      <button class="nexo-confirm-accept" type="button" data-confirm-accept>Confirmar</button>
+    </div>
+  </div>
+</dialog>
+<style>
+.nexo-confirm-dialog{border:1px solid #cce4f4;border-radius:18px;max-width:min(94vw,490px);width:100%;padding:0;background:#fff;color:#143452;box-shadow:0 30px 90px #09284364;overflow:hidden}
+.nexo-confirm-dialog::backdrop{background:rgba(4,22,43,.75);backdrop-filter:blur(4px)}
+.nexo-confirm-top{display:flex;align-items:center;gap:12px;background:linear-gradient(115deg,#063a75,#087dbe);padding:18px 22px;color:#fff}
+.nexo-confirm-symbol{display:grid;place-items:center;width:41px;height:41px;flex-shrink:0;border-radius:12px;background:#ffffff24;font-size:1.2rem}
+.nexo-confirm-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:.09em;flex:1;color:#e5f8ff}
+.nexo-confirm-x{border:0;background:#ffffff24;color:white;border-radius:9px;width:35px;height:35px}
+.nexo-confirm-x:hover,.nexo-confirm-x:focus-visible{background:#ffffff40}
+.nexo-confirm-body{padding:25px 25px 23px}
+.nexo-confirm-body h2{color:#0a3b70;font-size:1.45rem;font-weight:800;line-height:1.25;margin:0 0 11px}
+.nexo-confirm-body p{color:#385874;font-size:.95rem;line-height:1.65;margin:0 0 15px}
+.nexo-confirm-hint{border-left:4px solid #02afd3;padding:11px 14px;background:#eaf7fe;color:#174868;border-radius:0 9px 9px 0;line-height:1.5;font-size:.86rem}
+.nexo-confirm-actions{display:flex;gap:11px;justify-content:flex-end;margin-top:24px;flex-wrap:wrap}
+.nexo-confirm-cancel,.nexo-confirm-accept{min-height:44px;border-radius:10px;padding:9px 15px;font-size:.85rem;font-weight:750;cursor:pointer}
+.nexo-confirm-cancel{background:#fff;color:#145184;border:1px solid #b7d4eb}
+.nexo-confirm-cancel:hover{background:#edf8ff}
+.nexo-confirm-accept{border:1px solid #1263aa;background:#116bb9;color:#fff}
+.nexo-confirm-accept:hover{background:#075597}
+.nexo-confirm-accept.is-danger{background:#b42336;border-color:#b42336}
+.nexo-confirm-accept.is-danger:hover{background:#8f1529}
+.nexo-confirm-accept:focus-visible,.nexo-confirm-cancel:focus-visible,.nexo-confirm-x:focus-visible{outline:3px solid #3dc7f3;outline-offset:3px}
+html[data-theme="dark"] .nexo-confirm-dialog{background:#152b45;border-color:#386185;color:#ebf7ff}
+html[data-theme="dark"] .nexo-confirm-body h2{color:#f2faff}
+html[data-theme="dark"] .nexo-confirm-body p{color:#d0e5f5}
+html[data-theme="dark"] .nexo-confirm-hint{background:#193e55;color:#cceffa}
+html[data-theme="dark"] .nexo-confirm-cancel{background:#223e59;color:#ecfaff;border-color:#527696}
+html[data-theme="dark"] .nexo-confirm-cancel:hover{background:#315779}
+@media(max-width:500px){.nexo-confirm-body{padding:21px 18px}.nexo-confirm-actions>*{flex:1 1 100%}}
+</style>
+<script>
+(() => {
+  const dialog = document.getElementById('nexo-confirmacion-encuesta');
+  if (!dialog) return;
+  const title = document.getElementById('nexo-confirm-titulo');
+  const description = document.getElementById('nexo-confirm-descripcion');
+  const hint = document.getElementById('nexo-confirm-hint');
+  const accept = dialog.querySelector('[data-confirm-accept]');
+  const cancel = dialog.querySelector('.nexo-confirm-cancel');
+  const mensajes = {
+    'publicar': {
+      title: '¿Publicar esta encuesta?',
+      description: 'La encuesta quedará disponible para los egresados autorizados. Una vez publicada, ya no se podrán modificar sus preguntas desde este módulo.',
+      hint: 'Comprueba el contenido de las preguntas antes de confirmar.', button: 'Sí, publicar encuesta'
+    },
+    'cerrar': {
+      title: '¿Cerrar la encuesta?',
+      description: 'Los egresados dejarán de poder enviar nuevas respuestas a esta encuesta.',
+      hint: 'Las respuestas registradas se conservarán y podrás seguir consultando sus resultados.', button: 'Sí, cerrar encuesta'
+    },
+    'eliminar-encuesta': {
+      title: '¿Eliminar definitivamente la encuesta?',
+      description: 'Se eliminará el borrador junto con sus preguntas. Esta acción no se puede deshacer.',
+      hint: 'Esta operación no está disponible para encuestas que ya tengan respuestas.', button: 'Sí, eliminar encuesta', danger: true
+    },
+    'eliminar-pregunta': {
+      title: '¿Eliminar esta pregunta?',
+      description: 'La pregunta se quitará del borrador de encuesta.',
+      hint: 'Antes de publicar puedes volver a añadirla manualmente.', button: 'Eliminar pregunta', danger: true
+    },
+  };
+  let pendiente = null;
+  document.querySelectorAll('form[data-nexo-confirm]').forEach(form => {
+    form.addEventListener('submit', ev => {
+      if (form.dataset.confirmado === 'si') return;
+      ev.preventDefault();
+      const mensaje = mensajes[form.dataset.nexoConfirm];
+      if (!mensaje) return;
+      if (typeof dialog.showModal !== 'function') {
+        if (window.confirm(mensaje.title + '\n\n' + mensaje.description)) {
+          form.dataset.confirmado = 'si';
+          form.requestSubmit();
+        }
+        return;
+      }
+      pendiente = form;
+      title.textContent = mensaje.title;
+      description.textContent = mensaje.description;
+      hint.textContent = mensaje.hint;
+      accept.textContent = mensaje.button;
+      accept.classList.toggle('is-danger', Boolean(mensaje.danger));
+      dialog.showModal();
+      cancel.focus();
+    });
+  });
+  dialog.querySelectorAll('[data-confirm-cancel]').forEach(btn =>
+    btn.addEventListener('click', () => dialog.close()));
+  dialog.addEventListener('close', () => { pendiente = null; });
+  accept.addEventListener('click', () => {
+    const form = pendiente;
+    if (!form) return;
+    form.dataset.confirmado = 'si';
+    dialog.close();
+    form.requestSubmit();
+  });
+})();
+</script>
+
+<script>
+const tipoSelect = document.getElementById('tipo-pregunta');
+const bloqueOpciones = document.getElementById('bloque-opciones');
+if (tipoSelect) {
+    tipoSelect.addEventListener('change', function () {
+        const necesitaOpciones = this.value === 'opcion_unica' || this.value === 'opcion_multiple';
+        bloqueOpciones.classList.toggle('d-none', !necesitaOpciones);
+    });
+}
+</script>
+{% endblock %}

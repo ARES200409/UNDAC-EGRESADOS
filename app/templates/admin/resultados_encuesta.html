@@ -1,0 +1,182 @@
+<!-- app/templates/admin/resultados_encuesta.html -->
+{% extends "base.html" %}
+{% block titulo %}Resultados — {{ encuesta.nombre }}{% endblock %}
+
+{% macro sin_respuestas() %}
+    <div class="text-muted small text-center py-3">Sin respuestas para esta pregunta.</div>
+{% endmacro %}
+
+{% block contenido %}
+<div class="nexo-module-kicker"><span class="nexo-live-dot"></span> UNDAC · Gestión institucional</div>
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div class="d-flex align-items-center gap-2">
+        <a href="{{ url_for('admin.encuestas') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <div>
+            <h4 class="mb-0">Resultados: {{ encuesta.nombre }}</h4>
+            <div class="text-muted small">Año {{ encuesta.anio }} · {{ total_respondientes }} egresado(s) respondieron</div>
+        </div>
+    </div>
+
+    {# El archivo Excel puede incluir respuestas individuales; la ruta solo autoriza administrador/UTSAG. #}
+    {% if total_respondientes > 0 and rol_activo in ['administrador', 'utsag'] %}
+    <a href="{{ url_for('admin.exportar_encuesta', id=encuesta.id_encuesta, id_facultad=id_facultad, id_programa=id_programa) }}"
+       class="btn btn-success btn-sm">
+        <i class="bi bi-file-earmark-excel me-1"></i>Exportar a Excel
+    </a>
+    {% endif %}
+</div>
+
+<!-- Filtro: siempre visible, sin importar si hay resultados o no -->
+{% if rol_activo != 'docente_responsable' %}
+<div class="card mb-4">
+    <div class="card-body py-3">
+        <form method="GET" class="row g-2 align-items-end">
+            <div class="col-sm-4">
+                <label class="form-label small mb-1">Facultad</label>
+                <select name="id_facultad" id="select-facultad" class="form-select form-select-sm">
+                    <option value="">{{ 'Todas mis facultades' if rol_activo == 'coordinador' else 'Todas las facultades' }}</option>
+                    {% for f in facultades %}
+                    <option value="{{ f.id_facultad }}" {{ 'selected' if f.id_facultad == id_facultad }}>{{ f.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-4">
+                <label class="form-label small mb-1">Programa de estudio</label>
+                <select name="id_programa" id="select-programa" class="form-select form-select-sm">
+                    <option value="">Todos los programas</option>
+                    {% for p in programas %}
+                    <option value="{{ p.id_programa }}" {{ 'selected' if p.id_programa == id_programa }}>{{ p.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-sm-4 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="bi bi-funnel me-1"></i>Filtrar</button>
+                {% if id_facultad or id_programa %}
+                <a href="{{ url_for('admin.resultados_encuesta', id=encuesta.id_encuesta) }}" class="btn btn-sm btn-outline-secondary">Quitar filtro</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-light border small mb-4">
+    <i class="bi bi-pin-map me-1"></i>Mostrando resultados de tu programa asignado.
+</div>
+{% endif %}
+
+{% if total_respondientes == 0 %}
+    <div class="text-center text-muted py-5">
+        <i class="bi bi-bar-chart fs-1"></i>
+        <p class="mt-2">
+            {% if id_facultad or id_programa %}
+            No hay respuestas para este filtro. Prueba con otra facultad/programa o quítalo.
+            {% else %}
+            Aún no hay respuestas para esta encuesta.
+            {% endif %}
+        </p>
+    </div>
+{% else %}
+    <div class="row g-4">
+        {% for r in resultados %}
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header bg-white fw-semibold small">
+                    {{ loop.index }}. {{ r.pregunta.texto }}
+                </div>
+                <div class="card-body">
+
+                    {% if r.tipo in ('opcion_unica', 'opcion_multiple', 'si_no') %}
+                        {% if r.data and r.data|sum > 0 %}
+                            <div style="position: relative; height: 240px;">
+                                <canvas id="chart-{{ r.pregunta.id_pregunta }}"></canvas>
+                            </div>
+                        {% else %}
+                            {{ sin_respuestas() }}
+                        {% endif %}
+
+                    {% elif r.tipo == 'numero' %}
+                        {% if r.valores %}
+                            <div class="row text-center g-2 mb-2">
+                                <div class="col-4"><div class="text-muted small">Promedio</div><div class="fs-5 fw-semibold">{{ r.promedio }}</div></div>
+                                <div class="col-4"><div class="text-muted small">Mínimo</div><div class="fs-5 fw-semibold">{{ r.minimo }}</div></div>
+                                <div class="col-4"><div class="text-muted small">Máximo</div><div class="fs-5 fw-semibold">{{ r.maximo }}</div></div>
+                            </div>
+                            <div class="text-muted small text-center">{{ r.valores|length }} respuesta(s)</div>
+                        {% else %}
+                            {{ sin_respuestas() }}
+                        {% endif %}
+
+                    {% elif r.tipo == 'texto' %}
+                        {% if r.respuestas_texto %}
+                            <div class="text-muted small mb-1">{{ r.respuestas_texto|length }} respuesta(s)</div>
+                            <ul class="list-group list-group-flush" style="max-height:200px; overflow-y:auto;">
+                                {% for t in r.respuestas_texto %}
+                                    <li class="list-group-item small">{{ t }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            {{ sin_respuestas() }}
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+    const colores = ['#003876', '#0d6efd', '#20c997', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#198754'];
+
+    function crearGrafico(idCanvas, etiquetas, datos) {
+        new Chart(document.getElementById(idCanvas), {
+            type: 'pie',
+            data: {
+                labels: etiquetas,
+                datasets: [{ data: datos, backgroundColor: colores }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        align: 'center',
+                        labels: { font: { size: 11 }, boxWidth: 12, padding: 8 }
+                    }
+                }
+            }
+        });
+    }
+
+    {% for r in resultados %}
+    {% if r.tipo in ('opcion_unica', 'opcion_multiple', 'si_no') and r.data and r.data|sum > 0 %}
+        crearGrafico('chart-{{ r.pregunta.id_pregunta }}', {{ r.labels|tojson }}, {{ r.data|tojson }});
+    {% endif %}
+    {% endfor %}
+
+    {% if rol_activo != 'docente_responsable' %}
+    document.getElementById('select-facultad').addEventListener('change', function () {
+        const idFacultad = this.value;
+        const selectPrograma = document.getElementById('select-programa');
+        selectPrograma.innerHTML = '<option value="">Todos los programas</option>';
+        if (!idFacultad) return;
+        fetch(`{{ url_for('admin.programas_de_facultad', id=encuesta.id_encuesta) }}?id_facultad=${idFacultad}`)
+            .then(r => r.json())
+            .then(programas => programas.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id; opt.textContent = p.nombre;
+                selectPrograma.appendChild(opt);
+            }));
+    });
+    {% endif %}
+    
+</script>
+{% endblock %}

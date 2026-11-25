@@ -1,0 +1,820 @@
+
+/* ==========================================================
+   UNDAC | SISTEMA INSTITUCIONAL DE SEGUIMIENTO DE EGRESADOS
+   Archivo: app/static/css/estilos.css
+   Diseño global - Versión 3.0
+   ========================================================== */
+
+/* TIPOGRAFÍA */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+/* ==========================================================
+   01. IDENTIDAD VISUAL
+   ========================================================== */
+
+:root {
+    --undac-azul: #123d70;
+    --undac-rojo: #c8102e;
+
+    --ui-navy: #101d33;
+    --ui-navy-soft: #192b46;
+    --ui-blue: #216fba;
+    --ui-cyan: #18a6c5;
+    --ui-mint: #43b9ad;
+    --ui-gold: #e1b56b;
+
+    --ui-bg: #f3f6fa;
+    --ui-surface: #ffffff;
+
+    --ui-text: #172a43;
+    --ui-muted: #6d8097;
+    --ui-border: #e5ebf3;
+
+    --ui-radius: 16px;
+    --ui-radius-lg: 22px;
+
+    --ui-shadow:
+        0 5px 24px rgba(18, 40, 73, .045);
+
+    --ui-shadow-hover:
+        0 14px 38px rgba(18, 40, 73, .10);
+
+    --sidebar-w: 268px;
+    --sidebar-w-col: 78px;
+}
+
+/* ==========================================================
+   02. ESTRUCTURA GLOBAL
+   ========================================================== */
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: var(--ui-bg);
+    color: var(--ui-text);
+    font-family:
+        "Plus Jakarta Sans",
+        "Segoe UI",
+        system-ui,
+        sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+html body.app-shell {
+    font-family:
+        "Plus Jakarta Sans",
+        "Segoe UI",
+        system-ui,
+        sans-serif;
+    color: var(--ui-text);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+}
+
+a {
+    text-underline-offset: 3px;
+}
+
+:focus-visible {
+    outline: 3px solid rgba(43, 139, 218, .55);
+    outline-offset: 3px;
+}
+
+::selection {
+    background: #c9e8ff;
+    color: #102c4e;
+}
+
+/* FONDO DE LA APLICACIÓN */
+
+body.app-shell #wrapper #page-content {
+    background:
+        radial-gradient(
+            ellipse at 90% 0%,
+            rgba(221, 237, 252, .42),
+            transparent 40%
+        ),
+        #f4f7fb;
+}
+
+/* ==========================================================
+   03. REFINAMIENTO DE LA NAVEGACIÓN
+   ========================================================== */
+
+body.app-shell #wrapper #sidebar {
+    background:
+        radial-gradient(
+            circle at 15% 0%,
+            rgba(50, 121, 187, .18),
+            transparent 37%
+        ),
+        linear-gradient(
+            175deg,
+            #111e34 0%,
+            #132842 55%,
+            #0a233b 100%
+        );
+}
+
+body.app-shell #wrapper #sidebar .brand-mark {
+    background:
+        linear-gradient(
+            145deg,
+            #278ddd,
+            #0c507d
+        );
+    box-shadow:
+        0 10px 26px rgba(0, 0, 0, .18),
+        inset 0 1px rgba(255,255,255,.25);
+}
+
+body.app-shell #wrapper #sidebar .brand-name {
+    font-weight: 800;
+    letter-spacing: -.045em;
+}
+
+body.app-shell #wrapper #sidebar .sidebar-user {
+    background:
+        linear-gradient(
+            120deg,
+            rgba(255,255,255,.085),
+            rgba(255,255,255,.025)
+        );
+    border: 1px solid rgba(255,255,255,.10);
+}
+
+body.app-shell #wrapper #sidebar .sidebar-link {
+    border: 1px solid transparent;
+    transition:
+        color .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+body.app-shell #wrapper #sidebar .sidebar-link:hover {
+    background: rgba(255,255,255,.085);
+    color: #fff;
+    transform: translateX(3px);
+}
+
+body.app-shell #wrapper #sidebar .sidebar-link.active {
+    background:
+        linear-gradient(
+            100deg,
+            rgba(42, 120, 193, .30),
+            rgba(42, 120, 193, .08)
+        );
+    border-color: rgba(151, 195, 234, .14);
+    color: #fff;
+}
+
+body.app-shell #wrapper #sidebar .sidebar-link.active i {
+    color: #8ce0d1;
+}
+
+body.app-shell #wrapper #sidebar .nav-section-label {
+    color: #8aa6c3;
+    font-size: .63rem;
+    letter-spacing: .15em;
+}
+
+/* ==========================================================
+   04. CABECERA INSTITUCIONAL
+   ========================================================== */
+
+body.app-shell #page-content .topbar {
+    background: rgba(255,255,255,.97);
+    border-bottom: 1px solid #e5ebf3;
+    box-shadow: 0 3px 16px rgba(23,45,78,.025);
+}
+
+body.app-shell #page-content .topbar-kicker {
+    color: #32759e;
+    font-size: .62rem;
+    letter-spacing: .12em;
+}
+
+body.app-shell #page-content .topbar-title {
+    color: #182e49;
+    font-weight: 800;
+}
+
+body.app-shell #page-content .topbar-account-icon {
+    border-radius: 12px;
+    background: #e9f4fa;
+    color: #146a9b;
+}
+
+/* ==========================================================
+   05. TARJETAS COMPARTIDAS
+   ========================================================== */
+
+html body.app-shell .card {
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius);
+    background: var(--ui-surface);
+    box-shadow: var(--ui-shadow);
+    overflow: hidden;
+}
+
+html body.app-shell .card-header {
+    background: #fff;
+    color: #203957;
+    border-bottom: 1px solid var(--ui-border);
+    padding: 17px 21px;
+    font-weight: 750;
+    border-radius: 0 !important;
+}
+
+html body.app-shell .card-body {
+    color: #34475d;
+}
+
+html body.app-shell .card-footer {
+    background: #fbfcfe;
+    border-top: 1px solid var(--ui-border);
+}
+
+/* ==========================================================
+   06. FORMULARIOS PROFESIONALES
+   ========================================================== */
+
+html body.app-shell .form-label {
+    color: #354d69;
+    font-size: .79rem;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+html body.app-shell .form-control,
+html body.app-shell .form-select {
+    min-height: 43px;
+    background-color: #fff;
+    border: 1px solid #dce5f0;
+    border-radius: 11px;
+    color: #243c59;
+    font-size: .86rem;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+html body.app-shell .form-control:focus,
+html body.app-shell .form-select:focus {
+    background-color: #fff;
+    border-color: #3387c7;
+    box-shadow: 0 0 0 4px rgba(41,132,205,.10);
+    outline: 0;
+}
+
+html body.app-shell .form-control::placeholder {
+    color: #9aa9ba;
+}
+
+html body.app-shell textarea.form-control {
+    min-height: 110px;
+    resize: vertical;
+}
+
+html body.app-shell .form-check-input {
+    border-color: #b9c9da;
+}
+
+html body.app-shell .form-check-input:checked {
+    background-color: #1669aa;
+    border-color: #1669aa;
+}
+
+html body.app-shell .form-text {
+    color: #8392a5;
+    font-size: .75rem;
+}
+
+/* ==========================================================
+   07. BOTONES
+   ========================================================== */
+
+html body.app-shell .btn {
+    border-radius: 10px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    transition:
+        background .2s,
+        border-color .2s,
+        box-shadow .2s,
+        transform .2s;
+}
+
+html body.app-shell .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+html body.app-shell .btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+html body.app-shell .btn-primary {
+    background: #156aa9;
+    border-color: #156aa9;
+    color: #fff;
+}
+
+html body.app-shell .btn-primary:hover {
+    background: #0d5186;
+    border-color: #0d5186;
+    box-shadow: 0 6px 18px rgba(22,105,170,.18);
+}
+
+html body.app-shell .btn-outline-primary {
+    color: #156aa9;
+    border-color: #b9d3e9;
+}
+
+html body.app-shell .btn-outline-primary:hover {
+    color: #fff;
+    background: #156aa9;
+    border-color: #156aa9;
+}
+
+html body.app-shell .btn-outline-secondary {
+    color: #475e77;
+    border-color: #d5e0eb;
+}
+
+html body.app-shell .btn-outline-secondary:hover {
+    color: #1b405f;
+    background: #edf3f9;
+    border-color: #bdcedf;
+}
+
+/* ==========================================================
+   08. TABLAS INSTITUCIONALES
+   ========================================================== */
+
+html body.app-shell .table-responsive {
+    border-radius: 12px;
+}
+
+html body.app-shell .table {
+    --bs-table-bg: transparent;
+    margin-bottom: 0;
+    vertical-align: middle;
+    font-size: .82rem;
+}
+
+html body.app-shell .table thead th {
+    background: #edf3f9;
+    color: #3d5c7b;
+    border-bottom: 1px solid #dce6f0;
+    padding: 15px 14px;
+    font-size: .69rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: .065em;
+    white-space: nowrap;
+}
+
+html body.app-shell .table tbody td {
+    padding: 14px;
+    border-bottom-color: #edf1f6;
+    color: #34475d;
+}
+
+html body.app-shell .table-hover tbody tr:hover {
+    background-color: #f0f6fc;
+}
+
+html body.app-shell .table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ==========================================================
+   09. INDICADORES Y ETIQUETAS
+   ========================================================== */
+
+html body.app-shell .badge {
+    font-weight: 700;
+    letter-spacing: .015em;
+    padding: .45em .75em;
+    border-radius: 7px;
+}
+
+html body.app-shell .alert {
+    border-radius: 12px;
+    font-size: .84rem;
+    border-width: 1px;
+}
+
+html body.app-shell .breadcrumb {
+    font-size: .79rem;
+}
+
+html body.app-shell .breadcrumb a {
+    color: #2875b6;
+    text-decoration: none;
+}
+
+html body.app-shell .pagination .page-link {
+    border-color: #e1e9f2;
+    color: #2a638d;
+    padding: 9px 13px;
+}
+
+html body.app-shell .pagination .page-item.active .page-link {
+    color: #fff;
+    background: #1669aa;
+    border-color: #1669aa;
+}
+
+/* ==========================================================
+   10. DASHBOARD - NUEVA COMPOSICIÓN
+   ========================================================== */
+
+/* HERO MÁS COMPACTO Y DIFERENCIADO */
+
+body.app-shell .undac-dashboard .dash-hero {
+    border-radius: 18px;
+    padding: 25px 29px;
+    background:
+        radial-gradient(
+            ellipse at 95% 8%,
+            rgba(80,182,191,.27),
+            transparent 42%
+        ),
+        linear-gradient(
+            108deg,
+            #102341 0%,
+            #123e65 65%,
+            #125b73 100%
+        );
+    box-shadow: 0 15px 31px rgba(18,43,70,.13);
+}
+
+body.app-shell .undac-dashboard .dash-hero > .d-flex {
+    display: grid !important;
+    grid-template-columns: minmax(0,1fr) 210px;
+    align-items: center !important;
+    gap: 24px !important;
+}
+
+body.app-shell .undac-dashboard .dash-hero h1 {
+    font-size: clamp(1.5rem,2.2vw,1.9rem);
+    font-weight: 800;
+    letter-spacing: -.045em;
+    margin: 7px 0 8px;
+}
+
+body.app-shell .undac-dashboard .dash-hero p {
+    font-size: .84rem;
+    line-height: 1.7;
+    max-width: 720px;
+}
+
+body.app-shell .undac-dashboard .hero-kicker {
+    color: #94dedf;
+    letter-spacing: .12em;
+    font-size: .66rem;
+}
+
+body.app-shell .undac-dashboard .hero-chip {
+    margin-top: 12px;
+    font-size: .71rem;
+    padding: 5px 11px;
+}
+
+body.app-shell .undac-dashboard .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    align-items: stretch;
+}
+
+body.app-shell .undac-dashboard .btn-hero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-height: 43px;
+    padding: 10px 13px;
+    font-size: .76rem;
+    border-radius: 9px;
+}
+
+/* INDICADORES CON JERARQUÍA VISUAL */
+
+body.app-shell .undac-dashboard .dash-kpi {
+    min-height: 158px;
+    padding: 19px 19px 17px;
+    border-radius: 15px;
+    border: 1px solid #e4ebf3;
+    box-shadow: 0 5px 22px rgba(18,49,91,.045);
+}
+
+body.app-shell .undac-dashboard .dash-kpi::after {
+    width: 84px;
+    height: 84px;
+    right: -35px;
+    bottom: -35px;
+    opacity: .48;
+}
+
+body.app-shell .undac-dashboard .kpi-number {
+    font-size: clamp(1.85rem,2.5vw,2.25rem);
+    letter-spacing: -.055em;
+    margin-top: 11px;
+}
+
+body.app-shell .undac-dashboard .kpi-name {
+    font-size: .79rem;
+}
+
+body.app-shell .undac-dashboard .kpi-desc {
+    font-size: .70rem;
+    line-height: 1.6;
+}
+
+body.app-shell .undac-dashboard .kpi-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+}
+
+/* PRIMER INDICADOR: TARJETA PRINCIPAL */
+
+body.app-shell .undac-dashboard
+.col-sm-6.col-xl-3:first-child .dash-kpi {
+    background:
+        linear-gradient(
+            130deg,
+            #122e50,
+            #164f75
+        );
+    color: #fff;
+    border-color: #1c547b;
+}
+
+body.app-shell .undac-dashboard
+.col-sm-6.col-xl-3:first-child .dash-kpi
+.dash-small-label {
+    color: #9ed9e2;
+}
+
+body.app-shell .undac-dashboard
+.col-sm-6.col-xl-3:first-child .dash-kpi
+.kpi-desc {
+    color: #c5d8e9;
+}
+
+body.app-shell .undac-dashboard
+.col-sm-6.col-xl-3:first-child .dash-kpi
+.kpi-icon {
+    background: rgba(255,255,255,.13);
+    color: #fff;
+}
+
+/* GRÁFICOS */
+
+body.app-shell .undac-dashboard .dash-chart-card {
+    padding: 23px;
+    border-radius: 17px;
+}
+
+body.app-shell .undac-dashboard .chart-title {
+    font-size: .95rem;
+    color: #193650;
+    font-weight: 800;
+}
+
+body.app-shell .undac-dashboard .chart-help {
+    font-size: .74rem;
+    color: #8796a8;
+    line-height: 1.65;
+}
+
+body.app-shell .undac-dashboard .chart-area {
+    margin-top: 18px;
+    height: 265px;
+}
+
+body.app-shell .undac-dashboard .chart-area.tall {
+    height: 300px;
+}
+
+/* ESTADOS VACÍOS MÁS REFINADOS */
+
+body.app-shell .undac-dashboard .chart-empty {
+    border: 1px dashed #ccdae8;
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(225,239,250,.6),
+            transparent 75%
+        ),
+        #f9fbfd;
+    border-radius: 14px;
+}
+
+body.app-shell .undac-dashboard .chart-empty i {
+    color: #6698bc;
+}
+
+body.app-shell .undac-dashboard .chart-empty strong {
+    color: #2d4b67;
+}
+
+body.app-shell .undac-dashboard .dash-panel {
+    border: 1px solid #e3eaf3;
+    box-shadow: var(--ui-shadow);
+}
+
+body.app-shell .undac-dashboard .dash-section-title {
+    font-size: 1.12rem;
+    color: #17314f;
+}
+
+body.app-shell .undac-dashboard .dash-small-label {
+    font-size: .68rem;
+    letter-spacing: .12em;
+}
+
+body.app-shell .undac-dashboard .quick-link {
+    background: #f7fafd;
+    border-color: #e2ebf4;
+    border-radius: 11px;
+    min-height: 54px;
+}
+
+body.app-shell .undac-dashboard .quick-link:hover {
+    background: #e8f3fa;
+    border-color: #c2dced;
+}
+
+body.app-shell .undac-dashboard .dash-notice {
+    background: #eef6fa;
+    border-color: #d9e9f3;
+    color: #3e6684;
+}
+
+/* ==========================================================
+   11. PERFIL Y FOTOGRAFÍAS
+   ========================================================== */
+
+.foto-perfil {
+    width: 116px;
+    height: 116px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    outline: 2px solid #d8e8f5;
+    box-shadow: 0 9px 25px rgba(21,60,98,.15);
+}
+
+.card-auth {
+    max-width: 440px;
+    margin: 60px auto;
+}
+
+/* ==========================================================
+   12. DETALLES DE INTERACCIÓN
+   ========================================================== */
+
+@keyframes entradaSuave {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body.app-shell .shell-main {
+    animation: entradaSuave .35s ease both;
+}
+
+body.app-shell .undac-dashboard .dash-kpi:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ui-shadow-hover);
+}
+
+body.app-shell .undac-dashboard .dash-chart-card {
+    transition:
+        box-shadow .22s ease,
+        border-color .22s ease;
+}
+
+body.app-shell .undac-dashboard .dash-chart-card:hover {
+    border-color: #d2e0ed;
+    box-shadow: 0 9px 27px rgba(18,49,91,.07);
+}
+
+/* ==========================================================
+   13. RESPONSIVE
+   ========================================================== */
+
+@media (max-width: 1199.98px) {
+
+    body.app-shell .undac-dashboard
+    .dash-hero > .d-flex {
+        grid-template-columns: 1fr;
+        gap: 16px !important;
+    }
+
+    body.app-shell .undac-dashboard .hero-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    body.app-shell .undac-dashboard .dash-hero {
+        padding: 23px;
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    body.app-shell .undac-dashboard .dash-hero {
+        border-radius: 14px;
+        padding: 22px 19px;
+    }
+
+    body.app-shell .undac-dashboard .dash-hero h1 {
+        font-size: 1.5rem;
+    }
+
+    body.app-shell .undac-dashboard .hero-actions {
+        flex-direction: column;
+    }
+
+    body.app-shell .undac-dashboard .dash-kpi {
+        min-height: 145px;
+    }
+
+    body.app-shell .undac-dashboard .chart-area {
+        height: 230px;
+    }
+
+    body.app-shell .undac-dashboard .chart-area.tall {
+        height: 265px;
+    }
+
+    body.app-shell .undac-dashboard .dash-chart-card {
+        padding: 17px;
+    }
+
+    html body.app-shell .table {
+        font-size: .77rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+
+    body.app-shell .undac-dashboard .kpi-number {
+        font-size: 1.8rem;
+    }
+
+    body.app-shell .undac-dashboard .dash-section-title {
+        font-size: 1rem;
+    }
+
+    html body.app-shell .card-header {
+        padding: 14px 15px;
+    }
+
+    html body.app-shell .card-body {
+        padding: 15px;
+    }
+}
+
+/* ACCESIBILIDAD */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+
+    body.app-shell .shell-main {
+        animation: none;
+    }
+}

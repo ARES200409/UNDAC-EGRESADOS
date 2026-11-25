@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block titulo %}Mi cuenta y fotografía | UNDAC{% endblock %}
+{% block subtitulo %}Preferencias / Mi cuenta{% endblock %}
+{% block contenido %}
+<div class="nexo-account-page">
+  <div class="nexo-section-eyebrow">CONFIGURACIÓN / PERFIL</div>
+  <h1>Tu identidad en la plataforma.</h1>
+  <p class="nexo-muted">Esta fotografía aparecerá en tu perfil y en la navegación del sistema. Se guardará en tu computadora.</p>
+  <div class="nexo-account-grid">
+    <div class="nexo-avatar-preview">
+      {% if foto_usuario_url %}<img id="nexo-preview-photo" src="{{ foto_usuario_url }}" alt="Tu fotografía" class="nexo-profile-photo">
+      {% else %}<div id="nexo-preview-empty" class="nexo-profile-placeholder"><i class="bi bi-person-fill"></i></div><img id="nexo-preview-photo" class="nexo-profile-photo d-none" alt="Vista previa de fotografía">{% endif %}
+      <strong>{{ current_user.personal.nombre_completo() if current_user.id_personal and current_user.personal else (current_user.egresado.nombre_completo() if current_user.id_egresado and current_user.egresado else current_user.correo) }}</strong>
+      <span>{{ current_user.correo }}</span>
+    </div>
+    <form method="post" enctype="multipart/form-data" class="nexo-avatar-form">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="csrf_foto" value="{{ token_foto }}">
+      <h2>Fotografía de usuario</h2>
+      <p>Selecciona una imagen JPG, PNG o WEBP de máximo 3 MB. Se recortará automáticamente al formato cuadrado para utilizarla como avatar.</p>
+      <label for="foto-usuario" class="form-label fw-bold">Seleccionar fotografía</label>
+      <input class="form-control" id="foto-usuario" name="foto" type="file" accept="image/jpeg,image/png,image/webp" required>
+      <div class="d-flex gap-2 flex-wrap mt-4"><button class="btn btn-primary" type="submit"><i class="bi bi-cloud-arrow-up me-2"></i>Guardar fotografía</button><a href="{{ url_for('egresado.perfil') if current_user.es_egresado() else url_for('admin.dashboard') }}" class="btn btn-outline-secondary">Regresar</a></div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}<script>
+const inp=document.getElementById('foto-usuario');
+if(inp)inp.addEventListener('change',()=>{
+  const f=inp.files&&inp.files[0]; if(!f)return;
+  if(f.size>3*1024*1024){alert('La imagen supera 3 MB');inp.value='';return;}
+  const preview=document.getElementById('nexo-preview-photo');
+  if(preview){preview.src=URL.createObjectURL(f);preview.classList.remove('d-none');}
+  const empty=document.getElementById('nexo-preview-empty');if(empty)empty.classList.add('d-none');
+});
+</script>{% endblock %}

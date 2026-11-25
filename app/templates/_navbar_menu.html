@@ -1,0 +1,32 @@
+<!-- app/templates/_navbar_menu.html -->
+<nav class="menu-principal" style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; padding: 8px 0;">
+    <div class="container">
+        <ul class="nav justify-content-center gap-2">
+            <li class="nav-item">
+                <a class="nav-link fw-semibold px-3 py-2 rounded-3 {% if request.endpoint == 'public.index' %}active bg-primary text-white{% else %}text-dark{% endif %}" 
+                   aria-current="page" 
+                   href="{{ url_for('public.index') }}">
+                    <i class="bi bi-house-fill me-1"></i>Inicio
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-semibold px-3 py-2 rounded-3 {% if request.endpoint == 'public.quienes_somos' %}active bg-primary text-white{% else %}text-dark{% endif %}" 
+                   href="{{ url_for('public.quienes_somos') }}">
+                    <i class="bi bi-people-fill me-1"></i>Quiénes Somos
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-semibold px-3 py-2 rounded-3 {% if request.endpoint == 'public.noticias' %}active bg-primary text-white{% else %}text-dark{% endif %}" 
+                   href="{{ url_for('public.noticias') }}">
+                    <i class="bi bi-newspaper me-1"></i>Noticias
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link fw-semibold px-3 py-2 rounded-3 {% if request.endpoint == 'public.ofertas' %}active bg-primary text-white{% else %}text-dark{% endif %}" 
+                   href="{{ url_for('public.ofertas') }}">
+                    <i class="bi bi-briefcase-fill me-1"></i>Portal de Empleos
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>

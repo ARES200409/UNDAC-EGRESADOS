@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block titulo %}Capacitaciones y eventos · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Formación continua y eventos institucionales{% endblock %}
+
+{% block contenido %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+  <div>
+    <h1 class="h3 mb-1">Capacitaciones y Eventos</h1>
+    <p class="text-muted mb-0">Cursos, talleres, ferias laborales y actividades de desarrollo profesional.</p>
+  </div>
+  <form method="get" class="d-flex gap-2 align-items-center">
+    <select name="tipo" class="form-select form-select-sm" onchange="this.form.submit()">
+      <option value="">Todos los tipos</option>
+      {% for clave, nombre in tipos %}
+      <option value="{{ clave }}" {% if tipo_filtro == clave %}selected{% endif %}>{{ nombre }}</option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+
+{% if not capacitaciones_lista %}
+  <div class="nexo-card p-4 text-center text-muted">
+    <i class="bi bi-calendar-x fs-2 d-block mb-2"></i>
+    No hay capacitaciones publicadas en este momento.
+  </div>
+{% else %}
+  <div class="row g-3">
+    {% for c in capacitaciones_lista %}
+      {% set ins = mis_inscripciones.get(c.id_capacitacion) %}
+      {% set oc = ocupados.get(c.id_capacitacion, 0) %}
+      <div class="col-md-6 col-xl-4">
+        <div class="nexo-card p-3 h-100 d-flex flex-column justify-content-between">
+          <div>
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+              <span class="badge bg-info text-dark">{{ tipos_dict.get(c.tipo, c.tipo) }}</span>
+              <span class="badge bg-secondary">{{ c.modalidad | title }}</span>
+            </div>
+            <h2 class="h5 mb-2">{{ c.titulo }}</h2>
+            {% if c.descripcion %}
+              <p class="small text-muted mb-2">{{ c.descripcion[:180] }}{% if c.descripcion|length > 180 %}…{% endif %}</p>
+            {% endif %}
+            <ul class="list-unstyled small text-muted mb-3">
+              <li><i class="bi bi-calendar-event me-1"></i>Inicio: <strong>{{ c.fecha_inicio }}</strong>{% if c.fecha_fin %} · Fin: {{ c.fecha_fin }}{% endif %}</li>
+              {% if c.horario %}<li><i class="bi bi-clock me-1"></i>{{ c.horario }}</li>{% endif %}
+              {% if c.lugar_o_enlace %}<li><i class="bi bi-geo-alt me-1"></i>{{ c.lugar_o_enlace }}</li>{% endif %}
+              <li><i class="bi bi-people me-1"></i>Inscritos: {{ oc }}{% if c.capacidad_maxima %} / {{ c.capacidad_maxima }}{% endif %}</li>
+            </ul>
+          </div>
+
+          <div class="pt-2 border-top">
+            {% if ins and ins.estado == 'asistio' %}
+              <div class="alert alert-success py-2 px-3 mb-0 small">
+                <strong>Asistencia validada</strong>
+                {% if ins.codigo_constancia %}<br>Constancia: <code>{{ ins.codigo_constancia }}</code>{% endif %}
+              </div>
+            {% elif ins and ins.estado == 'inscrito' %}
+              <div class="d-flex justify-content-between align-items-center gap-2">
+                <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Inscrito</span>
+                <form method="post" action="{{ url_for('capacitaciones.cancelar_inscripcion', id_capacitacion=c.id_capacitacion) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                </form>
+              </div>
+            {% else %}
+              {% if c.capacidad_maxima and oc >= c.capacidad_maxima %}
+                <button class="btn btn-sm btn-secondary w-100" disabled>Cupos agotados</button>
+              {% else %}
+                <form method="post" action="{{ url_for('capacitaciones.inscribirse', id_capacitacion=c.id_capacitacion) }}">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-sm btn-primary w-100">Inscribirme</button>
+                </form>
+              {% endif %}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

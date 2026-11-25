@@ -1,0 +1,51 @@
+{# V11: conteos exclusivamente MySQL, ya filtrados por _alcance_programas del rol. #}
+<section class="v11-insights" data-v11-graficos data-api="{{ url_for('admin.indicadores_v11_api') }}" aria-label="Gráficos interactivos por rol">
+  <div class="v11-insights-top">
+    <div>
+      <span class="v11-eyebrow"><i class="bi bi-graph-up-arrow"></i> OBSERVATORIO INTERACTIVO · V11.1</span>
+      {% if rol_activo == 'administrador' %}
+      <h2>Control de cobertura y calidad de datos</h2>
+      <p>Indicadores de incorporación y estado de los registros de Sistemas.</p>
+      {% elif rol_activo == 'utsag' %}
+      <h2>Participación y seguimiento declarado</h2>
+      <p>Resultados reportados, sin confundir ausencia de información con desempleo.</p>
+      {% elif rol_activo == 'coordinador' %}
+      <h2>Evolución de tu programa académico</h2>
+      <p>Promociones, cuentas activadas y participación de tus egresados.</p>
+      {% else %}
+      <h2>Acompañamiento de tus egresados</h2>
+      <p>Información disponible para identificar a quién acompañar, sin mostrar datos ajenos a tus programas.</p>
+      {% endif %}
+    </div>
+    <button type="button" class="v11-refresh" id="v11-refrescar" aria-label="Actualizar gráficos con nuevos datos de MySQL">
+      <i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Actualizar
+    </button>
+  </div>
+  <div class="v11-grid" data-role="{{ rol_activo }}">
+    <article class="v11-panel">
+      <h3>{% if rol_activo == 'docente_responsable' %}Promociones que acompañas{% else %}Egresados por año de egreso{% endif %}</h3>
+      <div id="v11-chart-promociones" class="v11-chart" role="img" aria-label="Egresados por año de egreso"></div>
+      <div id="v11-empty-promociones" class="v11-empty">Sin años de egreso registrados. El gráfico se habilitará con los datos de MySQL.</div>
+    </article>
+    <article class="v11-panel">
+      <h3>{% if rol_activo == 'utsag' %}Participación en encuestas{% elif rol_activo == 'docente_responsable' %}Cuentas de tus egresados{% else %}Cobertura de cuentas{% endif %}</h3>
+      <div id="v11-chart-cobertura" class="v11-chart" role="img" aria-label="Cuentas activas y sin cuenta asociada"></div>
+      <div id="v11-empty-cobertura" class="v11-empty">{% if rol_activo == 'utsag' %}Aún no se recibieron respuestas a encuestas en el ámbito autorizado.{% else %}Sin padrón local. No se calcula un porcentaje con denominador cero.{% endif %}</div>
+    </article>
+    {% if rol_activo in ('administrador','utsag') %}
+    <article class="v11-panel">
+      <h3>Estado laboral autodeclarado</h3>
+      <div id="v11-chart-empleo" class="v11-chart" role="img" aria-label="Empleo actual declarado y no informado"></div>
+      <div id="v11-empty-empleo" class="v11-empty">Sin empleo actual declarado. No equivale a desempleo.</div>
+    </article>
+    <article class="v11-panel">
+      <h3>Currículas con egresados registrados</h3>
+      <div id="v11-chart-curriculas" class="v11-chart" role="img" aria-label="Número de egresados por currícula"></div>
+      <div id="v11-empty-curriculas" class="v11-empty">Aún no hay registros para comparar currículas.</div>
+    </article>
+    {% endif %}
+  </div>
+  <p id="v11-status" class="v11-status" role="status" aria-live="polite">Indicadores calculados desde MySQL. El empleo declarado no es una contratación verificada.</p>
+  <script type="application/json" id="v11-data-inicial">{{ graficos | tojson }}</script>
+  <noscript><p>Activa JavaScript para los gráficos interactivos. Los indicadores y gráficos tradicionales siguen disponibles más abajo.</p></noscript>
+</section>

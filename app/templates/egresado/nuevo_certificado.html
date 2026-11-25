@@ -1,0 +1,93 @@
+<!-- app/templates/egresado/nuevo_certificado.html -->
+{% extends "base.html" %}
+{% block titulo %}Agregar certificado{% endblock %}
+
+{% block contenido %}
+<section class="nexo-form-hero">
+  <div class="nexo-form-hero-content"><div class="nexo-form-hero-top"><a class="nexo-form-hero-back" href="{{ url_for('egresado.certificados') }}" aria-label="Volver"><i class="bi bi-arrow-left"></i> Volver</a><span class="nexo-form-eyebrow"><i class="bi bi-patch-check" aria-hidden="true"></i> APRENDIZAJE CONTINUO</span></div>
+   <h1>Añade un certificado</h1><p>Registra los cursos, capacitaciones y especializaciones que fortalecen tu perfil profesional.</p><div class="nexo-form-hero-chips"><span><i class="bi bi-check-circle" aria-hidden="true"></i> Tipo de certificado</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Institución</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Credencial digital</span></div>
+  </div><div class="nexo-form-hero-art"><img src="{{ url_for('static', filename='img/ia_formacion_laboratorio.webp') }}" alt="Ilustración digital de acompañamiento académico y profesional" loading="lazy"></div>
+</section>
+
+
+<form class="nexo-form-v107" data-nexo-primary-form="true" method="POST">
+<div class="nexo-form-progress" data-nexo-form-progress aria-live="polite"><span><i class="bi bi-clipboard-check" aria-hidden="true"></i> Completa los campos obligatorios</span><span data-nexo-progress-count></span></div>
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-patch-check me-2"></i>Datos del certificado
+        </div>
+        <div class="card-body">
+            <div class="alert alert-info py-2 small mb-3">
+                <i class="bi bi-info-circle me-1"></i>
+                Solo son obligatorios el <strong>nombre</strong> y la
+                <strong>institución emisora</strong>. Los demás campos son opcionales.
+            </div>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label class="form-label">Tipo <span class="text-danger">*</span></label>
+                     <select name="tipo" class="form-select" id="tipo-cert" required>
+                        <option value="externo">Externo (Coursera, instituto, etc.)</option>
+                        <option value="interno">Interno (UNDAC, institucional)</option>
+                    </select>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                        <select name="categoria" class="form-select" id="categoria-cert" required>
+                            <option value="curso">Curso</option>
+                            <option value="capacitacion">Capacitación</option>
+                            <option value="diplomado">Diplomado</option>
+                            <option value="idioma">Idioma</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-6" id="col-nivel-idioma" style="display:none;">
+                        <label class="form-label">Nivel de idioma</label>
+                        <select name="nivel_idioma" class="form-select">
+                            <option value="">Seleccionar</option>
+                            <option value="basico">Básico</option>
+                            <option value="intermedio">Intermedio</option>
+                            <option value="avanzado">Avanzado</option>
+                        </select>
+                    </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" name="nombre" class="form-control" required
+                           placeholder="Ej: Python para ciencia de datos">
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Institución emisora <span class="text-danger">*</span></label>
+                    <input type="text" name="institucion_emisora" class="form-control" required
+                           placeholder="Ej: Coursera, UNDAC, SENATI...">
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Fecha de emisión</label>
+                    <input type="date" name="fecha_emision" class="form-control">
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">URL de credencial
+                        <span class="text-muted small">(para certificados digitales)</span>
+                    </label>
+                    <input type="url" name="url_credencial" class="form-control"
+                           placeholder="https://...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-lg me-1"></i>Guardar certificado
+        </button>
+        <a href="{{ url_for('egresado.certificados') }}" class="btn btn-outline-secondary">
+            Cancelar
+        </a>
+    </div>
+</form>
+
+{% block scripts %}
+<script>
+    document.getElementById('categoria-cert').addEventListener('change', function() {document.getElementById('col-nivel-idioma').style.display = this.value === 'idioma' ? '' : 'none';});
+</script>
+{% endblock %}
+{% endblock %}

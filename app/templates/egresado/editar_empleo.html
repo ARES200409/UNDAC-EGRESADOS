@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block titulo %}Editar experiencia laboral · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Mi perfil / Experiencia laboral / Edición{% endblock %}
+{% block contenido %}
+<section class="nexo-form-hero">
+  <div class="nexo-form-hero-content"><div class="nexo-form-hero-top"><a class="nexo-form-hero-back" href="{{ url_for('egresado.empleos') }}" aria-label="Volver"><i class="bi bi-arrow-left"></i> Volver</a><span class="nexo-form-eyebrow"><i class="bi bi-briefcase" aria-hidden="true"></i> TRAYECTORIA LABORAL</span></div>
+   <h1>Actualiza tu experiencia</h1><p>Edita tu puesto, empresa y fechas sin modificar los demás registros de tu trayectoria.</p><div class="nexo-form-hero-chips"><span><i class="bi bi-check-circle" aria-hidden="true"></i> Empresa</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Fechas</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Funciones</span></div>
+  </div><div class="nexo-form-hero-art"><img src="{{ url_for('static', filename='img/ia_entrevista_profesional.webp') }}" alt="Ilustración digital de acompañamiento académico y profesional" loading="lazy"></div>
+</section>
+
+<form class="nexo-form-v107 card v9-form-card" data-nexo-primary-form="true" method="POST" action="{{ url_for('egresado.editar_empleo', id=empleo.id_empleo) }}">
+<div class="nexo-form-progress" data-nexo-form-progress aria-live="polite"><span><i class="bi bi-clipboard-check" aria-hidden="true"></i> Completa los campos obligatorios</span><span data-nexo-progress-count></span></div>
+ <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+ <div class="card-body"><div class="row g-4">
+ <div class="col-lg-6"><label class="form-label" for="empresa">Empresa</label><select required class="form-select" id="empresa" name="id_empresa"><option value="">Selecciona empresa</option>{% for empresa in empresas %}<option value="{{ empresa.id_empresa }}" {{ 'selected' if empleo.id_empresa == empresa.id_empresa }}>{{ empresa.nombre_display() }}</option>{% endfor %}</select></div>
+ <div class="col-lg-6"><label class="form-label" for="cargo">Cargo o puesto</label><input required maxlength="150" name="cargo" id="cargo" class="form-control" value="{{ empleo.cargo }}"></div>
+ <div class="col-lg-6"><label class="form-label" for="contrato">Tipo de contrato</label><input maxlength="80" name="tipo_contrato" id="contrato" class="form-control" value="{{ empleo.tipo_contrato or '' }}"></div>
+ <div class="col-lg-6"><label class="form-label" for="fecha_inicio">Fecha de inicio</label><input required type="date" id="fecha_inicio" name="fecha_inicio" class="form-control" value="{{ empleo.fecha_inicio.isoformat() if empleo.fecha_inicio else '' }}"></div>
+ <div class="col-lg-6"><label class="form-label" for="fecha_fin">Fecha de finalización</label><input type="date" id="fecha_fin" name="fecha_fin" class="form-control" value="{{ empleo.fecha_fin.isoformat() if empleo.fecha_fin else '' }}"></div>
+ <div class="col-lg-6 d-flex align-items-center"><div class="form-check"><input type="checkbox" class="form-check-input" id="es_actual" name="es_actual" {{ 'checked' if empleo.es_actual }}><label class="form-check-label" for="es_actual">Actualmente trabajo aquí</label></div></div>
+ <div class="col-12"><label class="form-label" for="funciones">Funciones principales</label><textarea id="funciones" name="funciones" class="form-control" rows="5" maxlength="5000">{{ empleo.funciones or '' }}</textarea><div class="form-text">La información es declarada por ti; no equivale a verificación empresarial.</div></div>
+ </div></div><div class="card-footer d-flex justify-content-end gap-2"><a href="{{ url_for('egresado.empleos') }}" class="btn btn-outline-secondary">Cancelar</a><button class="btn btn-primary" type="submit"><i class="bi bi-check2"></i> Guardar cambios</button></div>
+</form>
+{% endblock %}

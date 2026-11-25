@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block titulo %}Nueva cuenta de personal{% endblock %}
+{% block contenido %}
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{{ url_for('admin.personal') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+    <h4 class="mb-0">Nueva cuenta de personal</h4>
+</div>
+
+{% if not catalogo_sistemas_preparado %}
+<div class="alert alert-warning"><strong>Primero registra la Facultad de Ingeniería y el programa de Sistemas</strong> para poder asignar coordinadores y docentes. En la terminal: <code>python preparar_facultad_sistemas.py --aplicar</code>. Esta operación no inventa ni crea currículas.</div>
+{% endif %}
+<form method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white"><i class="bi bi-person-vcard me-2"></i>Datos personales</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-sm-6"><label class="form-label">Nombres <span class="text-danger">*</span></label>
+                    <input type="text" name="nombres" class="form-control" required></div>
+                <div class="col-sm-6"><label class="form-label">Teléfono</label>
+                    <input type="text" name="telefono" class="form-control"></div>
+                <div class="col-sm-6"><label class="form-label">Apellido paterno <span class="text-danger">*</span></label>
+                    <input type="text" name="apellido_paterno" class="form-control" required></div>
+                <div class="col-sm-6"><label class="form-label">Apellido materno</label>
+                    <input type="text" name="apellido_materno" class="form-control"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white"><i class="bi bi-shield-lock me-2"></i>Acceso al sistema</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-sm-6"><label class="form-label">Correo <span class="text-danger">*</span></label>
+                    <input type="email" name="correo" class="form-control" required></div>
+                <div class="col-sm-6"><label class="form-label">Contraseña <span class="text-danger">*</span></label>
+                    <input type="password" name="contrasena" class="form-control" required minlength="8" placeholder="Mínimo 8 caracteres"></div>
+                <div class="col-12">
+                    <label class="form-label">Rol{{ 'es' if roles|length > 1 else '' }} <span class="text-danger">*</span></label>
+                    {% if rol_activo == 'coordinador' %}
+                    <div class="form-text mb-2">Como coordinador, solo puedes crear cuentas de docente responsable.</div>
+                    {% else %}
+                    <div class="form-text mb-2">Puedes asignar más de uno.</div>
+                    {% endif %}
+                    <div class="d-flex flex-wrap gap-3">
+                        {% for rol in roles %}
+                        <div class="form-check">
+                            <input class="form-check-input rol-check" type="checkbox" name="roles"
+                                   value="{{ rol.id_rol }}" id="rol-{{ rol.id_rol }}" data-nombre="{{ rol.nombre }}"
+                                   {{ 'checked' if roles|length == 1 }}>
+                            <label class="form-check-label" for="rol-{{ rol.id_rol }}">{{ rol.nombre | replace("_", " ") | title }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if facultades %}
+    <div class="card mb-3 d-none" id="bloque-facultades">
+        <div class="card-header bg-primary text-white"><i class="bi bi-building me-2"></i>Facultad(es) a cargo</div>
+        <div class="card-body">
+            <div class="form-text mb-2">Un coordinador puede tener a su cargo más de una facultad.</div>
+            <div class="d-flex flex-wrap gap-3">
+                {% for f in facultades %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="facultades" value="{{ f.id_facultad }}" id="fac-{{ f.id_facultad }}">
+                    <label class="form-check-label" for="fac-{{ f.id_facultad }}">{{ f.nombre }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if programas %}
+    <div class="card mb-3 {% if rol_activo != 'coordinador' %}d-none{% endif %}" id="bloque-programas">
+        <div class="card-header bg-primary text-white"><i class="bi bi-mortarboard me-2"></i>Programa(s) a cargo</div>
+        <div class="card-body">
+            <div class="form-text mb-2">Solo se muestran los programas de tu(s) facultad(es).</div>
+            <div class="d-flex flex-wrap gap-3">
+                {% for p in programas %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="programas" value="{{ p.id_programa }}" id="prog-{{ p.id_programa }}">
+                    <label class="form-check-label" for="prog-{{ p.id_programa }}">{{ p.nombre }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Crear cuenta</button>
+        <a href="{{ url_for('admin.personal') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+
+{% if facultades %}
+<script>
+function actualizarBloqueFacultades() {
+    const checkCoord = document.querySelector('.rol-check[data-nombre="coordinador"]');
+    const bloque = document.getElementById('bloque-facultades');
+    if (!checkCoord || !bloque) return;
+    bloque.classList.toggle('d-none', !checkCoord.checked);
+    const checkDocente = document.querySelector('.rol-check[data-nombre="docente_responsable"]');
+    const bloqueProgramas = document.getElementById('bloque-programas');
+    if (bloqueProgramas && checkDocente) bloqueProgramas.classList.toggle('d-none', !checkDocente.checked);
+}
+document.querySelectorAll('.rol-check').forEach(chk => chk.addEventListener('change', actualizarBloqueFacultades));
+actualizarBloqueFacultades();
+</script>
+{% endif %}
+{% endblock %}

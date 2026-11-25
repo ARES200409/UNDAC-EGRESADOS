@@ -1,0 +1,109 @@
+<!-- TABLA SENCILLA Y LIMPIA -->
+<div id="nexo-lista-resultados" aria-live="polite">
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        {% if not hay_filtro %}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-funnel fs-1 text-secondary opacity-50"></i>
+            <p class="mt-2 mb-0">Aplica un filtro o escribe en el buscador para consultar egresados.</p>
+        </div>
+        {% elif egresados %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 tabla-egresados">
+                <thead class="bg-light text-secondary">
+                    <tr>
+                        <th class="ps-3 border-0" style="width: 40px;">#</th>
+                        <th class="border-0">Apellidos y Nombres</th>
+                        <th class="border-0">Año Egreso</th>
+                        <th class="border-0">Contacto</th>
+                        <th class="border-0">Nivel Máximo</th>
+                        <th class="border-0 text-end pe-3" style="width: 60px;">Ficha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for e in egresados %}
+                <tr>
+                    <td class="ps-3 text-muted">{{ (paginacion.page - 1) * 30 + loop.index }}</td>
+                    <td class="fw-semibold text-dark">
+                        {{ e.apellido_paterno }} {{ e.apellido_materno or '' }}, {{ e.nombres }}
+                    </td>
+                    <td>
+                        {{ e.anio_egreso or '—' }}
+                        {% if e.periodo %}<span class="text-muted small">({{ e.periodo }})</span>{% endif %}
+                    </td>
+                    <td>
+                        <div>{{ e.correo_institucional or e.correo_personal or '—' }}</div>
+                        <div class="text-muted" style="font-size: 0.75rem;">{{ e.telefono or 'Sin teléfono' }}</div>
+                    </td>
+                    <td>
+                        {% if e.nivel_maximo and e.nivel_maximo != 'egresado' %}
+                        <span class="badge 
+                            {% if e.nivel_maximo == 'phd' %}bg-dark
+                            {% elif e.nivel_maximo == 'doctorado' %}bg-danger
+                            {% elif e.nivel_maximo == 'maestria' %}bg-warning text-dark
+                            {% elif e.nivel_maximo == 'titulado' %}bg-success
+                            {% else %}bg-info text-dark{% endif %}" style="font-size: 0.72rem;">
+                            {{ e.nivel_maximo|capitalize }}
+                        </span>
+                        {% else %}
+                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" style="font-size: 0.72rem;">
+                            Egresado
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end pe-3">
+                        <a href="{{ url_for('admin.ver_egresado', id=e.id_egresado) }}" class="btn btn-sm btn-light border text-primary" title="Ver ficha del egresado">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINACIÓN -->
+        {% if paginacion and paginacion.pages > 1 %}
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center px-3 py-2 border-top gap-2">
+            <small class="text-muted">
+                Mostrando {{ egresados|length }} de {{ total }} resultados
+            </small>
+            <nav>
+                <ul class="pagination pagination-sm mb-0">
+                    <li class="page-item {{ 'disabled' if not paginacion.has_prev }}">
+                        <a class="page-link" href="{{ url_for('admin.egresados', pagina=paginacion.prev_num, **filtros) }}" hx-get="{{ url_for('admin.egresados', pagina=paginacion.prev_num, **filtros) }}" hx-target="#nexo-lista-resultados" hx-swap="outerHTML" hx-push-url="true">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                    {% for p in paginacion.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                        {% if p %}
+                        <li class="page-item {{ 'active' if p == paginacion.page }}">
+                            <a class="page-link" href="{{ url_for('admin.egresados', pagina=p, **filtros) }}" hx-get="{{ url_for('admin.egresados', pagina=p, **filtros) }}" hx-target="#nexo-lista-resultados" hx-swap="outerHTML" hx-push-url="true">{{ p }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                        {% endif %}
+                    {% endfor %}
+                    <li class="page-item {{ 'disabled' if not paginacion.has_next }}">
+                        <a class="page-link" href="{{ url_for('admin.egresados', pagina=paginacion.next_num, **filtros) }}" hx-get="{{ url_for('admin.egresados', pagina=paginacion.next_num, **filtros) }}" hx-target="#nexo-lista-resultados" hx-swap="outerHTML" hx-push-url="true">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="text-center text-muted py-5">
+            <i class="bi bi-search fs-1 opacity-50"></i>
+            <p class="mt-2 mb-0">No se encontraron egresados con los criterios ingresados.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+</div>
+
+{% if request.headers.get('HX-Request') == 'true' %}<span id="v11-total" hx-swap-oob="true" class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">{{ total }} resultado(s)</span>{% endif %}

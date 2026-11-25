@@ -1,0 +1,23 @@
+/* V11: gráficos por rol y experiencia clara/oscura. No modifica formularios V10.7 */
+.v11-insights{--v11-bg:#fff;--v11-border:#cde4f4;--v11-title:#062f60;--v11-muted:#526b85;--v11-glow:#e8f5ff;--v11-primary:#087ed4;max-width:100%;margin:34px 0;padding:clamp(18px,2.8vw,30px);border:1px solid var(--v11-border);border-radius:22px;background:var(--v11-bg);color:var(--v11-title);box-shadow:0 18px 45px rgba(18,64,112,.09)}
+[data-theme="dark"] .v11-insights{--v11-bg:#10263b;--v11-border:#2c506a;--v11-title:#f5faff;--v11-muted:#aecce0;--v11-glow:#193a53;--v11-primary:#62d7f0}
+.v11-insights-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.v11-eyebrow{display:block;color:var(--v11-primary);font-weight:850;font-size:.73rem;letter-spacing:.12em;margin-bottom:7px}
+.v11-insights h2{color:var(--v11-title)!important;font-size:clamp(1.25rem,2.6vw,2rem);font-weight:850;line-height:1.22;margin:0 0 6px}
+.v11-insights p{color:var(--v11-muted);margin:0;font-size:.9rem}
+.v11-refresh{border:1px solid var(--v11-border);color:var(--v11-title);background:var(--v11-glow);border-radius:10px;padding:9px 16px;white-space:nowrap;font-weight:750;min-height:42px}
+.v11-refresh:hover,.v11-refresh:focus-visible{outline:2px solid var(--v11-primary);outline-offset:2px}
+.v11-refresh:disabled{opacity:.56;cursor:wait}
+.v11-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.v11-panel{border:1px solid var(--v11-border);background:var(--v11-glow);border-radius:15px;padding:20px;min-width:0}
+.v11-panel h3{color:var(--v11-title)!important;font-weight:800;font-size:1rem;margin-bottom:12px}
+.v11-chart{height:250px;width:100%;display:none}
+.v11-empty{min-height:150px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--v11-border);border-radius:10px;padding:20px;color:var(--v11-muted);font-size:.9rem;text-align:center;line-height:1.7}
+.v11-status{font-size:.78rem!important;margin-top:16px!important}
+.v11-legacy{margin:10px 0 28px;color:var(--v11-title);border:1px solid var(--v11-border);border-radius:12px;overflow:hidden}
+.v11-legacy summary{cursor:pointer;padding:14px 20px;background:var(--v11-glow);color:var(--v11-title);font-weight:750}
+.v11-legacy[open]>section{padding:16px}
+@media(max-width:760px){.v11-grid{grid-template-columns:1fr}.v11-chart{height:215px}}
+@media(prefers-reduced-motion:reduce){.v11-insights *{animation:none!important;transition:none!important}}
+/* Padrón: indicador de carga HTMX. Ante fallo de CDN, el GET normal sigue activo */
+#v11-cargando{display:none;color:#076cac;font-weight:700;padding:8px 12px}.htmx-request#v11-cargando,.htmx-request #v11-cargando{display:block}

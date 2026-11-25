@@ -1,0 +1,192 @@
+/* ============================================================================
+   NEXO UNDAC - FASE 4: SISTEMA VISUAL DIFERENCIADO POR ROL (V12)
+   Complementa y ordena las capas visuales sin romper vistas heredadas.
+   ============================================================================ */
+
+:root {
+  --nexo-role-primary: #0f3d68;
+  --nexo-role-accent: #0ea5e9;
+  --nexo-role-soft: #eef6ff;
+  --nexo-role-header: #11263c;
+  --nexo-role-border: #d2a65a;
+  --nexo-card-radius: 14px;
+  --nexo-shadow-sm: 0 4px 16px rgba(15, 35, 58, 0.06);
+  --nexo-shadow-md: 0 12px 30px rgba(15, 35, 58, 0.10);
+}
+
+/* --- Paletas diferenciadas por rol --- */
+body[data-nexo-role="administrador"] {
+  --nexo-role-primary: #0f2942;
+  --nexo-role-accent: #d4a017;
+  --nexo-role-soft: #f4f6f9;
+  --nexo-role-header: #0b1e33;
+  --nexo-role-border: #d4a017;
+}
+
+body[data-nexo-role="coordinador"],
+body[data-nexo-role="utsag"],
+body[data-nexo-role="docente_responsable"] {
+  --nexo-role-primary: #0b4f4a;
+  --nexo-role-accent: #10b981;
+  --nexo-role-soft: #ecfdf5;
+  --nexo-role-header: #083b37;
+  --nexo-role-border: #34d399;
+}
+
+body[data-nexo-role="egresado"] {
+  --nexo-role-primary: #134074;
+  --nexo-role-accent: #0284c7;
+  --nexo-role-soft: #f0f9ff;
+  --nexo-role-header: #0f2c52;
+  --nexo-role-border: #38bdf8;
+}
+
+body[data-nexo-role="empresa"] {
+  --nexo-role-primary: #1e293b;
+  --nexo-role-accent: #d97706;
+  --nexo-role-soft: #fffbeb;
+  --nexo-role-header: #0f172a;
+  --nexo-role-border: #f59e0b;
+}
+
+/* --- Aplicación sobre barra superior y barra de rol --- */
+body.obs-shell .obs-head {
+  background: var(--nexo-role-header) !important;
+  border-bottom: 3px solid var(--nexo-role-border) !important;
+}
+
+body.obs-shell .obs-role-bar {
+  background: var(--nexo-role-soft);
+  border-bottom: 1px solid rgba(15, 35, 58, 0.08);
+  padding: 8px clamp(20px, 4vw, 60px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+body.obs-shell .obs-role-bar .v9-role-label {
+  color: var(--nexo-role-primary);
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+body.obs-shell .obs-nav a[aria-current="page"] {
+  color: var(--nexo-role-primary) !important;
+  border-bottom-color: var(--nexo-role-accent) !important;
+  font-weight: 700;
+}
+
+/* --- Tarjetas institucionales modernas --- */
+.nexo-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--nexo-card-radius);
+  box-shadow: var(--nexo-shadow-sm);
+  padding: 1.25rem 1.5rem;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.nexo-card:hover {
+  box-shadow: var(--nexo-shadow-md);
+}
+
+.nexo-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.nexo-kpi-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid var(--nexo-role-accent);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: var(--nexo-shadow-sm);
+}
+
+.nexo-kpi-card .kpi-label {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.nexo-kpi-card .kpi-value {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--nexo-role-primary);
+  line-height: 1.2;
+  margin-top: 4px;
+}
+
+/* --- Badges de estado documental --- */
+.nexo-doc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.nexo-doc-badge.is-pendiente   { background: #fef3c7; color: #92400e; }
+.nexo-doc-badge.is-en_revision { background: #e0f2fe; color: #075985; }
+.nexo-doc-badge.is-validado    { background: #dcfce7; color: #166534; }
+.nexo-doc-badge.is-observado   { background: #ffedd5; color: #9a3412; }
+.nexo-doc-badge.is-rechazado   { background: #fee2e2; color: #991b1b; }
+
+/* --- Zona Drag & Drop documental (preparada para Fase 8) --- */
+.nexo-dropzone {
+  border: 2px dashed #94a3b8;
+  border-radius: 14px;
+  background: #f8fafc;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.nexo-dropzone:hover,
+.nexo-dropzone.is-dragover {
+  border-color: var(--nexo-role-accent);
+  background: var(--nexo-role-soft);
+}
+
+/* --- Barra de completitud del perfil --- */
+.nexo-progress-wrap {
+  background: #e2e8f0;
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+}
+
+.nexo-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--nexo-role-primary), var(--nexo-role-accent));
+  transition: width 0.35s ease;
+}
+
+/* --- Modo oscuro compatible con tema.js --- */
+[data-theme="dark"] .nexo-card,
+[data-theme="dark"] .nexo-kpi-card {
+  background: #172330;
+  border-color: #263647;
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .nexo-kpi-card .kpi-value {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .nexo-dropzone {
+  background: #13202d;
+  border-color: #3b526b;
+  color: #cbd5e1;
+}

@@ -1,0 +1,79 @@
+<!-- app/templates/egresado/trayectoria.html -->
+{% extends "base.html" %}
+{% block titulo %}Formación profesional{% endblock %}
+{% block contenido %}
+<section class="nexo-form-hero">
+  <div class="nexo-form-hero-content"><div class="nexo-form-hero-top"><span class="nexo-form-eyebrow"><i class="bi bi-mortarboard" aria-hidden="true"></i> FORMACIÓN</span></div>
+   <h1>Tu trayectoria académica</h1><p>Organiza tus grados y títulos declarados. Podrás utilizarlos en tu CV cuando corresponda.</p><div class="nexo-form-hero-chips"><span><i class="bi bi-check-circle" aria-hidden="true"></i> Seguimiento Sistemas</span><span><i class="bi bi-info-circle" aria-hidden="true"></i> {% if logros %}{{ logros|length }} registro(s) académico(s){% else %}Sin grados o títulos registrados{% endif %}</span></div>
+  </div><div class="nexo-form-hero-art"><img src="{{ url_for('static', filename='img/ia_campus_futuro.webp') }}" alt="Ilustración digital de acompañamiento académico y profesional" loading="lazy"></div>
+</section>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0"><i class="bi bi-award me-2"></i>Formación profesional</h4>
+    <a href="{{ url_for('egresado.nuevo_grado_titulo') }}" class="btn btn-primary btn-sm">
+        <i class="bi bi-plus-lg me-1"></i>Agregar grado o título
+    </a>
+</div>
+
+<div class="alert alert-info py-2 small mb-4">
+    <i class="bi bi-info-circle me-1"></i>
+    Actualmente el registro es manual: consulta tu constancia en el portal oficial de SUNEDU
+    y copia los datos aquí. <strong>Próximamente se implementará la consulta automática mediante la API de SUNEDU.</strong>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% if logros %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Graduado</th>
+                        <th>DNI</th>
+                        <th>Grado o título</th>
+                        <th>Fecha del diploma</th>
+                        <th>Institución</th>
+                        <th>Fuente</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for logro in logros %}
+                <tr>
+                    <td class="text-muted small">{{ loop.index }}</td>
+                    <td class="small">{{ e.nombre_completo() }}</td>
+                    <td class="small">{{ e.dni }}</td>
+                    <td class="small">{{ logro.grado_titulo }}</td>
+                    <td class="small">
+                        {{ logro.fecha_obtencion.strftime('%d/%m/%Y') if logro.fecha_obtencion else '—' }}
+                    </td>
+                    <td class="small">{{ logro.institucion }}</td>
+                    <td>
+                        <span class="badge bg-secondary">{{ logro.fuente }}</span>
+                    </td>
+                    <td>
+                        <form method="POST"
+                              action="{{ url_for('egresado.eliminar_logro', id=logro.id_trayectoria) }}"
+                              onsubmit="return confirm('¿Eliminar este registro?')">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="nexo-v107-empty"><span class="nexo-v107-empty-icon"><i class="bi bi-mortarboard" aria-hidden="true"></i></span>
+            <h3>Aún no hay grados o títulos declarados</h3>
+            <p class="small">Haz clic en <strong>"Agregar grado o título"</strong>
+               para registrar tu información académica.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

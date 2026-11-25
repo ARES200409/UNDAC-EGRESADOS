@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block titulo %}Gestión de capacitaciones · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Capacitaciones, seminarios y eventos{% endblock %}
+
+{% block contenido %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+  <div>
+    <h1 class="h3 mb-1">Capacitaciones y Eventos Institucionales</h1>
+    <p class="text-muted mb-0">Administra actividades de formación, cupos, asistencia y emisión de constancias.</p>
+  </div>
+  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevaCap">
+    <i class="bi bi-plus-circle me-1"></i>Nueva capacitación
+  </button>
+</div>
+
+<div class="nexo-card p-3">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Tipo / Modalidad</th>
+          <th>Fechas</th>
+          <th>Inscritos / Asistentes</th>
+          <th>Estado</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in capacitaciones_lista %}
+          {% set st = stats.get(c.id_capacitacion, {'inscritos': 0, 'asistentes': 0}) %}
+          <tr>
+            <td>
+              <strong>{{ c.titulo }}</strong>
+              {% if c.lugar_o_enlace %}<div class="small text-muted">{{ c.lugar_o_enlace }}</div>{% endif %}
+            </td>
+            <td>
+              <span class="badge bg-info text-dark">{{ tipos_dict.get(c.tipo, c.tipo) }}</span>
+              <span class="badge bg-light text-dark border">{{ c.modalidad }}</span>
+            </td>
+            <td class="small">{{ c.fecha_inicio }}{% if c.fecha_fin %} → {{ c.fecha_fin }}{% endif %}</td>
+            <td>
+              {{ st.inscritos }}{% if c.capacidad_maxima %} / {{ c.capacidad_maxima }}{% endif %}
+              <span class="text-muted small">({{ st.asistentes }} asist.)</span>
+            </td>
+            <td>
+              <form method="post" action="{{ url_for('capacitaciones.admin_cambiar_estado', id_capacitacion=c.id_capacitacion) }}" class="d-inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="estado" class="form-select form-select-sm d-inline w-auto" onchange="this.form.submit()">
+                  {% for est in estados %}
+                  <option value="{{ est }}" {% if c.estado == est %}selected{% endif %}>{{ est }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+            </td>
+            <td class="text-end">
+              <a href="{{ url_for('capacitaciones.admin_inscritos', id_capacitacion=c.id_capacitacion) }}" class="btn btn-sm btn-outline-primary">
+                <i class="bi bi-people me-1"></i>Inscritos
+              </a>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="text-center text-muted py-4">No hay capacitaciones registradas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="modal fade" id="modalNuevaCap" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <form method="post" action="{{ url_for('capacitaciones.admin_nueva') }}" class="modal-content">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="modal-header">
+        <h2 class="modal-title h5">Registrar capacitación o evento</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body row g-3">
+        <div class="col-12">
+          <label class="form-label">Título *</label>
+          <input type="text" name="titulo" class="form-control" required maxlength="220">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Tipo</label>
+          <select name="tipo" class="form-select">
+            {% for k, v in tipos %}<option value="{{ k }}">{{ v }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Modalidad</label>
+          <select name="modalidad" class="form-select">
+            {% for m in modalidades %}<option value="{{ m }}">{{ m | title }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Aforo máximo</label>
+          <input type="number" name="capacidad_maxima" class="form-control" min="1" max="10000" placeholder="Opcional">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Fecha inicio *</label>
+          <input type="date" name="fecha_inicio" class="form-control" required>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Fecha fin</label>
+          <input type="date" name="fecha_fin" class="form-control">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Horario</label>
+          <input type="text" name="horario" class="form-control" placeholder="Ej. 18:00 - 20:00">
+        </div>
+        <div class="col-md-8">
+          <label class="form-label">Lugar o enlace virtual</label>
+          <input type="text" name="lugar_o_enlace" class="form-control" maxlength="300">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label">Estado inicial</label>
+          <select name="estado" class="form-select">
+            <option value="publicada" selected>Publicada</option>
+            <option value="borrador">Borrador</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="form-label">Descripción</label>
+          <textarea name="descripcion" class="form-control" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Guardar capacitación</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

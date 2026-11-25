@@ -1,0 +1,557 @@
+<!-- app/templates/auth/verificar.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de egresado — UNDAC</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/v9_institucional.css') }}">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: url("{{ url_for('static', filename='img/ia_campus_futuro.webp') }}") center/cover no-repeat fixed;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background: rgba(0, 20, 50, 0.72);
+            z-index: 0;
+        }
+        .wrap { position: relative; z-index: 1; width: 100%; padding: 24px; }
+        .card-login {
+            max-width: 540px;
+            margin: 0 auto;
+            background: rgba(255,255,255,.97);
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.35);
+            overflow: hidden;
+        }
+        .card-top {
+            background: linear-gradient(135deg, #003876 0%, #0056a3 100%);
+            padding: 24px 24px 20px;
+            text-align: center;
+            color: #fff;
+        }
+        .card-top h5 { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+        .card-top small { opacity: .8; font-size: .78rem; }
+        .steps { display: flex; justify-content: center; gap: 6px; margin-top: 14px; }
+        .step { width: 32px; height: 5px; border-radius: 3px; background: rgba(255,255,255,.3); }
+        .step.active { background: #fff; }
+        .card-body-custom { padding: 24px 28px 20px; }
+
+        /* Campo DNI destacado */
+        .dni-wrapper { position: relative; margin-bottom: 8px; }
+        .dni-input {
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            letter-spacing: .18em !important;
+            text-align: center !important;
+            padding: 14px 54px !important;
+            border-radius: 10px !important;
+            border: 2px solid #e5e7eb !important;
+            width: 100% !important;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .dni-input:focus {
+            outline: none;
+            border-color: #003876 !important;
+            box-shadow: 0 0 0 4px rgba(0,56,118,.12) !important;
+        }
+        .dni-estado-icon {
+            position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            font-size: 1.3rem;
+        }
+
+        /* Estados visuales del DNI */
+        .dni-estado-espera    .dni-input { border-color: #d1d5db !important; }
+        .dni-estado-consultando .dni-input { border-color: #f59e0b !important; box-shadow: 0 0 0 4px rgba(245,158,11,.1) !important; }
+        .dni-estado-encontrado  .dni-input { border-color: #10b981 !important; box-shadow: 0 0 0 4px rgba(16,185,129,.1) !important; }
+        .dni-estado-parcial     .dni-input { border-color: #f59e0b !important; }
+        .dni-estado-sin-datos   .dni-input { border-color: #ef4444 !important; }
+        .dni-estado-error       .dni-input { border-color: #ef4444 !important; }
+
+        .dni-mensaje {
+            font-size: .82rem; min-height: 20px;
+            display: flex; align-items: center; gap: 5px;
+            margin-bottom: 4px;
+        }
+
+        /* Spinner */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner-dni {
+            width: 18px; height: 18px; border: 2px solid #f59e0b;
+            border-top-color: transparent; border-radius: 50%;
+            animation: spin .7s linear infinite; display: inline-block;
+        }
+
+        /* Campos autocompletados */
+        .campo-auto {
+            background: #f0fdf4 !important;
+            border-color: #86efac !important;
+        }
+        .campo-manual {
+            background: #fffbeb !important;
+        }
+        .badge-fuente {
+            font-size: .68rem; padding: 2px 7px; border-radius: 20px;
+            font-weight: 600; letter-spacing: .02em;
+        }
+        .badge-undac  { background: #dbeafe; color: #1d4ed8; }
+        .badge-reniec { background: #fef3c7; color: #92400e; }
+        .badge-sunedu { background: #ede9fe; color: #5b21b6; }
+        .badge-manual { background: #f3f4f6; color: #6b7280; }
+
+        /* Secciones colapsables */
+        .seccion-datos {
+            border: 1px solid #e5e7eb; border-radius: 10px;
+            overflow: hidden; margin-bottom: 12px;
+        }
+        .seccion-header {
+            background: #f9fafb; padding: 10px 16px;
+            font-weight: 600; font-size: .85rem; color: #374151;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+        }
+        .seccion-body { padding: 14px 16px; }
+
+        .form-label { font-size: .82rem; font-weight: 600; color: #374151; margin-bottom: 3px; }
+        .form-control {
+            border-radius: 8px; border: 1.5px solid #e5e7eb;
+            font-size: .88rem; padding: 9px 13px; transition: border-color .15s;
+        }
+        .form-control:focus { border-color: #003876; box-shadow: 0 0 0 3px rgba(0,56,118,.08); }
+        .form-control[readonly] { background: #f9fafb; cursor: default; }
+
+        .btn-verificar {
+            width: 100%; background: #003876; color: #fff;
+            border: none; border-radius: 8px; padding: 12px;
+            font-weight: 700; font-size: .95rem; cursor: pointer;
+            transition: background .15s; margin-top: 10px;
+        }
+        .btn-verificar:hover { background: #002a5c; }
+        .btn-verificar:disabled { background: #9ca3af; cursor: not-allowed; }
+
+        .card-footer-custom {
+            padding: 14px 28px 22px; text-align: center;
+            font-size: .82rem; color: #6b7280;
+        }
+        .card-footer-custom a { color: #003876; font-weight: 600; }
+        .btn-inicio {
+            position: fixed; top: 18px; left: 18px; z-index: 10;
+            background: rgba(255,255,255,.15); border: 1.5px solid rgba(255,255,255,.4);
+            color: #fff; border-radius: 10px; padding: 7px 16px;
+            font-size: .83rem; font-weight: 600; text-decoration: none;
+            backdrop-filter: blur(6px); transition: background .15s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-inicio:hover { background: rgba(255,255,255,.25); color: #fff; }
+        .alert { font-size: .85rem; border-radius: 8px; }
+
+        /* Resultado encontrado */
+        .resultado-box {
+            background: #f0fdf4; border: 1.5px solid #86efac;
+            border-radius: 10px; padding: 16px; margin-top: 12px;
+        }
+        .resultado-box h6 { color: #166534; font-weight: 700; margin-bottom: 10px; }
+
+        /* Consentimiento */
+        .consentimiento-box {
+            background: #f0f9ff; border: 1px solid #bae6fd;
+            border-radius: 8px; padding: 12px 14px; margin-bottom: 12px;
+            font-size: .82rem; color: #0369a1;
+        }
+        .consentimiento-box label { cursor: pointer; }
+    </style>
+    <script src="{{ url_for('static', filename='js/tema.js') }}" defer></script>
+</head>
+<body class="nexo-auth">
+<button type="button" data-theme-toggle class="nexo-auth-theme" aria-label="Cambiar apariencia">
+    <i class="bi bi-moon-stars" data-theme-icon></i><span data-theme-label>Tema</span>
+</button>
+
+<a href="{{ url_for('public.index') }}" class="btn-inicio">
+    <i class="bi bi-arrow-left"></i> Inicio
+</a>
+
+<div class="wrap">
+    <div class="card-login">
+        <div class="card-top">
+            <h5><i class="bi bi-shield-check me-2"></i>Registro de egresado</h5>
+            <small>Ingresa tu DNI para completar automáticamente tu información</small>
+            <div class="steps">
+                <div class="step active"></div>
+                <div class="step"></div>
+            </div>
+        </div>
+
+        <div class="card-body-custom">
+            {% for categoria, mensaje in get_flashed_messages(with_categories=true) %}
+            <div class="alert alert-{{ categoria }} alert-dismissible fade show py-2 mb-3">
+                {{ mensaje }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+
+            <!-- ═══ CAMPO DNI ═══ -->
+            <label class="form-label d-block mb-1">
+                <i class="bi bi-credit-card me-1 text-primary"></i>
+                Número de DNI <span class="text-danger">*</span>
+            </label>
+            <div class="dni-wrapper dni-estado-espera" id="dniWrapper">
+                <input type="text" id="dniInput"
+                       class="form-control dni-input"
+                       placeholder="00000000"
+                       maxlength="8"
+                       inputmode="numeric"
+                       autocomplete="off"
+                       aria-describedby="dniMensaje"
+                       aria-label="Número de DNI">
+                <span class="dni-estado-icon" id="dniIcon" aria-hidden="true"></span>
+            </div>
+            <div class="dni-mensaje text-muted" id="dniMensaje">
+                <i class="bi bi-info-circle"></i>
+                Al completar 8 dígitos la búsqueda iniciará automáticamente.
+            </div>
+
+            <!-- ═══ CONSENTIMIENTO ═══ -->
+            <div class="consentimiento-box mb-3" id="consentimientoBox" style="display:none;">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="consentimiento" name="consentimiento">
+                    <label class="form-check-label" for="consentimiento">
+                        Autorizo a NEXO UNDAC a consultar mis datos en fuentes oficiales (API UNDAC, RENIEC, SUNEDU)
+                        con el único fin de completar mi registro académico.
+                        Los datos obtenidos serán tratados conforme a la Ley N.° 29733.
+                    </label>
+                </div>
+            </div>
+
+            <!-- ═══ FORMULARIO PRINCIPAL ═══ -->
+            <form method="POST" id="formVerificar">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                {{ form.hidden_tag() }}
+
+                <!-- Datos personales autocompletados -->
+                <div class="seccion-datos" id="seccionPersonales" style="display:none;">
+                    <div class="seccion-header" data-bs-toggle="collapse" data-bs-target="#colPersonales">
+                        <span><i class="bi bi-person-circle me-2 text-primary"></i>Datos personales</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+                    <div class="collapse show seccion-body" id="colPersonales">
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <label class="form-label d-flex justify-content-between">
+                                    Nombres
+                                    <span class="badge-fuente badge-undac" id="fuenteNombres"></span>
+                                </label>
+                                <input type="text" class="form-control" id="campos_nombres"
+                                       name="nombres_preview" readonly placeholder="Se completará automáticamente">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label d-flex justify-content-between">
+                                    Apellido paterno
+                                    <span class="badge-fuente badge-undac" id="fuenteAp"></span>
+                                </label>
+                                <input type="text" class="form-control" id="campos_ap"
+                                       name="ap_preview" readonly placeholder="Automático">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label d-flex justify-content-between">
+                                    Apellido materno
+                                    <span class="badge-fuente badge-undac" id="fuenteAm"></span>
+                                </label>
+                                <input type="text" class="form-control" id="campos_am"
+                                       name="am_preview" readonly placeholder="Automático">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Fecha de nacimiento</label>
+                                <input type="text" class="form-control" id="campos_fnac"
+                                       name="fnac_preview" readonly placeholder="Automático">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Género</label>
+                                <input type="text" class="form-control" id="campos_genero"
+                                       name="genero_preview" readonly placeholder="Automático">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Datos académicos -->
+                <div class="seccion-datos" id="seccionAcademicos" style="display:none;">
+                    <div class="seccion-header" data-bs-toggle="collapse" data-bs-target="#colAcademicos">
+                        <span><i class="bi bi-mortarboard me-2 text-primary"></i>Datos académicos</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+                    <div class="collapse show seccion-body" id="colAcademicos">
+                        <div class="row g-2">
+                            <div class="col-sm-6">
+                                <label class="form-label">Programa / Carrera</label>
+                                <input type="text" class="form-control" id="campos_programa"
+                                       name="programa_preview" readonly placeholder="Automático">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Currícula</label>
+                                <input type="text" class="form-control" id="campos_curricula"
+                                       name="curricula_preview" readonly placeholder="Automático">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label">Año de ingreso</label>
+                                <input type="text" class="form-control" id="campos_ingreso"
+                                       name="ingreso_preview" readonly placeholder="Automático">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fallback: código universitario (colapsado si DNI resolvió) -->
+                <div class="seccion-datos" id="seccionCodigo">
+                    <div class="seccion-header" data-bs-toggle="collapse" data-bs-target="#colCodigo">
+                        <span><i class="bi bi-hash me-2 text-secondary"></i>Código universitario
+                            <small class="text-muted fw-normal ms-1" id="codigoLabel">(requerido)</small>
+                        </span>
+                        <i class="bi bi-chevron-down"></i>
+                    </div>
+                    <div class="collapse show seccion-body" id="colCodigo">
+                        <p class="text-muted small mb-2" id="codigoHelp">
+                            Ingresa tu código universitario para verificar tu identidad con los registros de la UNDAC.
+                        </p>
+                        {{ form.codigo_universitario(class="form-control",
+                           placeholder="Ej: 211303020", maxlength=10,
+                           id="codigoInput") }}
+                        {% if form.codigo_universitario.errors %}
+                        <div class="text-danger small mt-1">{{ form.codigo_universitario.errors[0] }}</div>
+                        {% endif %}
+                        <!-- Campo oculto: DNI enviado al servidor -->
+                        {{ form.dni(class="d-none", id="dniHidden") }}
+                        {% if form.dni.errors %}
+                        <div class="text-danger small mt-1">{{ form.dni.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-verificar" id="btnVerificar">
+                    <i class="bi bi-search me-2"></i>Verificar identidad
+                </button>
+            </form>
+
+            <!-- Resultado encontrado -->
+            {% if datos %}
+            <div class="resultado-box">
+                <h6><i class="bi bi-check-circle-fill me-2"></i>Egresado encontrado</h6>
+                <div class="mb-1 small"><strong>Nombre:</strong>
+                    {{ datos['Apellido paterno'] }} {{ datos['Apellido materno'] }} {{ datos['Nombres'] }}
+                </div>
+                <div class="mb-1 small"><strong>Programa:</strong> {{ datos['Programa facultad'] }}</div>
+                <div class="mb-1 small"><strong>Currícula:</strong> {{ datos['Curricula'] }}</div>
+                <a href="{{ url_for('auth.registro') }}" class="btn btn-success w-100 mt-3 fw-semibold">
+                    <i class="bi bi-arrow-right me-2"></i>Continuar y crear contraseña
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="card-footer-custom">
+            ¿Ya tienes cuenta? <a href="{{ url_for('auth.login') }}">Inicia sesión</a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    const dniInput      = document.getElementById('dniInput');
+    const dniHidden     = document.getElementById('dniHidden');
+    const dniWrapper    = document.getElementById('dniWrapper');
+    const dniIcon       = document.getElementById('dniIcon');
+    const dniMensaje    = document.getElementById('dniMensaje');
+    const consentBox    = document.getElementById('consentimientoBox');
+    const consentCheck  = document.getElementById('consentimiento');
+    const secPersonales = document.getElementById('seccionPersonales');
+    const secAcademicos = document.getElementById('seccionAcademicos');
+    const btnVerificar  = document.getElementById('btnVerificar');
+
+    let _ultimoDniConsultado = '';
+    let _debounceTimer = null;
+    let _consultandoAhora = false;
+
+    // ── Solo dígitos ──
+    dniInput.addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, '').slice(0, 8);
+        dniHidden.value = this.value;
+
+        if (this.value.length < 8) {
+            setEstado('espera');
+            clearTimeout(_debounceTimer);
+            return;
+        }
+        // Evitar consultas repetidas
+        if (this.value === _ultimoDniConsultado) return;
+
+        // Mostrar consentimiento antes de consultar
+        consentBox.style.display = 'block';
+
+        // Debounce 400ms
+        clearTimeout(_debounceTimer);
+        _debounceTimer = setTimeout(() => {
+            if (!consentCheck.checked) {
+                setEstado('espera', 'Acepta el consentimiento antes de continuar.');
+                return;
+            }
+            consultarDni(this.value);
+        }, 400);
+    });
+
+    consentCheck.addEventListener('change', function () {
+        if (this.checked && dniInput.value.length === 8 && dniInput.value !== _ultimoDniConsultado) {
+            consultarDni(dniInput.value);
+        }
+    });
+
+    async function consultarDni(dni) {
+        if (_consultandoAhora) return;
+        _consultandoAhora = true;
+        setEstado('consultando');
+
+        try {
+            const resp = await fetch('/api/dni/' + encodeURIComponent(dni), {
+                credentials: 'same-origin',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (resp.status === 429) {
+                setEstado('error', 'Demasiadas consultas. Espera un momento e inténtalo de nuevo.');
+                return;
+            }
+            if (resp.status === 403) {
+                setEstado('error', 'Sesión expirada. Recarga la página.');
+                return;
+            }
+            if (!resp.ok) {
+                setEstado('error', 'Error al consultar. Verifica el DNI o continúa manualmente.');
+                return;
+            }
+
+            const datos = await resp.json();
+            _ultimoDniConsultado = dni;
+
+            if (datos.encontrado && datos.estado === 'encontrado') {
+                autocomplete(datos);
+                setEstado('encontrado', '¡Datos encontrados! Verifica tu información abajo.');
+            } else if (datos.encontrado && datos.estado === 'parcial') {
+                autocomplete(datos);
+                setEstado('parcial', 'Datos parciales encontrados. Completa los campos faltantes.');
+            } else {
+                setEstado('sin_datos', 'No se encontraron datos para este DNI. Ingresa tu código universitario.');
+            }
+
+        } catch (e) {
+            setEstado('error', 'No se pudo conectar. Ingresa tu código universitario manualmente.');
+        } finally {
+            _consultandoAhora = false;
+        }
+    }
+
+    function autocomplete(datos) {
+        const p = datos.datos_personales || {};
+        const a = datos.datos_academicos || {};
+
+        // Datos personales
+        setField('campos_nombres', 'fuenteNombres', p.nombres);
+        setField('campos_ap',      'fuenteAp',      p.apellido_paterno);
+        setField('campos_am',      'fuenteAm',      p.apellido_materno);
+        setField('campos_fnac',    null,             p.fecha_nacimiento);
+        setField('campos_genero',  null,             p.genero, v => v === 'M' ? 'Masculino' : v === 'F' ? 'Femenino' : v);
+
+        // Datos académicos
+        setField('campos_programa',  null, a.programa_facultad);
+        setField('campos_curricula', null, a.curricula);
+        setField('campos_ingreso',   null, a.anio_ingreso);
+
+        // Mostrar secciones si hay datos
+        const hayPersonales = anyVal(p, ['nombres','apellido_paterno','apellido_materno']);
+        const hayAcademicos = anyVal(a, ['programa_facultad','curricula','anio_ingreso']);
+
+        if (hayPersonales) secPersonales.style.display = '';
+        if (hayAcademicos) secAcademicos.style.display = '';
+
+        // Si DNI resolvió código, marcar campo código como opcional
+        if (a.codigo_universitario && a.codigo_universitario.valor) {
+            document.getElementById('codigoLabel').textContent = '(opcional, ya encontrado)';
+            document.getElementById('codigoHelp').textContent =
+                'Tu código universitario fue identificado. Puedes igualmente ingresarlo para confirmar.';
+            const codigoInput = document.getElementById('codigoInput');
+            if (codigoInput && !codigoInput.value) {
+                codigoInput.value = a.codigo_universitario.valor;
+            }
+        }
+    }
+
+    function setField(fieldId, badgeId, info, transformFn) {
+        const el = document.getElementById(fieldId);
+        if (!el || !info) return;
+        const val = info.valor || '';
+        const fuente = info.fuente || 'sin_datos';
+        if (!val || fuente === 'sin_datos') return;
+
+        el.value = transformFn ? transformFn(val) : val;
+        el.classList.add('campo-auto');
+
+        if (badgeId) {
+            const badge = document.getElementById(badgeId);
+            if (badge) {
+                badge.textContent = etiquetaFuente(fuente);
+                badge.className = 'badge-fuente ' + clasesFuente(fuente);
+            }
+        }
+    }
+
+    function anyVal(obj, campos) {
+        return campos.some(c => obj[c] && obj[c].valor && obj[c].fuente !== 'sin_datos');
+    }
+
+    function etiquetaFuente(f) {
+        return { undac_api: 'UNDAC', reniec: 'RENIEC', sunedu: 'SUNEDU', manual: 'Manual' }[f] || '';
+    }
+
+    function clasesFuente(f) {
+        return { undac_api: 'badge-undac', reniec: 'badge-reniec', sunedu: 'badge-sunedu', manual: 'badge-manual' }[f] || '';
+    }
+
+    // ── Estados visuales ──
+    const ESTADOS = {
+        espera:       { clase: 'dni-estado-espera',       icon: '',                            color: 'text-muted' },
+        consultando:  { clase: 'dni-estado-consultando',  icon: '<span class="spinner-dni"></span>', color: 'text-warning' },
+        encontrado:   { clase: 'dni-estado-encontrado',   icon: '<i class="bi bi-check-circle-fill text-success"></i>', color: 'text-success' },
+        parcial:      { clase: 'dni-estado-parcial',      icon: '<i class="bi bi-exclamation-circle-fill text-warning"></i>', color: 'text-warning' },
+        sin_datos:    { clase: 'dni-estado-sin-datos',    icon: '<i class="bi bi-search text-secondary"></i>', color: 'text-secondary' },
+        error:        { clase: 'dni-estado-error',        icon: '<i class="bi bi-x-circle-fill text-danger"></i>', color: 'text-danger' },
+    };
+
+    function setEstado(nombre, mensaje) {
+        const cfg = ESTADOS[nombre] || ESTADOS.espera;
+        // Quitar todas las clases de estado
+        Object.values(ESTADOS).forEach(e => dniWrapper.classList.remove(e.clase));
+        dniWrapper.classList.add(cfg.clase);
+        dniIcon.innerHTML = cfg.icon;
+        if (mensaje) {
+            dniMensaje.innerHTML = `<span class="${cfg.color}">${mensaje}</span>`;
+        } else {
+            dniMensaje.innerHTML = '<span class="text-muted"><i class="bi bi-info-circle me-1"></i>Al completar 8 dígitos la búsqueda iniciará automáticamente.</span>';
+        }
+    }
+
+    // Sincronizar campo oculto al enviar
+    document.getElementById('formVerificar').addEventListener('submit', function () {
+        dniHidden.value = dniInput.value;
+    });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block titulo %}Reportes consolidados · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Analítica institucional y exportación multi-módulo{% endblock %}
+
+{% block contenido %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+  <div>
+    <h1 class="h3 mb-1">Reportes Consolidados</h1>
+    <p class="text-muted mb-0">Indicadores integrados de padrón, empleabilidad, gestión documental, capacitaciones y campañas.</p>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{{ url_for('admin.reporte_consolidado_excel', id_facultad=id_facultad or '', fecha_desde=fecha_desde, fecha_hasta=fecha_hasta) }}" class="btn btn-success">
+      <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+    </a>
+    <a href="{{ url_for('admin.reporte_consolidado_pdf', id_facultad=id_facultad or '', fecha_desde=fecha_desde, fecha_hasta=fecha_hasta) }}" class="btn btn-danger">
+      <i class="bi bi-file-earmark-pdf me-1"></i>Exportar PDF
+    </a>
+  </div>
+</div>
+
+<form method="get" class="nexo-card p-3 mb-4 row g-3 align-items-end">
+  <div class="col-md-4">
+    <label class="form-label small fw-bold">Facultad</label>
+    <select name="id_facultad" class="form-select form-select-sm">
+      <option value="">Todas las facultades permitidas</option>
+      {% for f in facultades %}
+      <option value="{{ f.id_facultad }}" {% if id_facultad == f.id_facultad %}selected{% endif %}>{{ f.nombre }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small fw-bold">Desde</label>
+    <input type="date" name="fecha_desde" value="{{ fecha_desde }}" class="form-control form-control-sm">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small fw-bold">Hasta</label>
+    <input type="date" name="fecha_hasta" value="{{ fecha_hasta }}" class="form-control form-control-sm">
+  </div>
+  <div class="col-md-2 d-flex gap-2">
+    <button type="submit" class="btn btn-sm btn-primary w-100">Filtrar</button>
+    <a href="{{ url_for('admin.reportes_consolidados') }}" class="btn btn-sm btn-outline-secondary">Limpiar</a>
+  </div>
+</form>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="nexo-kpi-card p-3">
+      <small class="text-muted text-uppercase">Padrón y cuentas</small>
+      <div class="h3 mb-0 mt-1">{{ resumen.total_egresados }}</div>
+      <small class="text-muted">{{ resumen.con_cuenta }} con cuenta activa</small>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="nexo-kpi-card p-3">
+      <small class="text-muted text-uppercase">Seguimiento laboral</small>
+      <div class="h3 mb-0 mt-1">{{ resumen.empleos_actuales }}</div>
+      <small class="text-muted">{{ resumen.empleos_total }} empleos · {{ resumen.empleos_relacion }} afines</small>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="nexo-kpi-card p-3">
+      <small class="text-muted text-uppercase">Documentos digitales</small>
+      <div class="h3 mb-0 mt-1">{{ resumen.docs_total }}</div>
+      <small class="text-success">{{ resumen.docs_validados }} validados</small> · <small class="text-warning">{{ resumen.docs_pendientes }} pend.</small>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="nexo-kpi-card p-3">
+      <small class="text-muted text-uppercase">Capacitaciones</small>
+      <div class="h3 mb-0 mt-1">{{ resumen.cap_total }}</div>
+      <small class="text-muted">{{ resumen.cap_inscripciones }} inscritos · {{ resumen.cap_asistencias }} asist.</small>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-6">
+    <div class="nexo-card p-3">
+      <h2 class="h6 mb-3">Estado documental</h2>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between"><span>Validados</span><strong>{{ resumen.docs_validados }}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Pendientes / En revisión</span><strong>{{ resumen.docs_pendientes }}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Observados / Rechazados</span><strong>{{ resumen.docs_observados }}</strong></li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="nexo-card p-3">
+      <h2 class="h6 mb-3">Campañas y Bolsa Laboral</h2>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item d-flex justify-content-between"><span>Campañas totales / activas</span><strong>{{ resumen.camp_total }} / {{ resumen.camp_activas }}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Ofertas laborales activas</span><strong>{{ resumen.ofertas_activas }}</strong></li>
+        <li class="list-group-item d-flex justify-content-between"><span>Postulaciones en ámbito</span><strong>{{ resumen.postulaciones_total }}</strong></li>
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

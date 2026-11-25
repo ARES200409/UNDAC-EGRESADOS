@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block titulo %}Centro de administración · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Administración / Control de la plataforma{% endblock %}
+{% block contenido %}
+<div class="v91-panel v91-admin">
+  <section class="v91-admin-hero nexo-v92-photo-hero" aria-labelledby="titulo-admin">
+    <div class="v91-admin-hero-main">
+      <div class="v91-kicker"><i class="bi bi-shield-lock" aria-hidden="true"></i> CENTRO DE CONTROL · ADMINISTRADOR</div>
+      <h1 id="titulo-admin">La operación del sistema, <span>bajo control.</span></h1>
+      <p>Gestiona accesos, asignaciones y catálogos académicos. Este espacio controla la plataforma; no decide la contratación de egresados.</p>
+      <div class="v91-action-line">
+        <a class="v91-btn v91-btn-light" href="{{ url_for('admin.nuevo_personal') }}"><i class="bi bi-person-plus"></i> Crear personal</a>
+        <a class="v91-btn v91-btn-ghost-light" href="{{ url_for('admin.catalogos') }}"><i class="bi bi-diagram-3"></i> Gestionar estructura académica</a>
+      </div>
+    </div>
+    <div class="v91-admin-stamp" aria-label="Resumen de cuentas">
+      <div class="v91-admin-stamp-icon"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
+      <strong>{{ cuentas_personal }}</strong><span>cuentas institucionales</span>
+      <small>{{ personal_total }} fichas de personal registradas</small>
+    </div>
+  </section>
+
+  
+  <aside class="nexo-ia-role-story" aria-label="Presentación del espacio de trabajo">
+    <img src="{{ url_for('static', filename='img/ia_analitica_tecnologica.webp') }}" alt="Escena conceptual IA relacionada con las actividades de este rol" loading="lazy">
+    <div><span>Tu espacio de trabajo</span><h2>Gestión clara y confiable</h2><p>La administración configura accesos, catálogos y reglas del sistema; las métricas se obtienen de MySQL.</p></div>
+  </aside>
+<section aria-label="Indicadores administrativos" class="v91-stat-grid">
+    <div class="v91-stat"><i class="bi bi-building v93-stat-icon" aria-hidden="true"></i><span>Facultades registradas</span><strong>{{ facultades_total }}</strong><small>Estructura académica del sistema</small></div>
+    <div class="v91-stat"><i class="bi bi-diagram-3 v93-stat-icon" aria-hidden="true"></i><span>Programas de estudio</span><strong>{{ programas_total }}</strong><small>Organización curricular</small></div>
+    <div class="v91-stat"><i class="bi bi-mortarboard v93-stat-icon" aria-hidden="true"></i><span>Egresados en padrón</span><strong>{{ total }}</strong><small>Registros disponibles</small></div>
+    <div class="v91-stat"><i class="bi bi-clipboard-data v93-stat-icon" aria-hidden="true"></i><span>Encuestas creadas</span><strong>{{ encuestas_total }}</strong><small>Todas las etapas</small></div>
+  </section>
+
+  <div class="v91-two-col v91-admin-work">
+    <section class="v91-card" aria-labelledby="configuracion-title">
+      <div class="v91-section-header"><div><span class="v91-eyebrow">CONFIGURACIÓN</span><h2 id="configuracion-title">Operaciones administrativas</h2></div><i class="bi bi-sliders2" aria-hidden="true"></i></div>
+      <div class="v91-link-list">
+        <a href="{{ url_for('admin.personal') }}"><i class="bi bi-person-badge"></i><span><strong>Cuentas y permisos</strong><small>Crear, asignar y administrar personal institucional</small></span><i class="bi bi-arrow-up-right"></i></a>
+        <a href="{{ url_for('admin.catalogos') }}"><i class="bi bi-diagram-3"></i><span><strong>Facultades, programas y currículas</strong><small>Validar el catálogo usado para asociar egresados</small></span><i class="bi bi-arrow-up-right"></i></a>
+        <a href="{{ url_for('admin.empresas') }}"><i class="bi bi-buildings"></i><span><strong>Directorio de organizaciones</strong><small>Gestionar las fuentes empresariales registradas</small></span><i class="bi bi-arrow-up-right"></i></a>
+        <a href="{{ url_for('admin.ofertas') }}"><i class="bi bi-briefcase"></i><span><strong>Convocatorias internas</strong><small>Supervisar publicaciones administradas en NEXO</small></span><i class="bi bi-arrow-up-right"></i></a>
+      </div>
+    </section>
+    <div class="v91-column-stack">
+      <section class="v91-card v91-card-feature" aria-labelledby="operacion-title">
+        <span class="v91-eyebrow">MONITOREO DE MÓDULOS</span><h2 id="operacion-title">Vinculación y oportunidades</h2>
+        <div class="v91-mini-row"><span>Organizaciones registradas</span><strong>{{ empresas_total }}</strong></div>
+        <div class="v91-mini-row"><span>Vacantes vigentes</span><strong>{{ puestos_activos }}</strong></div>
+        <div class="v91-mini-row"><span>Postulaciones internas</span><strong>{{ postulaciones_total if postulaciones_total is not none else '—' }}</strong></div>
+        <p class="v91-footnote">Estas cifras no demuestran contrataciones ni tasa de empleo.</p>
+        <a class="v91-text-link" href="{{ url_for('admin.empleabilidad') }}">Ver indicadores de seguimiento <i class="bi bi-arrow-up-right"></i></a>
+      </section>
+      <section class="v91-card v91-advice"><i class="bi bi-info-circle"></i><div><strong>Separación de responsabilidades</strong><p>El administrador asegura la calidad de los datos, las cuentas y las reglas de acceso. Las acciones de seguimiento corresponden a UTSAG y responsables académicos.</p></div></section>
+    </div>
+  </div>
+  {% include 'admin/_v11_graficos_interactivos.html' %}
+  {% if rol_activo != 'docente_responsable' %}
+  <details class="v11-legacy"><summary>Ver también gráficos tradicionales y cifras detalladas</summary>
+    {% include 'admin/_graficos_sistemas.html' %}
+  </details>
+  {% endif %}
+</div>
+{% endblock %}

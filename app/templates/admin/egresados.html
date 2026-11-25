@@ -1,0 +1,204 @@
+<!-- app/templates/admin/egresados.html -->
+{% extends "base.html" %}
+{% block titulo %}Egresados{% endblock %}
+
+{% block contenido %}
+<div class="nexo-module-kicker"><span class="nexo-live-dot"></span> UNDAC · Gestión institucional</div>
+
+<style>
+    .tabla-egresados {
+        font-size: 0.8125rem; /* ~13px */
+    }
+    .tabla-egresados td, .tabla-egresados th {
+        padding-top: 0.55rem;
+        padding-bottom: 0.55rem;
+    }
+</style>
+
+<!-- ENCABEZADO Y ACCIONES -->
+<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2 mb-3">
+    <div>
+        <h4 class="mb-0 fw-bold"><i class="bi bi-people me-2"></i>Egresados</h4>
+        <small class="text-muted">Gestión y consulta de egresados registrados</small>
+    </div>
+    
+    <div class="d-flex gap-2 align-items-center">
+        {% if hay_filtro %}
+            <span id="v11-total" class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                {{ total }} resultado(s)
+            </span>
+        {% endif %}
+        {% if rol_activo in ('administrador', 'utsag') %}
+            <a href="{{ url_for('admin.nuevo_egresado') }}" class="btn btn-sm btn-primary">
+                <i class="bi bi-person-plus me-1"></i>Registrar egresado
+            </a>
+        {% endif %}
+        
+        <div class="dropdown">
+            <button class="btn btn-sm btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-download me-1"></i>Exportar
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                <li>
+                    <a class="dropdown-item small" href="{{ url_for('admin.exportar_egresados', formato='excel', **filtros) }}">
+                        <i class="bi bi-file-earmark-excel me-2 text-success"></i>Excel (.xlsx)
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>  
+
+<!-- FILTROS VISIBLES Y ORDENADOS -->
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <form method="GET" action="{{ url_for('admin.egresados') }}" id="v11-filtros-egresados" hx-get="{{ url_for('admin.egresados') }}" hx-trigger="submit, change delay:200ms, keyup changed delay:500ms from:input[name=buscar]" hx-target="#nexo-lista-resultados" hx-swap="outerHTML" hx-push-url="true" hx-indicator="#v11-cargando">
+            
+            <!-- Barra principal de texto -->
+            <div class="row g-2 mb-3">
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                        <input type="text" name="buscar" class="form-control border-start-0 ps-0"
+                            placeholder="Buscar por nombres, apellidos, DNI, correo o teléfono..."
+                            value="{{ filtros.get('buscar', '') }}">
+                    </div>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>Buscar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid de filtros extendidos -->
+            <div class="row g-2">
+                {% if rol_activo != 'docente_responsable' and facultades %}
+                <div class="col-sm-6 col-md-3">
+                    <label class="form-label text-muted small mb-1">Facultad</label>
+                    <select name="id_facultad" id="select-facultad" class="form-select form-select-sm">
+                        <option value="">Facultad de Ingeniería</option>
+                        {% for f in facultades %}
+                        <option value="{{ f.id_facultad }}" {{ 'selected' if f.id_facultad == id_facultad }}>{{ f.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-sm-6 col-md-3">
+                    <label class="form-label text-muted small mb-1">Programa</label>
+                    <select name="id_programa" id="select-programa" class="form-select form-select-sm">
+                        <option value="">Todos los programas</option>
+                        {% for p in programas %}
+                        <option value="{{ p.id_programa }}" {{ 'selected' if p.id_programa == id_programa }}>{{ p.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                {% endif %}
+
+                <div class="col-sm-6 col-md-3">
+                    <label class="form-label text-muted small mb-1">Nivel Alcanzado</label>
+                    <select name="nivel" class="form-select form-select-sm">
+                        <option value="">Todos los niveles</option>
+                        <optgroup label="Exactamente">
+                            <option value="solo_bachiller"   {{ 'selected' if filtros.get('nivel')=='solo_bachiller' }}>Solo Bachiller</option>
+                            <option value="solo_titulado"    {{ 'selected' if filtros.get('nivel')=='solo_titulado' }}>Solo Titulado</option>
+                            <option value="solo_maestria"    {{ 'selected' if filtros.get('nivel')=='solo_maestria' }}>Solo Maestría</option>
+                            <option value="solo_doctorado"   {{ 'selected' if filtros.get('nivel')=='solo_doctorado' }}>Solo Doctorado</option>
+                            <option value="solo_phd"         {{ 'selected' if filtros.get('nivel')=='solo_phd' }}>Solo PhD</option>
+                        </optgroup>
+                        <optgroup label="Al menos">
+                            <option value="bachiller"  {{ 'selected' if filtros.get('nivel')=='bachiller' }}>Al menos Bachiller</option>
+                            <option value="titulado"   {{ 'selected' if filtros.get('nivel')=='titulado' }}>Al menos Titulado</option>
+                            <option value="maestria"   {{ 'selected' if filtros.get('nivel')=='maestria' }}>Al menos Maestría</option>
+                            <option value="doctorado"  {{ 'selected' if filtros.get('nivel')=='doctorado' }}>Al menos Doctorado</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <label class="form-label text-muted small mb-1">Año de Egreso</label>
+                    <select name="anio_egreso" class="form-select form-select-sm">
+                        <option value="">Todos los años</option>
+                        {% for a in anios_eg %}
+                        <option value="{{ a }}" {{ 'selected' if filtros.get('anio_egreso')==(a|string) }}>{{ a }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <label class="form-label text-muted small mb-1">Año de Ingreso</label>
+                    <select name="anio_ingreso" class="form-select form-select-sm">
+                        <option value="">Todos los años</option>
+                        {% for a in anios_ing %}
+                        <option value="{{ a }}" {{ 'selected' if filtros.get('anio_ingreso')==(a|string) }}>{{ a }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <label class="form-label text-muted small mb-1">Currícula</label>
+                    <select name="curricula" class="form-select form-select-sm">
+                        <option value="">Todas</option>
+                        {% for c in curriculas %}
+                        <option value="{{ c }}" {{ 'selected' if filtros.get('curricula')==c }}>{{ c }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <label class="form-label text-muted small mb-1">Modalidad Período</label>
+                    <select name="letra_periodo" class="form-select form-select-sm">
+                        <option value="">Todas</option>
+                        <option value="A" {{ 'selected' if filtros.get('letra_periodo')=='A' }}>A — Impar</option>
+                        <option value="B" {{ 'selected' if filtros.get('letra_periodo')=='B' }}>B — Par</option>
+                        <option value="D" {{ 'selected' if filtros.get('letra_periodo')=='D' }}>D — Aplazados impar</option>
+                        <option value="E" {{ 'selected' if filtros.get('letra_periodo')=='E' }}>E — Aplazados par</option>
+                        <option value="S" {{ 'selected' if filtros.get('letra_periodo')=='S' }}>S — Subsanación</option>
+                        <option value="N" {{ 'selected' if filtros.get('letra_periodo')=='N' }}>N — Nivelación</option>
+                        <option value="J" {{ 'selected' if filtros.get('letra_periodo')=='J' }}>J — Dirigido</option>
+                    </select>
+                </div>
+
+                <div class="col-sm-6 col-md-3">
+                    <label class="form-label text-muted small mb-1">Género</label>
+                    <select name="genero" class="form-select form-select-sm">
+                        <option value="">Todos</option>
+                        <option value="M" {{ 'selected' if filtros.get('genero')=='M' }}>Masculino</option>
+                        <option value="F" {{ 'selected' if filtros.get('genero')=='F' }}>Femenino</option>
+                    </select>
+                </div>
+            </div>
+
+            {% if hay_filtro %}
+            <div class="text-end mt-2">
+                <a href="{{ url_for('admin.egresados') }}" class="btn btn-sm btn-link text-danger text-decoration-none p-0 small">
+                    <i class="bi bi-x-circle me-1"></i>Limpiar todos los filtros
+                </a>
+            </div>
+            {% endif %}
+
+        </form>
+    </div>
+</div>
+
+<div id="v11-cargando" role="status">Actualizando resultados…</div>
+{% include 'admin/_v11_resultados_egresados.html' %}
+
+{% if rol_activo != 'docente_responsable' and facultades %}
+<script>
+document.getElementById('select-facultad').addEventListener('change', function () {
+    const idFacultad = this.value;
+    const selectPrograma = document.getElementById('select-programa');
+    selectPrograma.innerHTML = '<option value="">Todos los programas</option>';
+    if (!idFacultad) return;
+    fetch(`{{ url_for('admin.programas_por_facultad') }}?id_facultad=${idFacultad}`)
+        .then(r => r.json())
+        .then(programas => programas.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id; opt.textContent = p.nombre;
+            selectPrograma.appendChild(opt);
+        }));
+});
+</script>
+{% endif %}
+
+{% endblock %}

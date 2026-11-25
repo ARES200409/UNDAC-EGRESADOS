@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}Postulaciones · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Oportunidades / Seguimiento de postulaciones{% endblock %}
+{% block contenido %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/v8_profesional.css') }}">
+<section class="v8-page">
+  <header class="v8-header"><div><span class="v8-overline">GESTIÓN DE OPORTUNIDADES</span><h1>Postulaciones <em>recibidas</em></h1><p>Seguimiento de postulaciones internas a vacantes publicadas en NEXO UNDAC.</p></div><a class="btn btn-outline-secondary" href="{{ url_for('admin.ofertas') }}">Volver a ofertas</a></header>
+  <div class="v8-table-wrap"><table class="table table-hover align-middle mb-0"><thead><tr><th>Oferta</th><th>Postulante</th><th>Fecha</th><th>Estado</th><th>Acción</th></tr></thead><tbody>
+  {% for fila in filas %}
+    <tr><td><strong>{{ fila.oferta.titulo }}</strong><div class="text-muted small">{{ fila.oferta.nombre_empresa() }}</div></td>
+        <td>{{ fila.egresado.nombre_completo() }}<div class="text-muted small">{{ fila.egresado.curricula.programa.nombre }}</div></td>
+        <td>{{ fila.fecha.strftime('%d/%m/%Y') if fila.fecha else '—' }}</td>
+        <td><span class="badge text-bg-secondary">{{ fila.estado | replace('_', ' ') | title }}</span></td>
+        <td><form method="post" action="{{ url_for('admin.cambiar_estado_postulacion', id_postulacion=fila.id_postulacion) }}" class="d-flex gap-2">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="_csrf" value="{{ csrf_admin }}"><select class="form-select form-select-sm" name="estado"><option value="enviada" {{ 'selected' if fila.estado=='enviada' }}>Enviada</option><option value="en_revision" {{ 'selected' if fila.estado=='en_revision' }}>En revisión</option></select><button type="submit" class="btn btn-primary btn-sm">Guardar</button></form></td></tr>
+  {% else %}<tr><td colspan="5" class="text-center text-muted py-5">No existen postulaciones internas registradas en tu ámbito de gestión.</td></tr>{% endfor %}
+  </tbody></table></div>
+  <p class="v8-footnote">Información privada: consulta permitida únicamente al personal autorizado. No difundas perfiles de egresados sin su consentimiento.</p>
+</section>
+{% endblock %}

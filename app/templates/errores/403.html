@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block titulo %}Acceso restringido · NEXO UNDAC{% endblock %}
+{% block contenido %}
+<section class="nexo-v92-error" role="alert"><i class="bi bi-shield-lock" aria-hidden="true"></i><span>PERMISOS DEL SISTEMA</span><h1>Esta información no corresponde a tu ámbito.</h1><p>No tienes autorización para consultar este recurso. Puedes volver al panel de tu rol o contactar con el administrador para revisar tus asignaciones.</p><a class="nexo-v92-button nexo-v92-button-primary" href="{{ url_for('admin.dashboard') if current_user.is_authenticated and not current_user.es_egresado() else url_for('public.index') }}">Volver al inicio</a></section>
+{% endblock %}

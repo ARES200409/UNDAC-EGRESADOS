@@ -1,0 +1,110 @@
+<!-- app/templates/admin/_form_empresa.html -->
+<div class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label small fw-semibold">RUC</label>
+        <div class="input-group input-group-sm">
+            <input type="text" id="ruc" name="ruc" class="form-control" maxlength="11" placeholder="11 dígitos" 
+                   value="{{ form_data.ruc if form_data else (empresa.ruc if empresa else '') }}">
+            <button class="btn btn-outline-secondary" type="button" id="btn-buscar-ruc">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+        <div id="ruc-feedback" class="form-text small"></div>
+    </div>
+
+    <div class="col-md-8">
+        <label class="form-label small fw-semibold">Razón Social <span class="text-danger">*</span></label>
+        <input type="text" name="razon_social" class="form-control form-control-sm" required 
+               value="{{ form_data.razon_social if form_data else (empresa.razon_social if empresa else '') }}">
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label small fw-semibold">Nombre Comercial</label>
+        <input type="text" name="nombre_comercial" class="form-control form-control-sm" 
+               value="{{ form_data.nombre_comercial if form_data else (empresa.nombre_comercial if empresa else '') }}">
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label small fw-semibold">Sector</label>
+        <select name="id_sector" class="form-select form-select-sm">
+            <option value="">-- Seleccionar --</option>
+            {% set sel_sector = (form_data.id_sector|int if form_data and form_data.id_sector else (empresa.id_sector if empresa else 0)) %}
+            {% for s in sectores %}
+                <option value="{{ s.id_sector }}" {{ 'selected' if s.id_sector == sel_sector }}>{{ s.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label small fw-semibold">Tipo Empresa</label>
+        {% set sel_tipo = form_data.tipo_empresa if form_data else (empresa.tipo_empresa if empresa else '') %}
+        <select name="tipo_empresa" class="form-select form-select-sm">
+            <option value="">-- Seleccionar --</option>
+            {% for t in ['Privada', 'Pública', 'ONG', 'Mypime', 'Otro'] %}
+                <option value="{{ t }}" {{ 'selected' if t == sel_tipo }}>{{ t }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-12">
+        <label class="form-label small fw-semibold">Dirección</label>
+        <input type="text" name="direccion" class="form-control form-control-sm" 
+               value="{{ form_data.direccion if form_data else (empresa.direccion if empresa else '') }}">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label small fw-semibold">Distrito</label>
+        <input type="text" name="distrito" class="form-control form-control-sm" 
+               value="{{ form_data.distrito if form_data else (empresa.distrito if empresa else '') }}">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label small fw-semibold">Provincia</label>
+        <input type="text" name="provincia" class="form-control form-control-sm" 
+               value="{{ form_data.provincia if form_data else (empresa.provincia if empresa else '') }}">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label small fw-semibold">Región / Departamento</label>
+        <input type="text" name="region" class="form-control form-control-sm" 
+               value="{{ form_data.region if form_data else (empresa.region if empresa else '') }}">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label small fw-semibold">País</label>
+        <input type="text" name="pais" class="form-control form-control-sm" 
+               value="{{ form_data.pais if form_data else (empresa.pais if empresa else 'Perú') }}">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label small fw-semibold">Teléfono</label>
+        <input type="text" name="telefono" class="form-control form-control-sm" 
+               value="{{ form_data.telefono if form_data else (empresa.telefono if empresa else '') }}">
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label small fw-semibold">Sitio Web</label>
+        <input type="url" name="sitio_web" class="form-control form-control-sm" placeholder="https://..." 
+               value="{{ form_data.sitio_web if form_data else (empresa.sitio_web if empresa else '') }}">
+    </div>
+</div>
+
+<script>
+document.getElementById('btn-buscar-ruc')?.addEventListener('click', function() {
+    const ruc = document.getElementById('ruc').value.trim();
+    const feedback = document.getElementById('ruc-feedback');
+    if (!ruc) return;
+
+    fetch(`{{ url_for('admin.buscar_ruc') }}?ruc=${ruc}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.existe) {
+                feedback.className = 'form-text small text-danger';
+                feedback.textContent = `Este RUC ya está registrado por: ${data.nombre}`;
+            } else {
+                feedback.className = 'form-text small text-success';
+                feedback.textContent = 'RUC disponible.';
+            }
+        });
+});
+</script>

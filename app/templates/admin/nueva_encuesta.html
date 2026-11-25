@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block titulo %}Nueva encuesta{% endblock %}
+{% block contenido %}
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{{ url_for('admin.encuestas') }}" class="btn btn-sm btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i>
+    </a>
+    <h4 class="mb-0">Nueva encuesta</h4>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3">
+                <div class="col-sm-8">
+                    <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                    <input type="text" name="nombre" class="form-control" required
+                           placeholder="Ej: Encuesta de seguimiento al egresado 2026">
+                </div>
+                <div class="col-sm-4">
+                    <label class="form-label">Año <span class="text-danger">*</span></label>
+                    <input type="number" name="anio" class="form-control" required value="{{ anio_actual }}">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Descripción</label>
+                    <textarea name="descripcion" class="form-control" rows="2"
+                              placeholder="Breve explicación del propósito de esta encuesta (opcional)"></textarea>
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Fecha de inicio</label>
+                    <input type="date" name="fecha_inicio" class="form-control">
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Fecha de fin</label>
+                    <input type="date" name="fecha_fin" class="form-control">
+                </div>
+            </div>
+            <div class="alert alert-info small mt-3 mb-0">
+                <i class="bi bi-info-circle me-1"></i>
+                La encuesta se crea como <strong>borrador</strong>. Después de agregar preguntas,
+                podrás publicarla para que los egresados la respondan.
+            </div>
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-1"></i>Crear y agregar preguntas
+                </button>
+                <a href="{{ url_for('admin.encuestas') }}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

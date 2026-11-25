@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="theme-color" content="#142b36">
+  <title>{% block title %}Egresados UNDAC{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/public.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/portada_v5.css') }}">
+  {% block head_extra %}{% endblock %}
+  <!-- Correcciones visuales V6 cargadas después de los CSS de cada página -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo_v6.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/v9_institucional.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/v92_experiencia.css') }}">
+  <script src="{{ url_for('static', filename='js/tema.js') }}" defer></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexosi_v10.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo_ia_visual.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/v102_asignaciones.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/nexo_chat.css') }}?v=1">
+</head>
+<body class="nexo-public">
+  <a href="#principal" class="visually-hidden-focusable position-absolute top-0 start-0 p-2 bg-white">Saltar al contenido principal</a>
+  <div class="nexo-public-shell">
+    <header class="nexo-public-header">
+      <div class="nexo-public-top container-fluid px-lg-5 px-3">
+        <a class="nexo-brand" href="{{ url_for('public.index') }}" aria-label="Ir al inicio de NEXO UNDAC">
+          <span class="nexo-brand-mark nexo-v92-public-mark"><img src="{{ url_for('static', filename='img/logo_undac_original.png') }}" alt="Escudo institucional UNDAC" width="54" height="54"></span>
+          <span><strong>NEXO <em>UNDAC</em></strong><small>Seguimiento de egresados de Sistemas</small></span>
+        </a>
+        <div class="nexo-top-right">
+          <span class="nexo-university-name d-none d-xl-inline">Universidad Nacional Daniel Alcides Carrión</span>
+          <button type="button" class="nexo-theme-toggle" data-theme-toggle aria-label="Cambiar apariencia"><i class="bi bi-moon-stars" data-theme-icon aria-hidden="true"></i><span class="nexo-theme-label" data-theme-label>Modo</span></button>
+          <a href="{{ url_for('auth.login') }}" class="nexo-login-link"><i class="bi bi-box-arrow-in-right" aria-hidden="true"></i><span>Ingresar</span></a>
+        </div>
+      </div>
+      <nav class="nexo-public-nav container-fluid px-lg-5 px-3" aria-label="Secciones públicas">
+        <a href="{{ url_for('public.index') }}" {% if request.endpoint == 'public.index' %}aria-current="page"{% endif %}>Inicio</a>
+        <a href="{{ url_for('public.quienes_somos') }}" {% if request.endpoint == 'public.quienes_somos' %}aria-current="page"{% endif %}>La plataforma</a>
+        <a href="{{ url_for('public.noticias') }}" {% if request.endpoint == 'public.noticias' %}aria-current="page"{% endif %}>Noticias</a>
+        <a href="{{ url_for('public.ofertas') }}" {% if request.endpoint == 'public.ofertas' %}aria-current="page"{% endif %}>Oportunidades</a>
+        <a href="{{ url_for('public.index') }}#conoce-el-sistema">Conoce el sistema</a>
+        <a href="{{ url_for('public.index') }}#contacto">Contacto</a>
+        <a href="{{ url_for('auth.verificar') }}">Soy egresado</a>
+      </nav>
+    </header>
+
+    <main id="principal">{% block content %}{% endblock %}</main>
+
+    <footer class="nexo-public-footer nexo-footer-v5">
+      <div class="nexo-footer-grid container-fluid px-lg-5 px-3">
+        <section class="nexo-footer-intro" aria-label="Identidad y créditos">
+          <strong class="nexo-footer-wordmark">NEXO <span>UNDAC</span></strong>
+          <p>Plataforma de seguimiento académico y profesional de egresados de Ingeniería de Sistemas y Computación.</p>
+          <div class="nexo-footer-credits">
+            <img src="{{ url_for('static', filename='img/logo_sistemas_original.png') }}" alt="Emblema original de Sistemas y Computación" width="52" height="52" loading="lazy">
+            <span>Proyecto desarrollado desde la <strong>Escuela Profesional de Ingeniería de Sistemas y Computación</strong> para el seguimiento institucional.</span>
+          </div>
+        </section>
+        <section>
+          <h2>Plataforma</h2>
+          <a href="{{ url_for('public.index') }}">Inicio</a>
+          <a href="{{ url_for('public.quienes_somos') }}">Acerca del sistema</a>
+          <a href="{{ url_for('public.ofertas') }}">Bolsa laboral</a>
+          <a href="{{ url_for('auth.verificar') }}">Verificar condición de egresado</a>
+          <a href="{{ url_for('auth.login') }}">Ingresar a mi cuenta</a>
+          <a href="https://enlinea.sunedu.gob.pe/" target="_blank" rel="noopener noreferrer"><i class="bi bi-award" aria-hidden="true"></i> Consulta de grados y títulos - SUNEDU</a>
+        </section>
+        <section>
+          <h2>Universidad</h2>
+          <p><i class="bi bi-geo-alt" aria-hidden="true"></i> Ciudad universitaria: Av. Daniel Alcides Carrión s/n, Pasco, Perú</p>
+          <a href="https://www.google.com/maps/search/?api=1&amp;query=Universidad%20Nacional%20Daniel%20Alcides%20Carri%C3%B3n%20Ciudad%20Universitaria%20Pasco" target="_blank" rel="noopener noreferrer"><i class="bi bi-map" aria-hidden="true"></i> Buscar ubicación en Google Maps</a>
+          <a href="mailto:atencion@undac.edu.pe"><i class="bi bi-envelope" aria-hidden="true"></i> atencion@undac.edu.pe</a>
+          <a href="https://undac.edu.pe/" target="_blank" rel="noopener noreferrer"><i class="bi bi-globe2" aria-hidden="true"></i> Portal institucional UNDAC</a>
+        </section>
+        <section>
+          <h2>Comunidad</h2>
+          <a href="https://www.facebook.com/sistemaspasco/" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook" aria-hidden="true"></i> Facebook de Sistemas</a>
+          <a href="{{ url_for('public.noticias') }}"><i class="bi bi-newspaper" aria-hidden="true"></i> Noticias y actividades</a>
+          <p class="nexo-footer-note">El contacto de soporte exclusivo del sistema se publicará cuando sea designado.</p>
+        </section>
+      </div>
+      <div class="nexo-footer-bottom container-fluid px-lg-5 px-3">
+        <span>© {{ anio if anio is defined else 2026 }} NEXO UNDAC · Proyecto de plataforma institucional</span>
+        <span>Ingeniería de Sistemas y Computación · Pasco, Perú</span>
+      </div>
+    </footer>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="{{ url_for('static', filename='js/portada_v5.js') }}" defer></script>
+  {% block scripts_extra %}{% endblock %}
+{% include "includes/_nexo_asistente.html" %}
+<script src="{{ url_for('static', filename='js/nexo_chat.js') }}?v=1" defer></script>
+</body>
+</html>

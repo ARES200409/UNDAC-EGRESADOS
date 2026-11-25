@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block titulo %}Seguimiento institucional UTSAG · NEXO UNDAC{% endblock %}
+{% block subtitulo %}UTSAG / Observatorio y resultados{% endblock %}
+{% block contenido %}
+<div class="v91-panel v91-utsag">
+  <section class="v91-utsag-hero nexo-v92-photo-hero" aria-labelledby="titulo-utsag">
+    <div>
+      <span class="v91-kicker"><i class="bi bi-graph-up-arrow"></i> UTSAG · GESTIÓN DE RESULTADOS</span>
+      <h1 id="titulo-utsag">Datos que ayudan a <em>dar seguimiento.</em></h1>
+      <p>Analiza la participación de los egresados, los registros laborales declarados y los resultados de las encuestas en Ingeniería de Sistemas y Computación.</p>
+      <div class="v91-action-line"><a class="v91-btn v91-btn-teal" href="{{ url_for('admin.encuestas') }}"><i class="bi bi-clipboard2-check"></i> Gestionar encuestas</a><a class="v91-btn v91-btn-outline" href="{{ url_for('admin.informe_pdf') }}"><i class="bi bi-file-earmark-pdf"></i> Exportar informe</a></div>
+    </div>
+    <aside class="v91-utsag-coverage" aria-label="Cobertura de registro">
+      <span class="v91-eyebrow">COBERTURA DEL PADRÓN</span><strong>{{ (cobertura_pct|string ~ '%') if cobertura_pct is not none else 'Sin datos' }}</strong>
+      <div class="v91-bar" role="progressbar" aria-valuenow="{{ cobertura_pct or 0 }}" aria-valuemin="0" aria-valuemax="100" aria-label="Cobertura de cuentas"><span style="width:{{ cobertura_pct or 0 }}%"></span></div>
+      <p>{{ registrados }} egresados con cuenta, de {{ total }} en el padrón.</p>
+      <small>Una cuenta activa no demuestra inserción laboral.</small>
+    </aside>
+  </section>
+
+  
+  <aside class="nexo-ia-role-story" aria-label="Presentación del espacio de trabajo">
+    <img src="{{ url_for('static', filename='img/ia_analitica_tecnologica.webp') }}" alt="Escena conceptual IA relacionada con las actividades de este rol" loading="lazy">
+    <div><span>Tu espacio de trabajo</span><h2>Evidencias para el observatorio</h2><p>Compara la cobertura, participación y empleabilidad declarada de Sistemas sin atribuir resultados a registros ausentes.</p></div>
+  </aside>
+<section class="v91-stat-grid" aria-label="Indicadores UTSAG">
+    <div class="v91-stat"><i class="bi bi-people v93-stat-icon" aria-hidden="true"></i><span>Egresados incorporados</span><strong>{{ total }}</strong><small>Registros institucionales</small></div>
+    <div class="v91-stat"><i class="bi bi-briefcase v93-stat-icon" aria-hidden="true"></i><span>Empleo actual reportado</span><strong>{{ con_empleo_actual }}</strong><small>No equivale a la tasa oficial de empleo</small></div>
+    <div class="v91-stat"><i class="bi bi-clipboard-check v93-stat-icon" aria-hidden="true"></i><span>Encuestas publicadas</span><strong>{{ encuestas_publicadas }}</strong><small>Instrumentos disponibles</small></div>
+    <div class="v91-stat"><i class="bi bi-chat-left-text v93-stat-icon" aria-hidden="true"></i><span>Personas que respondieron</span><strong>{{ participantes_encuestas }}</strong><small>Encuestados distintos identificables</small></div>
+  </section>
+
+  <div class="v91-two-col v91-utsag-grid">
+    <section class="v91-card" aria-labelledby="facultades-title"><div class="v91-section-header"><div><span class="v91-eyebrow">ANÁLISIS / 01</span><h2 id="facultades-title">Participación por facultad</h2></div><i class="bi bi-bar-chart-steps"></i></div>
+      <p class="v91-caption">Compara egresados incorporados y cuentas activadas, sin interpretar registros ausentes como desempleo.</p>
+      {% if facultades_resumen %}
+      <div class="v91-faculty-list">
+        {% for f in facultades_resumen %}
+        {% set pct = ((f.cuentas / f.total) * 100) if f.total else 0 %}
+        <div class="v91-faculty-item"><div class="v91-list-head"><strong>{{ f.nombre }}</strong><span>{{ f.cuentas }} / {{ f.total }}</span></div>
+          <div class="v91-bar"><span style="width:{{ pct|round(1) }}%"></span></div><small>{{ pct|round(1) }}% con cuenta</small>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}<div class="v91-empty">Todavía no existen facultades registradas.</div>{% endif %}
+      <a class="v91-text-link" href="{{ url_for('admin.egresados') }}">Explorar padrón <i class="bi bi-arrow-up-right"></i></a>
+    </section>
+    <div class="v91-column-stack">
+      <section class="v91-card v91-utsag-surveys" aria-labelledby="encuestas-title"><span class="v91-eyebrow">ANÁLISIS / 02</span><h2 id="encuestas-title">Participación en encuestas</h2><strong class="v91-big-num">{{ participantes_encuestas }}</strong><p>egresados distintos con respuestas registradas</p>
+        <div class="v91-mini-row"><span>Encuestas cerradas</span><strong>{{ encuestas_cerradas }}</strong></div><a class="v91-text-link" href="{{ url_for('admin.encuestas') }}">Ver instrumentos y resultados <i class="bi bi-arrow-up-right"></i></a>
+      </section>
+      <section class="v91-card v91-advice"><i class="bi bi-shield-check"></i><div><strong>Indicadores con evidencia</strong><p>Los empleos reportados por egresados no deben confundirse con colocaciones verificadas por una empresa.</p><a class="v91-text-link" href="{{ url_for('admin.empleabilidad') }}">Examinar intermediación y KPI <i class="bi bi-arrow-up-right"></i></a></div></section>
+    </div>
+  </div>
+  <section class="v91-card v91-utsag-years" aria-labelledby="cohort-title"><div class="v91-section-header"><div><span class="v91-eyebrow">EVOLUCIÓN / 03</span><h2 id="cohort-title">Promociones registradas</h2></div><i class="bi bi-calendar3"></i></div>
+    {% if anios %}<div class="v91-year-row">{% for anio in anios %}<div><small>{{ anio }}</small><strong>{{ datos_anio['egresados'][loop.index0] }}</strong><span>egresados</span></div>{% endfor %}</div>{% else %}<div class="v91-empty">Aún no existen años de egreso registrados. No se inventan datos para completar el gráfico.</div>{% endif %}
+  </section>
+  {% include 'admin/_v11_graficos_interactivos.html' %}
+  {% if rol_activo != 'docente_responsable' %}
+  <details class="v11-legacy"><summary>Ver también gráficos tradicionales y cifras detalladas</summary>
+    {% include 'admin/_graficos_sistemas.html' %}
+  </details>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Seguimiento por programa · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Docente responsable / Programas asignados{% endblock %}
+{% block contenido %}
+<div class="v91-panel v91-docente">
+  <section class="v91-docente-hero nexo-v92-photo-hero" aria-labelledby="titulo-docente"><div>
+    <span class="v91-kicker"><i class="bi bi-mortarboard"></i> SEGUIMIENTO ACADÉMICO · DOCENTE RESPONSABLE</span>
+    <h1 id="titulo-docente">Acompaña a quienes<br><em>ya egresaron.</em></h1>
+    <p>Consulta únicamente los programas que tienes a cargo e identifica registros académicos pendientes de completar.</p>
+    <div class="v91-action-line"><a class="v91-btn v91-btn-purple" href="{{ url_for('admin.egresados') }}"><i class="bi bi-people"></i> Ver mis egresados</a><a class="v91-btn v91-btn-outline" href="{{ url_for('admin.encuestas') }}"><i class="bi bi-clipboard-data"></i> Consultar encuestas</a></div>
+  </div><div class="v91-docente-portrait" aria-hidden="true"><i class="bi bi-mortarboard-fill"></i><span>TRAYECTORIA<br>Y SEGUIMIENTO</span></div></section>
+  
+  <aside class="nexo-ia-role-story" aria-label="Presentación del espacio de trabajo">
+    <img src="{{ url_for('static', filename='img/ia_docente_acompanamiento.webp') }}" alt="Escena conceptual IA relacionada con las actividades de este rol" loading="lazy">
+    <div><span>Tu espacio de trabajo</span><h2>El seguimiento comienza con las personas</h2><p>Revisa información de egresados asignados y orienta la actualización voluntaria de sus trayectorias.</p></div>
+  </aside>
+<section class="v91-docente-status" aria-label="Situación de registros">
+    <div><i class="bi bi-collection v93-doc-stat-icon" aria-hidden="true"></i><span>Programas asignados</span><strong>{{ programas_resumen|length }}</strong></div>
+    <div><i class="bi bi-people v93-doc-stat-icon" aria-hidden="true"></i><span>Egresados registrados</span><strong>{{ total }}</strong></div>
+    <div><i class="bi bi-person-check v93-doc-stat-icon" aria-hidden="true"></i><span>Cuentas habilitadas</span><strong>{{ registrados }}</strong></div>
+    <div class="v91-docente-alert"><i class="bi bi-calendar-x v93-doc-stat-icon" aria-hidden="true"></i><span>Sin año de egreso informado</span><strong>{{ pendientes_anio }}</strong><small>No equivale a estado laboral</small></div>
+  </section>
+  <div class="v91-two-col v91-docente-grid">
+    <section class="v91-card" aria-labelledby="recientes-title"><div class="v91-section-header"><div><span class="v91-eyebrow">SEGUIMIENTO DIRECTO</span><h2 id="recientes-title">Egresados incorporados recientemente</h2></div><i class="bi bi-clock-history"></i></div>
+      {% if egresados_recientes %}<div class="v91-graduates-list">
+      {% for e in egresados_recientes %}
+        <a href="{{ url_for('admin.ver_egresado', id=e.id_egresado) }}"><span class="v91-graduate-avatar">{{ (e.nombres or 'E')[:1]|upper }}</span><span class="v91-graduate-info"><strong>{{ e.apellido_paterno }} {{ e.apellido_materno or '' }}, {{ e.nombres }}</strong><small>Año de egreso: {{ e.anio_egreso if e.anio_egreso else 'Sin registrar' }}</small></span><i class="bi bi-chevron-right"></i></a>
+      {% endfor %}</div>
+      {% else %}<div class="v91-empty">No hay egresados registrados en tus programas asignados.</div>{% endif %}
+    </section>
+    <div class="v91-column-stack">
+      <section class="v91-card" aria-labelledby="programas-doc-title"><span class="v91-eyebrow">PROGRAMAS A CARGO</span><h2 id="programas-doc-title">Mis programas</h2>
+        {% for p in programas_resumen %}<a class="v91-docente-program" href="{{ url_for('admin.egresados', id_programa=p.id) }}"><i class="bi bi-book-half"></i><span><strong>{{ p.nombre }}</strong><small>{{ p.total }} egresados · {{ p.cuentas }} cuentas</small></span><i class="bi bi-arrow-up-right"></i></a>{% else %}<p class="v91-caption">No tienes programas asignados. Comunícate con el administrador.</p>{% endfor %}
+      </section>
+      <section class="v91-card v91-docente-tasks"><span class="v91-eyebrow">SIGUIENTE ACCIÓN</span><h2>Revisa la información disponible</h2><p>La actualización de perfiles y la respuesta a encuestas depende del egresado. Consulta los reportes sin asumir que un dato ausente representa un resultado negativo.</p>
+        <a class="v91-text-link" href="{{ url_for('admin.empleabilidad') }}">Ver seguimiento laboral reportado <i class="bi bi-arrow-up-right"></i></a>
+      </section>
+    </div>
+  </div>
+  {% include 'admin/_v11_graficos_interactivos.html' %}
+  {% if rol_activo != 'docente_responsable' %}
+  <details class="v11-legacy"><summary>Ver también gráficos tradicionales y cifras detalladas</summary>
+    {% include 'admin/_graficos_sistemas.html' %}
+  </details>
+  {% endif %}
+</div>
+{% endblock %}

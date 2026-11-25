@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block titulo %}Registrar egresado · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Gestión académica / Registrar egresado{% endblock %}
+
+{% block contenido %}
+<div class="mb-3">
+    <a href="{{ url_for('admin.egresados') }}" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i>Volver al padrón
+    </a>
+</div>
+
+<div class="nexo-card" style="max-width: 860px;">
+    <h4 class="fw-bold mb-1"><i class="bi bi-person-plus-fill me-2"></i>Registro Administrativo de Egresado</h4>
+    <p class="text-muted small mb-4">Registra directamente un egresado en el padrón institucional y, si lo deseas, genera su cuenta de acceso.</p>
+
+    <form method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">DNI *</label>
+                <input type="text" name="dni" class="form-control" maxlength="15" required value="{{ form_data.get('dni', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Código universitario</label>
+                <input type="text" name="codigo_universitario" class="form-control" maxlength="10" value="{{ form_data.get('codigo_universitario', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Género</label>
+                <select name="genero" class="form-select">
+                    <option value="">No especificado</option>
+                    <option value="M" {{ 'selected' if form_data and form_data.get('genero') == 'M' }}>Masculino</option>
+                    <option value="F" {{ 'selected' if form_data and form_data.get('genero') == 'F' }}>Femenino</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Apellido paterno *</label>
+                <input type="text" name="apellido_paterno" class="form-control" maxlength="80" required value="{{ form_data.get('apellido_paterno', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Apellido materno</label>
+                <input type="text" name="apellido_materno" class="form-control" maxlength="80" value="{{ form_data.get('apellido_materno', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label fw-semibold">Nombres *</label>
+                <input type="text" name="nombres" class="form-control" maxlength="100" required value="{{ form_data.get('nombres', '') if form_data else '' }}">
+            </div>
+
+            <hr class="my-2">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Programa y Plan Curricular *</label>
+                <select name="id_curricula" class="form-select" required>
+                    <option value="">Selecciona un plan...</option>
+                    {% for c in curriculas %}
+                    <option value="{{ c.id_curricula }}" {{ 'selected' if form_data and form_data.get('id_curricula') == (c.id_curricula|string) }}>
+                        {{ c.programa.nombre }} — Plan {{ c.nombre }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold">Año ingreso</label>
+                <input type="number" name="anio_ingreso" class="form-control" min="1950" max="2100" value="{{ form_data.get('anio_ingreso', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold">Año egreso</label>
+                <input type="number" name="anio_egreso" class="form-control" min="1950" max="2100" value="{{ form_data.get('anio_egreso', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-semibold">Promoción / Período</label>
+                <input type="text" name="periodo" class="form-control" placeholder="2024-II" value="{{ form_data.get('periodo', '') if form_data else '' }}">
+            </div>
+
+            <hr class="my-2">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Correo institucional</label>
+                <input type="email" name="correo_institucional" class="form-control" placeholder="egresado@undac.edu.pe" value="{{ form_data.get('correo_institucional', '') if form_data else '' }}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Teléfono</label>
+                <input type="text" name="telefono" class="form-control" maxlength="20" value="{{ form_data.get('telefono', '') if form_data else '' }}">
+            </div>
+
+            <div class="col-12 mt-2">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="crear_cuenta" name="crear_cuenta" value="1" checked>
+                    <label class="form-check-label fw-semibold" for="crear_cuenta">Crear cuenta de inicio de sesión inmediatamente</label>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Contraseña inicial (mínimo 8 caracteres)</label>
+                <input type="password" name="contrasena" class="form-control" minlength="8" placeholder="Solo si creas cuenta">
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary fw-semibold">
+                <i class="bi bi-check2-circle me-1"></i>Guardar egresado
+            </button>
+            <a href="{{ url_for('admin.egresados') }}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

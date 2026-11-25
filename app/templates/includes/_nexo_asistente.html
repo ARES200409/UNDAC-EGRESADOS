@@ -1,0 +1,77 @@
+<div id="nexo-chat" class="nexo-chat"
+     data-api="{{ url_for('asistente.mensaje') }}"
+     data-estado="{{ url_for('asistente.estado') }}"
+     data-scope="{{ 'usuario-' ~ current_user.get_id() if current_user.is_authenticated else 'visitante' }}">
+  <button type="button" id="nexo-chat-open" class="nexo-chat-open"
+          aria-label="Abrir NEXO Asistente" aria-expanded="false" aria-controls="nexo-chat-panel">
+    <img src="{{ url_for('static', filename='img/nexo_chat_avatar.webp') }}" width="55" height="55" alt="" loading="lazy">
+    <span class="nexo-chat-open-txt">¿Necesitas ayuda?<small>NEXO Asistente</small></span>
+    <span class="nexo-chat-open-pulse" aria-hidden="true"></span>
+  </button>
+
+  <section id="nexo-chat-panel" class="nexo-chat-panel" hidden aria-labelledby="nexo-chat-title">
+    <header class="nexo-chat-head">
+      <img src="{{ url_for('static', filename='img/nexo_chat_avatar.webp') }}" alt="Avatar de NEXO" width="47" height="47">
+      <div class="nexo-chat-brand">
+        <strong id="nexo-chat-title">NEXO Asistente</strong>
+        <small>Tu guía dentro de la plataforma</small>
+      </div>
+      <div class="nexo-chat-head-tools" role="group" aria-label="Herramientas del asistente">
+        <button type="button" id="nexo-chat-new" class="nexo-chat-tool" title="Nuevo chat" aria-label="Iniciar nuevo chat">＋</button>
+        <button type="button" id="nexo-chat-history-toggle" class="nexo-chat-tool" title="Historial" aria-label="Abrir historial" aria-expanded="false">◷</button>
+        <button type="button" id="nexo-chat-expand" class="nexo-chat-tool" title="Ampliar chat" aria-label="Ampliar chat" aria-pressed="false">⛶</button>
+        <button type="button" id="nexo-chat-close" class="nexo-chat-tool nexo-chat-close" title="Cerrar" aria-label="Cerrar asistente">×</button>
+      </div>
+    </header>
+
+    <div class="nexo-chat-status" role="status">
+      <span class="nexo-chat-led" aria-hidden="true"></span>
+      <span id="nexo-chat-mode">Guía institucional disponible</span>
+      <span id="nexo-chat-state" class="nexo-chat-state">En línea</span>
+    </div>
+
+    <section id="nexo-chat-history" class="nexo-chat-history" hidden aria-label="Historial de conversaciones">
+      <div class="nexo-chat-history-head">
+        <strong>Mis conversaciones</strong>
+        <button type="button" id="nexo-chat-history-close" class="nexo-chat-outline">Volver al chat</button>
+      </div>
+      <label class="nexo-chat-save-pref">
+        <input type="checkbox" id="nexo-chat-save">
+        <span>Guardar conversaciones en este navegador <small>Desactivado por defecto. Evítalo en equipos compartidos.</small></span>
+      </label>
+      <div id="nexo-chat-history-list" class="nexo-chat-history-list"></div>
+      <div class="nexo-chat-history-bottom">
+        <button type="button" id="nexo-chat-clear" class="nexo-chat-danger">Borrar todo el historial</button>
+        <button type="button" id="nexo-chat-export" class="nexo-chat-outline">Exportar chat .txt</button>
+      </div>
+      <p class="nexo-chat-history-note">Este historial se guarda solo en el navegador cuando lo autorizas; no en MySQL ni en Gemini.</p>
+    </section>
+
+    <div id="nexo-chat-messages" class="nexo-chat-messages" role="log" aria-live="polite" aria-label="Mensajes del asistente"></div>
+
+    <div id="nexo-chat-suggest" class="nexo-chat-suggestions">
+      <div class="nexo-chat-suggestions-title"><span>Explora NEXO UNDAC</span><span class="nexo-chat-suggestions-hint">Selecciona un tema</span></div>
+      <div id="nexo-chat-prompts" class="nexo-chat-prompts" aria-label="Preguntas sugeridas">
+        <button type="button" data-question="¿Cómo genero mi CV?">📄 Mi CV</button>
+        <button type="button" data-question="¿Cómo registro mi cuenta?">👤 Registro</button>
+        <button type="button" data-question="¿Cómo funcionan las ofertas laborales?">💼 Ofertas</button>
+        <button type="button" data-question="¿Cómo respondo las encuestas?">📊 Encuestas</button>
+        <button type="button" data-question="¿Qué hacen los roles?">🏛️ Roles</button>
+      </div>
+    </div>
+
+    <form id="nexo-chat-form" class="nexo-chat-form">
+      <label class="visually-hidden" for="nexo-chat-text">Escribe tu pregunta</label>
+      <textarea id="nexo-chat-text" rows="2" maxlength="300" placeholder="Ej.: ¿Cómo genero mi CV?" required></textarea>
+      <div class="nexo-chat-form-row">
+        <span id="nexo-chat-counter" aria-label="Caracteres de la pregunta">0 / 300</span>
+        <span class="nexo-chat-input-hint">Enter para enviar · Mayús+Enter para salto</span>
+      </div>
+      <div class="nexo-chat-actions">
+        <label id="nexo-chat-ia-option" hidden><input type="checkbox" id="nexo-chat-ia"> Solicitar reformulación con IA externa</label>
+        <button type="submit" id="nexo-chat-submit">Enviar <span aria-hidden="true">➤</span></button>
+      </div>
+      <small class="nexo-chat-disclaimer">No escribas DNI, contraseñas, claves de API ni información privada. Las respuestas requieren verificación institucional.</small>
+    </form>
+  </section>
+</div>

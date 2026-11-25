@@ -1,0 +1,61 @@
+{# Navegación diferenciada por rol - NEXO UNDAC #}
+<nav class="obs-nav" aria-label="Navegación principal">
+    {% if current_user.es_egresado() %}
+        <a href="{{ url_for('egresado.perfil') }}" {% if pagina in ['egresado.perfil','egresado.editar_perfil'] %}aria-current="page"{% endif %}><i class="bi bi-person-vcard"></i>Mi perfil</a>
+        <a href="{{ url_for('egresado.empleos') }}" {% if pagina.startswith('egresado.empleo') %}aria-current="page"{% endif %}><i class="bi bi-briefcase"></i>Experiencia laboral</a>
+        <a href="{{ url_for('egresado.trayectoria') }}" {% if pagina.startswith('egresado.trayectoria') %}aria-current="page"{% endif %}><i class="bi bi-mortarboard"></i>Formación académica</a>
+        <a href="{{ url_for('documentos.mis_documentos') }}" {% if pagina.startswith('documentos.') %}aria-current="page"{% endif %}><i class="bi bi-folder2-open"></i>Mis documentos</a>
+        <a href="{{ url_for('egresado.certificados') }}" {% if pagina.startswith('egresado.certificado') %}aria-current="page"{% endif %}><i class="bi bi-patch-check"></i>Certificados</a>
+        <a href="{{ url_for('egresado.seleccionar_cv') }}" {% if pagina == 'egresado.seleccionar_cv' %}aria-current="page"{% endif %}><i class="bi bi-file-earmark-person"></i>Mi CV</a>
+        <a href="{{ url_for('egresado.encuesta') }}" {% if pagina.startswith('egresado.encuesta') %}aria-current="page"{% endif %}><i class="bi bi-clipboard-check"></i>Encuestas</a>
+        <a href="{{ url_for('egresado.ofertas') }}" {% if pagina == 'egresado.ofertas' %}aria-current="page"{% endif %}><i class="bi bi-stars"></i>Bolsa laboral</a>
+        <a href="{{ url_for('egresado.mi_seguimiento') }}" {% if pagina == 'egresado.mi_seguimiento' %}aria-current="page"{% endif %}><i class="bi bi-activity"></i>Mis postulaciones</a>
+        <a href="{{ url_for('capacitaciones.catalogo_egresado') }}" {% if pagina == 'capacitaciones.catalogo_egresado' %}aria-current="page"{% endif %}><i class="bi bi-easel"></i>Capacitaciones</a>
+        <a href="{{ url_for('capacitaciones.mis_notificaciones') }}" {% if pagina == 'capacitaciones.mis_notificaciones' %}aria-current="page"{% endif %}><i class="bi bi-bell"></i>Notificaciones{% if notificaciones_no_leidas %} ({{ notificaciones_no_leidas }}){% endif %}</a>
+    {% elif rol_activo == 'administrador' %}
+        <a href="{{ url_for('admin.dashboard') }}" {% if pagina == 'admin.dashboard' %}aria-current="page"{% endif %}><i class="bi bi-grid-1x2"></i>Centro de control</a>
+        <a href="{{ url_for('admin.personal') }}" {% if pagina in ['admin.personal','admin.nuevo_personal','admin.editar_personal'] %}aria-current="page"{% endif %}><i class="bi bi-person-gear"></i>Cuentas y roles</a>
+        <a href="{{ url_for('admin.catalogos') }}" {% if pagina == 'admin.catalogos' %}aria-current="page"{% endif %}><i class="bi bi-diagram-3"></i>Catálogo académico</a>
+        <a href="{{ url_for('admin.empresas') }}" {% if pagina.startswith('admin.empresa') %}aria-current="page"{% endif %}><i class="bi bi-buildings"></i>Empresas</a>
+        <a href="{{ url_for('admin.ofertas') }}" {% if pagina.startswith('admin.oferta') %}aria-current="page"{% endif %}><i class="bi bi-briefcase"></i>Ofertas laborales</a>
+        <a href="{{ url_for('admin.ver_postulaciones') }}" {% if pagina == 'admin.ver_postulaciones' %}aria-current="page"{% endif %}><i class="bi bi-envelope-paper"></i>Postulaciones</a>
+        <a href="{{ url_for('admin.egresados') }}" {% if pagina == 'admin.egresados' %}aria-current="page"{% endif %}><i class="bi bi-people"></i>Padrón de egresados</a>
+        <a href="{{ url_for('documentos.admin_documentos') }}" {% if pagina.startswith('documentos.') %}aria-current="page"{% endif %}><i class="bi bi-file-earmark-check"></i>Validación documental</a>
+        <a href="{{ url_for('admin.encuestas') }}" {% if pagina.startswith('admin.encuesta') %}aria-current="page"{% endif %}><i class="bi bi-clipboard-data"></i>Encuestas</a>
+        <a href="{{ url_for('admin.campanas') }}" {% if pagina == 'admin.campanas' %}aria-current="page"{% endif %}><i class="bi bi-calendar2-check"></i>Campañas</a>
+        <a href="{{ url_for('capacitaciones.admin_lista') }}" {% if pagina.startswith('capacitaciones.admin') %}aria-current="page"{% endif %}><i class="bi bi-easel"></i>Capacitaciones</a>
+        <a href="{{ url_for('admin.empleabilidad') }}" {% if pagina == 'admin.empleabilidad' %}aria-current="page"{% endif %}><i class="bi bi-graph-up-arrow"></i>Indicadores</a>
+        <a href="{{ url_for('admin.reportes_consolidados') }}" {% if pagina == 'admin.reportes_consolidados' %}aria-current="page"{% endif %}><i class="bi bi-file-earmark-bar-graph"></i>Reportes</a>
+        <a href="{{ url_for('admin.visor_auditoria') }}" {% if pagina == 'admin.visor_auditoria' %}aria-current="page"{% endif %}><i class="bi bi-shield-check"></i>Auditoría</a>
+    {% elif rol_activo == 'utsag' %}
+        <a href="{{ url_for('admin.dashboard') }}" {% if pagina == 'admin.dashboard' %}aria-current="page"{% endif %}><i class="bi bi-pie-chart"></i>Observatorio UTSAG</a>
+        <a href="{{ url_for('admin.egresados') }}" {% if pagina in ['admin.egresados','admin.ver_egresado'] %}aria-current="page"{% endif %}><i class="bi bi-people"></i>Cobertura del padrón</a>
+        <a href="{{ url_for('admin.empleabilidad') }}" {% if pagina == 'admin.empleabilidad' %}aria-current="page"{% endif %}><i class="bi bi-activity"></i>Seguimiento laboral</a>
+        <a href="{{ url_for('admin.encuestas') }}" {% if pagina.startswith('admin.encuesta') %}aria-current="page"{% endif %}><i class="bi bi-clipboard2-check"></i>Encuestas</a>
+        <a href="{{ url_for('admin.campanas') }}" {% if pagina == 'admin.campanas' %}aria-current="page"{% endif %}><i class="bi bi-calendar2-check"></i>Campañas</a>
+        <a href="{{ url_for('capacitaciones.admin_lista') }}" {% if pagina.startswith('capacitaciones.admin') %}aria-current="page"{% endif %}><i class="bi bi-easel"></i>Capacitaciones</a>
+        <a href="{{ url_for('admin.reportes_consolidados') }}" {% if pagina == 'admin.reportes_consolidados' %}aria-current="page"{% endif %}><i class="bi bi-file-earmark-bar-graph"></i>Reportes</a>
+        <a href="{{ url_for('admin.visor_auditoria') }}" {% if pagina == 'admin.visor_auditoria' %}aria-current="page"{% endif %}><i class="bi bi-shield-check"></i>Auditoría</a>
+        <a href="{{ url_for('admin.informe_pdf') }}"><i class="bi bi-file-earmark-pdf"></i>Informe PDF</a>
+    {% elif rol_activo == 'coordinador' %}
+        <a href="{{ url_for('admin.dashboard') }}" {% if pagina == 'admin.dashboard' %}aria-current="page"{% endif %}><i class="bi bi-building-check"></i>Mi coordinación</a>
+        <a href="{{ url_for('admin.dashboard') }}#programas-coord-title"><i class="bi bi-diagram-2"></i>Mis programas</a>
+        <a href="{{ url_for('admin.egresados') }}" {% if pagina in ['admin.egresados','admin.ver_egresado'] %}aria-current="page"{% endif %}><i class="bi bi-people"></i>Egresados de mi facultad</a>
+        <a href="{{ url_for('documentos.admin_documentos') }}" {% if pagina.startswith('documentos.') %}aria-current="page"{% endif %}><i class="bi bi-file-earmark-check"></i>Documentos</a>
+        <a href="{{ url_for('admin.encuestas') }}" {% if pagina.startswith('admin.encuesta') %}aria-current="page"{% endif %}><i class="bi bi-clipboard-data"></i>Encuestas</a>
+        <a href="{{ url_for('admin.campanas') }}" {% if pagina == 'admin.campanas' %}aria-current="page"{% endif %}><i class="bi bi-calendar2-check"></i>Campañas</a>
+        <a href="{{ url_for('admin.empleabilidad') }}" {% if pagina == 'admin.empleabilidad' %}aria-current="page"{% endif %}><i class="bi bi-graph-up"></i>Empleabilidad</a>
+        <a href="{{ url_for('admin.reportes_consolidados') }}" {% if pagina == 'admin.reportes_consolidados' %}aria-current="page"{% endif %}><i class="bi bi-file-earmark-bar-graph"></i>Reportes</a>
+    {% elif rol_activo == 'docente_responsable' %}
+        <a href="{{ url_for('admin.dashboard') }}" {% if pagina == 'admin.dashboard' %}aria-current="page"{% endif %}><i class="bi bi-journal-text"></i>Mi seguimiento</a>
+        <a href="{{ url_for('admin.dashboard') }}#programas-doc-title"><i class="bi bi-book-half"></i>Mis programas</a>
+        <a href="{{ url_for('admin.egresados') }}" {% if pagina in ['admin.egresados','admin.ver_egresado'] %}aria-current="page"{% endif %}><i class="bi bi-person-lines-fill"></i>Mis egresados</a>
+        <a href="{{ url_for('admin.encuestas') }}" {% if pagina.startswith('admin.encuesta') %}aria-current="page"{% endif %}><i class="bi bi-clipboard-check"></i>Encuestas</a>
+        <a href="{{ url_for('admin.empleabilidad') }}" {% if pagina == 'admin.empleabilidad' %}aria-current="page"{% endif %}><i class="bi bi-bar-chart"></i>Resultados laborales</a>
+    {% elif rol_activo == 'empresa' %}
+        <a href="{{ url_for('empresa.panel') }}" {% if pagina == 'empresa.panel' %}aria-current="page"{% endif %}><i class="bi bi-building"></i>Portal empresarial</a>
+        <a href="{{ url_for('empresa.nueva_oferta') }}" {% if pagina == 'empresa.nueva_oferta' %}aria-current="page"{% endif %}><i class="bi bi-plus-circle"></i>Publicar vacante</a>
+        <a href="{{ url_for('auth.mi_cuenta') }}" {% if pagina == 'auth.mi_cuenta' %}aria-current="page"{% endif %}><i class="bi bi-person-circle"></i>Mi cuenta</a>
+        <a href="{{ url_for('auth.cambiar_contrasena') }}" {% if pagina == 'auth.cambiar_contrasena' %}aria-current="page"{% endif %}><i class="bi bi-shield-lock"></i>Seguridad</a>
+    {% endif %}
+</nav>

@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block titulo %}Mis documentos y expediente digital · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Mi espacio / Expediente documental privado{% endblock %}
+
+{% block contenido %}
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+    <div>
+        <h3 class="fw-bold mb-1"><i class="bi bi-folder2-open me-2"></i>Mi Expediente Documental Digital</h3>
+        <p class="text-muted small mb-0">
+            Tus archivos son privados por defecto. Solo tú y el personal autorizado pueden verlos, salvo que autorices compartirlos en una postulación.
+        </p>
+    </div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalSubirDoc">
+        <i class="bi bi-cloud-upload me-1"></i>Subir documento
+    </button>
+</div>
+
+<!-- KPIs -->
+<div class="nexo-kpi-grid">
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Total de archivos</div>
+        <div class="kpi-value">{{ resumen.total }}</div>
+    </div>
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Validados</div>
+        <div class="kpi-value text-success">{{ resumen.validados }}</div>
+    </div>
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Pendientes / En revisión</div>
+        <div class="kpi-value text-primary">{{ resumen.pendientes }}</div>
+    </div>
+    <div class="nexo-kpi-card">
+        <div class="kpi-label">Observados / Rechazados</div>
+        <div class="kpi-value text-warning">{{ resumen.observados }}</div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="nexo-card mb-4">
+    <form method="GET" action="{{ url_for('documentos.mis_documentos') }}" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label small fw-semibold">Buscar</label>
+            <input type="text" name="buscar" class="form-control form-control-sm" value="{{ buscar }}" placeholder="Nombre, institución o archivo...">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-semibold">Categoría</label>
+            <select name="categoria" class="form-select form-select-sm">
+                <option value="">Todas las categorías</option>
+                {% for k, v in categorias %}
+                <option value="{{ k }}" {{ 'selected' if filtro_categoria == k }}>{{ v }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small fw-semibold">Estado</label>
+            <select name="estado" class="form-select form-select-sm">
+                <option value="">Todos los estados</option>
+                {% for k, v in estados.items() %}
+                <option value="{{ k }}" {{ 'selected' if filtro_estado == k }}>{{ v }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-1">
+            <button type="submit" class="btn btn-primary btn-sm flex-grow-1">Filtrar</button>
+            {% if buscar or filtro_categoria or filtro_estado %}
+            <a href="{{ url_for('documentos.mis_documentos') }}" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+            {% endif %}
+        </div>
+    </form>
+</div>
+
+<!-- Listado -->
+<div class="nexo-card">
+    {% if docs %}
+    <div class="table-responsive">
+        <table class="table align-middle table-hover mb-0">
+            <thead>
+                <tr class="small text-muted text-uppercase">
+                    <th>Documento</th>
+                    <th>Categoría</th>
+                    <th>Archivo y tamaño</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in docs %}
+                <tr>
+                    <td>
+                        <div class="fw-bold">
+                            {{ d.nombre }}
+                            {% if d.es_cv_principal %}
+                            <span class="badge bg-primary ms-1">CV Principal</span>
+                            {% endif %}
+                        </div>
+                        <div class="small text-muted">
+                            {{ d.institucion_emisora or 'Institución no indicada' }}
+                            {% if d.fecha_emision %} · Emitido: {{ d.fecha_emision.strftime('%d/%m/%Y') }}{% endif %}
+                        </div>
+                        {% if d.observaciones %}
+                        <div class="small text-danger mt-1">
+                            <i class="bi bi-exclamation-circle me-1"></i><strong>Observación:</strong> {{ d.observaciones }}
+                        </div>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge bg-light text-dark border">{{ categorias_dict.get(d.categoria, d.categoria) }}</span></td>
+                    <td class="small">
+                        <div>{{ d.nombre_original }}</div>
+                        <span class="text-muted">{{ (d.tamano_bytes / 1024)|round(1) }} KB · {{ d.creado_en.strftime('%d/%m/%Y') }}</span>
+                    </td>
+                    <td>
+                        <span class="nexo-doc-badge is-{{ d.estado_validacion }}">
+                            {{ estados.get(d.estado_validacion, d.estado_validacion) }}
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        <div class="btn-group btn-group-sm">
+                            <a href="{{ url_for('documentos.descargar_documento', id_doc=d.id_documento, ver=1) }}" target="_blank" class="btn btn-outline-primary" title="Vista previa">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ url_for('documentos.descargar_documento', id_doc=d.id_documento) }}" class="btn btn-outline-secondary" title="Descargar">
+                                <i class="bi bi-download"></i>
+                            </a>
+                            <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#modalReemplazar{{ d.id_documento }}" title="Reemplazar archivo">
+                                <i class="bi bi-arrow-repeat"></i>
+                            </button>
+                            {% if d.categoria == 'cv' and not d.es_cv_principal %}
+                            <form method="POST" action="{{ url_for('documentos.marcar_cv_principal', id_doc=d.id_documento) }}" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-outline-info" title="Marcar como CV principal"><i class="bi bi-star"></i></button>
+                            </form>
+                            {% endif %}
+                            {% if d.estado_validacion != 'validado' %}
+                            <form method="POST" action="{{ url_for('documentos.eliminar_documento', id_doc=d.id_documento) }}" class="d-inline" onsubmit="return confirm('¿Eliminar este documento definitivamente?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-outline-danger" title="Eliminar"><i class="bi bi-trash"></i></button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Modal Reemplazar -->
+                <div class="modal fade" id="modalReemplazar{{ d.id_documento }}" tabindex="-1">
+                    <div class="modal-dialog">
+                        <form method="POST" action="{{ url_for('documentos.reemplazar_documento', id_doc=d.id_documento) }}" enctype="multipart/form-data" class="modal-content">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <div class="modal-header">
+                                <h6 class="modal-title fw-bold">Reemplazar archivo: {{ d.nombre }}</h6>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="small text-muted">El archivo actual será sustituido de forma segura y pasará nuevamente a estado <strong>Pendiente de revisión</strong>.</p>
+                                <input type="file" name="archivo" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Subir reemplazo</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+        <i class="bi bi-folder-x" style="font-size: 2.5rem;"></i>
+        <p class="mt-2 mb-3">Aún no has cargado documentos en tu expediente digital.</p>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalSubirDoc">
+            <i class="bi bi-cloud-upload me-1"></i>Cargar mi primer documento
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal Subir Documento con Drag & Drop -->
+<div class="modal fade" id="modalSubirDoc" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <form method="POST" action="{{ url_for('documentos.subir_documento') }}" enctype="multipart/form-data" class="modal-content">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold"><i class="bi bi-cloud-upload me-2"></i>Cargar documento privado</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Nombre del documento *</label>
+                        <input type="text" name="nombre" class="form-control" required maxlength="200" placeholder="Ej: CV Actualizado 2026 / Certificado Python">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Categoría *</label>
+                        <select name="categoria" id="doc_categoria" class="form-select" required>
+                            {% for k, v in categorias %}
+                            <option value="{{ k }}">{{ v }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold">Institución emisora</label>
+                        <input type="text" name="institucion_emisora" class="form-control" maxlength="200" placeholder="Ej: UNDAC, Platzi, Ministerio...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Fecha de emisión</label>
+                        <input type="date" name="fecha_emision" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Vencimiento</label>
+                        <input type="date" name="fecha_vencimiento" class="form-control">
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Descripción breve</label>
+                        <input type="text" name="descripcion" class="form-control" maxlength="500" placeholder="Opcional">
+                    </div>
+                    <div class="col-12" id="wrap_cv_principal">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="es_cv_principal" value="1" id="chk_cv_principal">
+                            <label class="form-check-label small" for="chk_cv_principal">Establecer como mi CV principal para postulaciones</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="nexo-dropzone" id="nexoDropzone">
+                            <i class="bi bi-file-earmark-arrow-up fs-1 text-primary"></i>
+                            <p class="mb-1 fw-semibold">Arrastra y suelta tu archivo aquí o haz clic para seleccionar</p>
+                            <small class="text-muted">Formatos permitidos: PDF, JPG, PNG · Máximo 10 MB</small>
+                            <div id="nombreArchivoSel" class="mt-2 fw-bold text-success small"></div>
+                            <input type="file" name="archivo" id="inputArchivoDoc" class="d-none" accept=".pdf,.jpg,.jpeg,.png" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary fw-semibold"><i class="bi bi-shield-lock me-1"></i>Guardar de forma segura</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+    const dropzone = document.getElementById('nexoDropzone');
+    const input = document.getElementById('inputArchivoDoc');
+    const label = document.getElementById('nombreArchivoSel');
+    const catSelect = document.getElementById('doc_categoria');
+    const cvWrap = document.getElementById('wrap_cv_principal');
+
+    if (catSelect && cvWrap) {
+        const toggleCv = () => { cvWrap.style.display = catSelect.value === 'cv' ? 'block' : 'none'; };
+        catSelect.addEventListener('change', toggleCv);
+        toggleCv();
+    }
+
+    if (!dropzone || !input) return;
+    dropzone.addEventListener('click', () => input.click());
+    input.addEventListener('change', () => {
+        if (input.files.length) label.textContent = `Seleccionado: ${input.files[0].name}`;
+    });
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('is-dragover'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('is-dragover'));
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('is-dragover');
+        if (e.dataTransfer.files.length) {
+            input.files = e.dataTransfer.files;
+            label.textContent = `Seleccionado: ${e.dataTransfer.files[0].name}`;
+        }
+    });
+})();
+</script>
+{% endblock %}

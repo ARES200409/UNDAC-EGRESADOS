@@ -1,0 +1,394 @@
+<!-- app/templates/egresado/editar_perfil.html -->
+{% extends "base.html" %}
+{% block titulo %}Editar perfil{% endblock %}
+
+{% block contenido %}
+<div class="nexo-module-kicker"><span class="nexo-live-dot"></span> UNDAC · Gestión institucional</div>
+
+
+{% macro badge_tag(h) %}
+<span class="badge bg-light text-dark border d-flex align-items-center gap-2 py-2 px-3" data-id="{{ h.id_habilidad }}">
+    <span class="texto-tag">{{ h.nombre }}</span>
+    <button type="button" class="btn btn-sm p-0 border-0 text-danger btn-quitar-tag" style="line-height:0;">
+        <i class="bi bi-x-circle"></i>
+    </button>
+</span>
+{% endmacro %}
+
+<section class="nexo-form-hero">
+  <div class="nexo-form-hero-content"><div class="nexo-form-hero-top"><a class="nexo-form-hero-back" href="{{ url_for('egresado.perfil') }}" aria-label="Volver"><i class="bi bi-arrow-left"></i> Volver</a><span class="nexo-form-eyebrow"><i class="bi bi-person-vcard" aria-hidden="true"></i> MI PERFIL</span></div>
+   <h1>Actualiza tu información</h1><p>Mantén tus datos de contacto y tu trayectoria actualizados. Los datos académicos verificados permanecen protegidos.</p><div class="nexo-form-hero-chips"><span><i class="bi bi-check-circle" aria-hidden="true"></i> Contacto</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Información académica</span><span><i class="bi bi-check-circle" aria-hidden="true"></i> Redes y habilidades</span></div>
+  </div><div class="nexo-form-hero-art"><img src="{{ url_for('static', filename='img/ia_campus_futuro.webp') }}" alt="Ilustración digital de acompañamiento académico y profesional" loading="lazy"></div>
+</section>
+
+</div>
+
+<form class="nexo-form-v107" data-nexo-primary-form="true" method="POST" enctype="multipart/form-data" id="form-editar-perfil">
+<div class="nexo-form-progress"><span><i class="bi bi-shield-lock"></i> Tus datos académicos verificados no se modificarán</span></div>
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="row g-4">
+
+        <!-- COLUMNA IZQUIERDA: foto + datos fijos -->
+        <div class="col-lg-4">
+            <div class="card p-4 text-center sticky-top" style="top:1rem;">
+
+                <div class="position-relative mx-auto mb-2" style="width:130px;">
+                    <img id="preview-foto"
+                         src="{{ url_for('static', filename=e.foto) if e.foto else '' }}"
+                         class="foto-perfil {{ '' if e.foto else 'd-none' }}"
+                         style="width:130px;height:130px;object-fit:cover;border-radius:50%;">
+                    <div id="placeholder-foto"
+                         class="d-flex align-items-center justify-content-center bg-secondary rounded-circle {{ 'd-none' if e.foto else '' }}"
+                         style="width:130px;height:130px;">
+                        <i class="bi bi-person-fill text-white" style="font-size:3rem;"></i>
+                    </div>
+                </div>
+
+                <div class="fw-semibold">{{ e.apellido_paterno }} {{ e.apellido_materno or '' }}</div>
+                <div class="text-muted small mb-3">{{ e.nombres }}</div>
+
+                <label for="input-foto" class="btn btn-outline-primary btn-sm w-100 mb-1">
+                    <i class="bi bi-camera me-1"></i>
+                    <span id="texto-btn-foto">{{ 'Cambiar foto' if e.foto else 'Subir foto' }}</span>
+                </label>
+                <input type="file" id="input-foto" name="foto" class="d-none" accept=".png,.jpg,.jpeg,.webp">
+
+                <div id="badge-foto-ok" class="d-none mt-2">
+                    <span class="badge bg-success">
+                        <i class="bi bi-check-circle-fill me-1"></i>Imagen cargada
+                    </span>
+                </div>
+                <div class="text-muted mt-2" style="font-size:.75rem;">PNG, JPG o WEBP. Máx 5MB.</div>
+
+                <hr class="my-4">
+
+                <div class="text-start">
+                    <div class="text-muted small mb-2 fw-semibold">
+                        <i class="bi bi-lock me-1"></i>Datos del sistema
+                    </div>
+                    <div class="small text-muted mb-1">DNI</div>
+                    <div class="mb-2">{{ e.dni }}</div>
+                    <div class="small text-muted mb-1">Currícula</div>
+                    <div class="mb-2">{{ e.curricula.nombre if e.curricula else '—' }}</div>
+                    <div class="small text-muted mb-1">Programa</div>
+                    <div class="mb-2">{{ e.curricula.programa.nombre if e.curricula else '—' }}</div>
+                    <div class="small text-muted mb-1">Año de ingreso</div>
+                    <div>{{ e.anio_ingreso or '—' }}</div>
+                </div>
+                <div class="alert alert-warning py-2 small mt-3 mb-0">
+                    Estos datos provienen del sistema académico y no se pueden editar aquí.
+                </div>
+            </div>
+        </div>
+
+        <!-- COLUMNA DERECHA: secciones editables -->
+        <div class="col-lg-8">
+
+            <!-- Contacto -->
+            <div class="card mb-4">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-telephone me-2"></i>Contacto
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">Correo institucional</label>
+                            <input type="email" name="correo_institucional" class="form-control"
+                                value="{{ e.correo_institucional or '' }}"
+                                placeholder="correo@undac.edu.pe">
+                            <div class="form-text">Este correo es el que usas para iniciar sesión.</div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Correo personal</label>
+                            <input type="email" name="correo_personal" class="form-control"
+                                value="{{ e.correo_personal or '' }}"
+                                placeholder="correo@ejemplo.com">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" name="telefono" class="form-control"
+                                value="{{ e.telefono or '' }}"
+                                placeholder="999 999 999">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos académicos complementarios -->
+            <div class="card mb-4">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-mortarboard me-2"></i>Datos académicos complementarios
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-light border py-2 small mb-3">
+                        <i class="bi bi-info-circle me-1"></i>
+                        El sistema académico no siempre reporta estos datos. Complétalos si los conoces.
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">Año de egreso</label>
+                            <input type="number" name="anio_egreso" class="form-control"
+                                value="{{ e.anio_egreso or '' }}"
+                                placeholder="Solo el año" min="1990" max="2100">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Período académico</label>
+                            <input type="text" name="periodo" class="form-control"
+                                value="{{ e.periodo or '' }}"
+                                placeholder="Ej: 25A, 25B, 25D, 25E, 25S, 25N, 25J ">
+                            <div class="form-text"><small>
+                                Dejar en blanco si no lo sabes. Correponde a la última 
+                                matrícula hecha para egresar y el año abreviado.
+                                A: Periodo Impar; 
+                                B: Perido Par; 
+                                D: Aplazados Impar; 
+                                E: Aplazados Par; 
+                                S: Subsanación; 
+                                N: Nivelación; 
+                                J: Dirigido.
+                            </small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="card mb-4">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-geo-alt me-2"></i>Dirección
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label class="form-label">País</label>
+                            <input type="text" name="pais" class="form-control" value="{{ e.pais or 'Perú' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Región</label>
+                            <input type="text" name="region" class="form-control" value="{{ e.region or '' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Provincia</label>
+                            <input type="text" name="provincia" class="form-control" value="{{ e.provincia or '' }}">
+                        </div>
+                        <div class="col-sm-6">
+                            <label class="form-label">Distrito</label>
+                            <input type="text" name="distrito" class="form-control" value="{{ e.distrito or '' }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Situación laboral, perfil profesional y privacidad -->
+            <div class="card mb-4">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-person-badge me-2"></i>Situación laboral, perfil y privacidad
+                </div>
+                <div class="card-body">
+                    <input type="hidden" name="control_privacidad_presente" value="1">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Situación laboral actual</label>
+                            <select name="situacion_laboral" class="form-select">
+                                {% for clave, texto in etiquetas_situacion.items() %}
+                                <option value="{{ clave }}" {{ 'selected' if e.situacion_laboral == clave }}>{{ texto }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Titular profesional (CV)</label>
+                            <input type="text" name="titulo_cv" class="form-control" maxlength="150"
+                                value="{{ e.titulo_cv or '' }}" placeholder="Ej: Ingeniero de Sistemas | Desarrollador Backend">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Resumen profesional</label>
+                            <textarea name="perfil_profesional" class="form-control" rows="3" maxlength="3000"
+                                placeholder="Describe brevemente tu experiencia, especialidad y objetivos...">{{ e.perfil_profesional or '' }}</textarea>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="perfil_publico" name="perfil_publico" value="1"
+                                    {{ 'checked' if e.perfil_publico }}>
+                                <label class="form-check-label" for="perfil_publico">
+                                    Autorizo que empresas validadas en la Bolsa Laboral consulten mi perfil profesional resumido (nunca se comparten documentos privados sin tu permiso expreso).
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Redes sociales -->
+            <div class="card mb-4">
+                <div class="card-header bg-white fw-semibold">
+                    <i class="bi bi-share me-2"></i>Redes sociales
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-sm-4">
+                            <label class="form-label"><i class="bi bi-linkedin me-1"></i>LinkedIn</label>
+                            <input type="url" name="linkedin" class="form-control"
+                                value="{{ e.linkedin or '' }}" placeholder="https://linkedin.com/in/...">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label"><i class="bi bi-facebook me-1"></i>Facebook</label>
+                            <input type="url" name="facebook" class="form-control"
+                                value="{{ e.facebook or '' }}" placeholder="https://facebook.com/...">
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label"><i class="bi bi-tiktok me-1"></i>TikTok</label>
+                            <input type="text" name="tiktok" class="form-control"
+                                value="{{ e.tiktok or '' }}" placeholder="usuario (sin @ ni URL)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-1"></i>Guardar cambios
+                </button>
+                <a href="{{ url_for('egresado.perfil') }}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+
+        </div>
+    </div>
+</form>
+
+<!-- Habilidades e intereses: independiente del form principal, se guarda al instante -->
+<div class="card mt-4">
+    <div class="card-header bg-white fw-semibold d-flex align-items-center justify-content-between">
+        <span><i class="bi bi-stars me-2"></i>Habilidades e intereses</span>
+        <span class="text-muted small fw-normal">Se guardan automáticamente al agregar</span>
+    </div>
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Habilidades</label>
+                <div class="d-flex gap-2 mb-2">
+                    <input type="text" id="input-habilidad" class="form-control form-control-sm"
+                           placeholder="Ej: Python, trabajo en equipo...">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="agregarTag('habilidad')">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+                <div class="d-flex flex-wrap gap-2" id="contenedor-habilidad">
+                    {% for h in habilidades %}
+                        {{ badge_tag(h) }}
+                    {% else %}
+                    <span class="text-muted small" id="vacio-habilidad">Sin habilidades registradas.</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">Intereses</label>
+                <div class="d-flex gap-2 mb-2">
+                    <input type="text" id="input-interes" class="form-control form-control-sm"
+                           placeholder="Ej: Fotografía, videojuegos...">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="agregarTag('interes')">
+                        <i class="bi bi-plus-lg"></i>
+                    </button>
+                </div>
+                <div class="d-flex flex-wrap gap-2" id="contenedor-interes">
+                    {% for h in intereses %}
+                        {{ badge_tag(h) }}
+                    {% else %}
+                    <span class="text-muted small" id="vacio-interes">Sin intereses registrados.</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- Preview de foto en vivo ---
+const inputFoto      = document.getElementById('input-foto');
+const previewFoto     = document.getElementById('preview-foto');
+const placeholderFoto = document.getElementById('placeholder-foto');
+const badgeFotoOk     = document.getElementById('badge-foto-ok');
+const textoBtnFoto    = document.getElementById('texto-btn-foto');
+
+inputFoto.addEventListener('change', () => {
+    const archivo = inputFoto.files[0];
+    if (!archivo) return;
+
+    const lector = new FileReader();
+    lector.onload = (e) => {
+        previewFoto.src = e.target.result;
+        previewFoto.classList.remove('d-none');
+        placeholderFoto.classList.add('d-none');
+        badgeFotoOk.classList.remove('d-none');
+        textoBtnFoto.textContent = 'Cambiar foto';
+    };
+    lector.readAsDataURL(archivo);
+});
+
+// --- Habilidades / intereses vía AJAX (no recarga la página) ---
+function crearBadge(id, nombre) {
+    const badge = document.createElement('span');
+    badge.className = 'badge bg-light text-dark border d-flex align-items-center gap-2 py-2 px-3';
+    badge.dataset.id = id;
+    const texto = document.createElement('span');
+    texto.className = 'texto-tag';
+    texto.textContent = nombre;
+    const quitar = document.createElement('button');
+    quitar.type = 'button';
+    quitar.className = 'btn btn-sm p-0 border-0 text-danger btn-quitar-tag';
+    quitar.setAttribute('aria-label', 'Eliminar habilidad o interés');
+    const icon = document.createElement('i');
+    icon.className = 'bi bi-x-circle';
+    quitar.appendChild(icon);
+    badge.append(texto, quitar);
+    quitar.addEventListener('click', () => quitarTag(badge, id));
+    return badge;
+}
+
+function quitarTag(badge, id) {
+    if (!confirm('¿Eliminar?')) return;
+
+    fetch(`/habilidades/${id}/eliminar`, {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': document.querySelector('meta[name=csrf-token]').content }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) badge.remove();
+        else alert(data.error || 'No se pudo eliminar.');
+    })
+    .catch(() => alert('Error de conexión al eliminar.'));
+}
+
+function agregarTag(tipo) {
+    const input = document.getElementById(tipo === 'habilidad' ? 'input-habilidad' : 'input-interes');
+    const valor = input.value.trim();
+    if (!valor) return;
+
+    const datos = new FormData();
+    datos.append('nombre', valor);
+    datos.append('tipo', tipo);
+
+    fetch("{{ url_for('egresado.nueva_habilidad') }}", {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': document.querySelector('meta[name=csrf-token]').content },
+        body: datos
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.ok) { alert(data.error || 'No se pudo agregar.'); return; }
+        const contenedor = document.getElementById(`contenedor-${tipo}`);
+        const vacio = document.getElementById(`vacio-${tipo}`);
+        if (vacio) vacio.remove();
+        contenedor.appendChild(crearBadge(data.id_habilidad, data.nombre));
+        input.value = '';
+    })
+    .catch(() => alert('Error de conexión al agregar.'));
+}
+
+document.querySelectorAll('.btn-quitar-tag').forEach(btn => {
+    const badge = btn.closest('[data-id]');
+    btn.addEventListener('click', () => quitarTag(badge, badge.dataset.id));
+});
+</script>
+
+{% endblock %}

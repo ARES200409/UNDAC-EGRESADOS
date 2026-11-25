@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block titulo %}Coordinación de facultades · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Coordinación / Facultades asignadas{% endblock %}
+{% block contenido %}
+<div class="v91-panel v91-coord">
+  <section class="v91-coord-hero nexo-v92-photo-hero" aria-labelledby="titulo-coord">
+    <span class="v91-kicker"><i class="bi bi-buildings"></i> ÁMBITO ACADÉMICO · COORDINACIÓN</span>
+    <div class="v91-coord-heading"><div><h1 id="titulo-coord">Tu programa.<br><em>Sus egresados.</em></h1><p>El seguimiento de los egresados comienza por revisar los programas que tienes asignados, su cobertura y las acciones académicas pendientes.</p></div>
+    <div class="v91-coord-count"><strong>{{ facultades_asignadas|length }}</strong><span>facultad(es)<br>asignada(s)</span></div></div>
+    <div class="v91-chip-row">{% for f in facultades_asignadas %}<span class="v91-chip"><i class="bi bi-check2-circle"></i> {{ f.nombre }}</span>{% else %}<span class="v91-chip v91-chip-warning">Sin facultad asignada. Solicita al administrador una asignación.</span>{% endfor %}</div>
+  </section>
+  
+  <aside class="nexo-ia-role-story" aria-label="Presentación del espacio de trabajo">
+    <img src="{{ url_for('static', filename='img/ia_mentoria_academica.webp') }}" alt="Escena conceptual IA relacionada con las actividades de este rol" loading="lazy">
+    <div><span>Tu espacio de trabajo</span><h2>Acompañamiento por programa</h2><p>Consulta egresados y actividades únicamente dentro del ámbito académico autorizado.</p></div>
+  </aside>
+<section aria-label="Resumen de facultad" class="v91-stat-grid v91-stat-3">
+    <div class="v91-stat"><i class="bi bi-mortarboard v93-stat-icon" aria-hidden="true"></i><span>Egresados de tus facultades</span><strong>{{ total }}</strong><small>Solo programas autorizados</small></div>
+    <div class="v91-stat"><i class="bi bi-person-vcard v93-stat-icon" aria-hidden="true"></i><span>Cuentas de egresados</span><strong>{{ registrados }}</strong><small>{{ registrados }} con cuenta · {{ faltan_cuenta }} pendientes de cuenta</small></div>
+    <div class="v91-stat"><i class="bi bi-person-workspace v93-stat-icon" aria-hidden="true"></i><span>Docentes responsables asignados</span><strong>{{ docentes_total }}</strong><small>Con asignaciones activas</small></div>
+  </section>
+  <div class="v91-two-col v91-coord-grid">
+    <section class="v91-card" aria-labelledby="programas-coord-title"><div class="v91-section-header"><div><span class="v91-eyebrow">ORGANIZACIÓN ACADÉMICA</span><h2 id="programas-coord-title">Programas bajo tu coordinación</h2></div><i class="bi bi-diagram-3"></i></div>
+      {% if programas_resumen %}
+        <div class="v91-program-list">{% for p in programas_resumen %}<a href="{{ url_for('admin.egresados', id_programa=p.id) }}"><div class="v91-program-number">{{ '%02d'|format(loop.index) }}</div><div class="v91-program-label"><strong>{{ p.nombre }}</strong><span>{{ p.total }} egresados · {{ p.cuentas }} con cuenta</span></div><i class="bi bi-arrow-up-right"></i></a>{% endfor %}</div>
+      {% else %}<div class="v91-empty">Todavía no hay programas en tu ámbito. Revisa las asignaciones con el administrador.</div>{% endif %}
+    </section>
+    <div class="v91-column-stack">
+      <section class="v91-card v91-coord-task" aria-labelledby="tareas-coord-title"><span class="v91-eyebrow">RUTAS DE TRABAJO</span><h2 id="tareas-coord-title">Tu agenda de coordinación</h2>
+        <a href="{{ url_for('admin.egresados') }}"><i class="bi bi-people"></i><span>Revisar padrón y cobertura</span><i class="bi bi-chevron-right"></i></a>
+        <a href="{{ url_for('admin.encuestas') }}"><i class="bi bi-clipboard-check"></i><span>Consultar encuestas del ámbito académico</span><i class="bi bi-chevron-right"></i></a>
+        <a href="{{ url_for('admin.empleabilidad') }}"><i class="bi bi-graph-up-arrow"></i><span>Analizar seguimiento laboral</span><i class="bi bi-chevron-right"></i></a>
+      </section>
+      <section class="v91-card v91-coord-coverage"><span class="v91-eyebrow">COBERTURA DE CUENTAS</span><strong>{{ (cobertura_pct|string ~ '%') if cobertura_pct is not none else 'Sin datos' }}</strong>
+        <div class="v91-bar"><span style="width:{{ cobertura_pct or 0 }}%"></span></div><p>Porcentaje de egresados en tu ámbito que tienen una cuenta asociada.</p>
+      </section>
+    </div>
+  </div>
+  {% include 'admin/_v11_graficos_interactivos.html' %}
+  {% if rol_activo != 'docente_responsable' %}
+  <details class="v11-legacy"><summary>Ver también gráficos tradicionales y cifras detalladas</summary>
+    {% include 'admin/_graficos_sistemas.html' %}
+  </details>
+  {% endif %}
+</div>
+{% endblock %}

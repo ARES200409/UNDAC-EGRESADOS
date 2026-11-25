@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block titulo %}Editar personal{% endblock %}
+{% block contenido %}
+<div class="d-flex align-items-center gap-2 mb-4">
+    <a href="{{ url_for('admin.personal') }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+    <h4 class="mb-0">Editar cuenta de personal</h4>
+</div>
+
+{% if not catalogo_sistemas_preparado %}
+<div class="alert alert-warning"><strong>Catálogo de Sistemas pendiente.</strong> Antes de reasignar a coordinadores o docentes, ejecuta <code>python preparar_facultad_sistemas.py --aplicar</code>. No crea la currícula.</div>
+{% endif %}
+{% if asignaciones_ajenas %}
+<div class="alert alert-info" role="status"><strong>Ámbito anterior detectado.</strong> Esta cuenta tiene una o más asignaciones académicas de otro programa o facultad.
+  <ul class="mb-1 mt-2">{% for a in asignaciones_ajenas %}<li>{{ a.facultad.nombre if a.facultad else a.programa.nombre if a.programa else 'Asignación sin descripción' }}</li>{% endfor %}</ul>
+  Si corresponde a un responsable real de Sistemas, marca la <strong>Facultad de Ingeniería</strong> para Coordinador o <strong>Ingeniería de Sistemas y Computación</strong> para Docente responsable y guarda. Si no corresponde, conserva su asignación actual y no la cambies.
+</div>
+{% endif %}
+<form method="POST">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white"><i class="bi bi-person-vcard me-2"></i>Datos personales</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-sm-6"><label class="form-label">Nombres <span class="text-danger">*</span></label>
+                    <input type="text" name="nombres" class="form-control" required value="{{ persona.nombres }}"></div>
+                <div class="col-sm-6"><label class="form-label">Teléfono</label>
+                    <input type="text" name="telefono" class="form-control" value="{{ persona.telefono or '' }}"></div>
+                <div class="col-sm-6"><label class="form-label">Apellido paterno <span class="text-danger">*</span></label>
+                    <input type="text" name="apellido_paterno" class="form-control" required value="{{ persona.apellido_paterno }}"></div>
+                <div class="col-sm-6"><label class="form-label">Apellido materno</label>
+                    <input type="text" name="apellido_materno" class="form-control" value="{{ persona.apellido_materno or '' }}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header bg-primary text-white"><i class="bi bi-shield-lock me-2"></i>Acceso al sistema</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-sm-6"><label class="form-label">Correo</label>
+                    <input type="email" class="form-control" value="{{ usuario.correo }}" disabled>
+                    <div class="text-muted small mt-1">El correo no se puede modificar aquí.</div>
+                </div>
+                <div class="col-sm-6"><label class="form-label">Nueva contraseña <span class="text-muted small">(dejar vacío para no cambiar)</span></label>
+                    <input type="password" name="nueva_contrasena" class="form-control" minlength="8" placeholder="Mínimo 8 caracteres"></div>
+
+                {% if rol_activo != 'coordinador' %}
+                <div class="col-12">
+                    <label class="form-label">Roles <span class="text-danger">*</span></label>
+                    <div class="form-text mb-2">Puedes asignar más de uno.</div>
+                    <div class="d-flex flex-wrap gap-3">
+                        {% for rol in roles %}
+                        <div class="form-check">
+                            <input class="form-check-input rol-check" type="checkbox" name="roles"
+                                   value="{{ rol.id_rol }}" id="rol-{{ rol.id_rol }}" data-nombre="{{ rol.nombre }}"
+                                   {{ 'checked' if rol.id_rol in ids_roles_actuales }}>
+                            <label class="form-check-label" for="rol-{{ rol.id_rol }}">{{ rol.nombre | replace("_", " ") | title }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="col-12">
+                    <span class="badge bg-secondary">Docente responsable</span>
+                    <div class="form-text">Como coordinador, solo puedes ajustar los programas a su cargo.</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if rol_activo != 'coordinador' and facultades %}
+    <div class="card mb-3 d-none" id="bloque-facultades">
+        <div class="card-header bg-primary text-white"><i class="bi bi-building me-2"></i>Facultad(es) a cargo</div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-3">
+                {% for f in facultades %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="facultades" value="{{ f.id_facultad }}" id="fac-{{ f.id_facultad }}"
+                           {{ 'checked' if f.id_facultad in ids_facultades_actuales }}>
+                    <label class="form-check-label" for="fac-{{ f.id_facultad }}">{{ f.nombre }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if programas %}
+    <div class="card mb-3 {% if rol_activo != 'coordinador' and not ids_programas_actuales %}d-none{% endif %}" id="bloque-programas">
+        <div class="card-header bg-primary text-white"><i class="bi bi-mortarboard me-2"></i>Programa(s) a cargo</div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-3">
+                {% for p in programas %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="programas" value="{{ p.id_programa }}" id="prog-{{ p.id_programa }}"
+                           {{ 'checked' if p.id_programa in ids_programas_actuales }}>
+                    <label class="form-check-label" for="prog-{{ p.id_programa }}">{{ p.nombre }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Guardar cambios</button>
+        <a href="{{ url_for('admin.personal') }}" class="btn btn-outline-secondary">Cancelar</a>
+    </div>
+</form>
+
+{% if rol_activo != 'coordinador' and facultades %}
+<script>
+function actualizarBloqueFacultades() {
+    const checkCoord = document.querySelector('.rol-check[data-nombre="coordinador"]');
+    const bloque = document.getElementById('bloque-facultades');
+    if (!checkCoord || !bloque) return;
+    bloque.classList.toggle('d-none', !checkCoord.checked);
+    const checkDocente = document.querySelector('.rol-check[data-nombre="docente_responsable"]');
+    const bloqueProgramas = document.getElementById('bloque-programas');
+    if (checkDocente && bloqueProgramas) bloqueProgramas.classList.toggle('d-none', !checkDocente.checked);
+}
+document.querySelectorAll('.rol-check').forEach(chk => chk.addEventListener('change', actualizarBloqueFacultades));
+actualizarBloqueFacultades();
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block titulo %}Gestión académica · NEXO UNDAC{% endblock %}
+{% block subtitulo %}Administración / Catálogos académicos{% endblock %}
+{% block contenido %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/v8_profesional.css') }}">
+<style>
+.nexosi-catalog-progress{display:flex;align-items:flex-start;gap:.7rem;padding:.8rem 1rem;margin:0 0 1.2rem;border-radius:12px;border:1px solid #b7e1f6;background:#e9f7ff;color:#11436d;font-size:.91rem;line-height:1.55}
+.nexosi-catalog-progress strong{color:#063b66}
+.nexosi-catalog-progress code{color:#075d8b;background:rgba(0,122,198,.09);padding:.08rem .35rem;border-radius:5px}
+.nexosi-progress-icon{color:#0874b6;font-size:1.12rem;line-height:1.35}
+.nexosi-plan-help{font-size:.82rem;line-height:1.45;color:#4b657b;margin:.2rem 0 .9rem}
+html[data-theme="dark"] .nexosi-catalog-progress{background:#163c59;color:#d6efff;border-color:#376e93}
+html[data-theme="dark"] .nexosi-catalog-progress strong{color:#f0faff}
+html[data-theme="dark"] .nexosi-catalog-progress code{color:#a9e9ff;background:#174964}
+html[data-theme="dark"] .nexosi-progress-icon{color:#7bd9ff}
+html[data-theme="dark"] .nexosi-plan-help{color:#bad6e6}
+</style>
+<div class="v8-page"><header class="v8-header"><div><span class="v8-overline">CATÁLOGO ACADÉMICO · SISTEMAS</span><h1>Ingeniería de Sistemas y <em>Computación</em></h1><p>Ámbito: Facultad de Ingeniería · Ingeniería de Sistemas y Computación. Mantén únicamente planes y códigos confirmados por los registros académicos oficiales.</p></div></header>
+{# Estado del catálogo derivado de MySQL, no avisos permanentes. #}
+{% set sistemas_listo = (programas | length) > 0 %}
+{% set planes_api = curriculas | selectattr('nombre', 'equalto', '17A4SI') | list %}
+<div class="nexosi-catalog-progress" role="status" aria-live="polite">
+  <span class="nexosi-progress-icon"><i class="bi {{ 'bi-check-circle-fill' if sistemas_listo else 'bi-info-circle-fill' }}" aria-hidden="true"></i></span>
+  <span>
+  {% if sistemas_listo and planes_api %}
+    <strong>Catálogo de Sistemas registrado.</strong> El código <code>17A4SI</code> figura en MySQL.{% if planes_api[0].anio_inicio is none %} Año oficial de inicio <strong>pendiente de confirmación</strong>.{% endif %}
+  {% elif sistemas_listo %}
+    <strong>Facultad y programa configurados.</strong> Falta registrar la currícula <code>17A4SI</code> cuando se confirme su año oficial de inicio.
+  {% else %}
+    <strong>Configuración académica pendiente.</strong> Registra primero Facultad de Ingeniería e Ingeniería de Sistemas y Computación.
+  {% endif %}
+  </span>
+</div>
+
+<div class="row g-3 mb-4">
+<div class="col-lg-4"><div class="card h-100"><div class="card-body"><h2 class="h5 mb-3">1. Facultad</h2><form method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="_csrf" value="{{ csrf_admin }}"><input type="hidden" name="accion" value="facultad"><label class="form-label" for="fac-nombre">Nombre oficial</label><input id="fac-nombre" name="nombre" class="form-control mb-2" required maxlength="200"><label class="form-label" for="fac-codigo">Código oficial (opcional)</label><input id="fac-codigo" name="codigo" class="form-control mb-3" maxlength="10"><button class="btn btn-primary">Guardar facultad</button></form></div></div></div>
+<div class="col-lg-4"><div class="card h-100"><div class="card-body"><h2 class="h5 mb-3">2. Programa / mención</h2><form method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="_csrf" value="{{ csrf_admin }}"><input type="hidden" name="accion" value="programa"><label class="form-label">Facultad</label><select class="form-select mb-2" name="id_facultad" required><option value="">Selecciona facultad</option>{% for f in facultades %}<option value="{{ f.id_facultad }}">{{ f.nombre }}</option>{% endfor %}</select><label class="form-label">Denominación oficial / API</label><input name="nombre" class="form-control mb-2" maxlength="200" required><label class="form-label">Código de escuela (opcional)</label><input name="codigo" class="form-control mb-3" maxlength="20"><button class="btn btn-primary">Guardar programa</button></form></div></div></div>
+<div class="col-lg-4"><div class="card h-100"><div class="card-body"><h2 class="h5 mb-3">3. Currícula</h2><form method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><input type="hidden" name="_csrf" value="{{ csrf_admin }}"><input type="hidden" name="accion" value="curricula"><label class="form-label">Programa</label><select class="form-select mb-2" name="id_programa" required><option value="">Selecciona programa</option>{% for p in programas %}<option value="{{ p.id_programa }}">{{ p.nombre }}</option>{% endfor %}</select><label class="form-label" for="nexo-codigo-plan">Código de currícula</label><input id="nexo-codigo-plan" name="nombre" class="form-control mb-2" placeholder="Ej. 17A4SI" required maxlength="50">
+<label class="form-label" for="nexo-anio-plan">Año oficial de inicio (opcional para 17A4SI)</label><input id="nexo-anio-plan" type="number" name="anio_inicio" min="1950" max="2100" class="form-control mb-2" placeholder="Pendiente de validación oficial">
+<p class="nexosi-plan-help">El código <strong>17A4SI</strong> fue observado en la API académica. Si aún no conoces el año oficial, deja ese campo vacío. El plan quedará <strong>con año pendiente</strong>, sin inventar una fecha.</p><button class="btn btn-primary">Guardar currícula</button></form></div></div></div>
+</div>
+<div class="v8-table-wrap"><table class="table table-hover mb-0"><thead><tr><th>Facultad</th><th>Programa</th><th>Código escuela</th><th>Currículas</th></tr></thead><tbody>{% for p in programas %}<tr><td>{{ p.facultad.nombre }}</td><td>{{ p.nombre }}</td><td>{{ p.codigo or 'Sin código' }}</td><td>{% for c in p.curriculas %}<span class="badge text-bg-secondary me-1">{{ c.nombre }}{% if c.anio_inicio is none %} · año pendiente{% endif %}</span>{% else %}Pendiente{% endfor %}</td></tr>{% else %}<tr><td colspan="4" class="text-center py-5 text-muted">Registra facultades y programas verificados.</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endblock %}

@@ -1,0 +1,261 @@
+<!-- app/templates/public/ofertas.html -->
+{% extends 'base_public.html' %}
+
+{% block title %}Bolsa de trabajo — Egresados UNDAC{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/ofertas.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="nexo-ia-banner" aria-labelledby="ia-trabajo-titulo">
+ <img src="{{ url_for('static', filename='img/ia_orientacion_laboral.webp') }}" alt="Escena IA de una conversación de orientación profesional" loading="eager">
+ <div class="nexo-ia-banner-copy"><span class="nexo-ia-banner-label">Conexión con el empleo</span><h1 id="ia-trabajo-titulo">Oportunidades para tu siguiente etapa.</h1><p>Explora convocatorias disponibles. Una visita a una oferta externa no confirma que se haya enviado una postulación ni conseguido un empleo.</p></div>
+</section>
+<div class="container py-4">
+
+    <!-- Título -->
+    <div class="d-flex align-items-center gap-2 mb-1">
+        <i class="bi bi-briefcase-fill text-primary fs-5"></i>
+        <h4 class="fw-bold mb-0">Bolsa de trabajo</h4>
+        {% if ofertas %}
+        <span class="badge bg-primary ms-1">{{ ofertas|length }}</span>
+        {% endif %}
+    </div>
+    <p class="text-muted small mb-4">
+        Oportunidades laborales para egresados de Ingeniería de Sistemas y Computación — UNDAC.
+        Haz clic en una oferta para ver los detalles.
+    </p>
+
+    {% if ofertas %}
+    <div class="row g-3 mb-5">
+
+        <!-- Lista -->
+        <div class="col-lg-5">
+            <div class="lista-ofertas">
+                {% for o in ofertas %}
+                <div class="card-mini card shadow-sm p-3"
+                     data-id="{{ o.id_oferta }}"
+                     onclick="mostrarDetalle({{ o.id_oferta }})">
+                    <div class="d-flex align-items-start gap-2 mb-2">
+                        <i class="bi bi-briefcase-fill text-primary mt-1 flex-shrink-0"></i>
+                        <div>
+                            <div class="fw-semibold small">{{ o.titulo }}</div>
+                            <div class="text-muted" style="font-size:.8rem;">
+                                {{ o.nombre_empresa() }}
+                            </div>>
+                        </div>
+                    </div>
+                    <div class="text-muted small mb-1">
+                        <i class="bi bi-geo-alt me-1"></i>{{ o.ubicacion or 'No especificado' }}
+                    </div>
+                    <div class="text-muted small mb-2">
+                        <i class="bi bi-calendar3 me-1"></i>
+                        {{ o.fecha_publicacion.strftime('%d/%m/%Y') if o.fecha_publicacion else '—' }}
+                    </div>
+                    <div class="d-flex gap-1 flex-wrap">
+                        <span class="badge bg-info text-dark" style="font-size:.7rem;">
+                            {{ o.modalidad or 'No especificado' }}
+                        </span>
+                        <span class="badge bg-warning text-dark" style="font-size:.7rem;">
+                            {{ o.tipo_oferta or 'Empleo' }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Panel detalle -->
+        <div class="col-lg-7">
+            <div class="card shadow-sm panel-detalle" id="panel-detalle">
+                <div class="card-body">
+                    <div class="detalle-vacio" id="detalle-vacio">
+                        <i class="bi bi-cursor fs-1 mb-2"></i>
+                        <p class="small text-muted">Selecciona una oferta para ver los detalles</p>
+                    </div>
+                    <div id="detalle-contenido" style="display:none;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script id="datos-ofertas" type="application/json">{{ ofertas_json | safe }}</script>
+
+    {% else %}
+    <div class="card shadow-sm text-center py-5 mb-5">
+        <div class="text-muted">
+            <i class="bi bi-inbox fs-1 mb-2 d-block"></i>
+            <p class="mb-0 small">No hay ofertas publicadas por la escuela en este momento.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Portales -->
+    <hr class="my-4">
+    <div class="d-flex align-items-center gap-2 mb-2">
+        <i class="bi bi-globe2 text-primary"></i>
+        <h5 class="fw-bold mb-0">Portales de empleo recomendados</h5>
+    </div>
+    <p class="text-muted small mb-3">
+        Plataformas donde puedes buscar oportunidades en sistemas e informática.
+    </p>
+
+    <div class="row g-3">
+        {% for p in portales %}
+        <div class="col-md-6 col-xl-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="portal-icon" style="background:{{ p.color }};">
+                            <i class="bi {{ p.icono }}"></i>
+                        </div>
+                        <div>
+                            <div class="fw-bold small">{{ p.titulo }}</div>
+                            <div class="text-muted" style="font-size:.75rem;">{{ p.subtitulo }}</div>
+                        </div>
+                    </div>
+                    <p class="small text-muted mb-3">{{ p.descripcion }}</p>
+                    <a href="{{ p.url }}" target="_blank"
+                       class="btn btn-sm w-100"
+                       style="color:{{ p.color }};border:1.5px solid {{ p.color }};">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>Ver portal
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+// 1. CARGA DE DATOS E INICIALIZACIÓN
+const ofertasData = JSON.parse(document.getElementById('datos-ofertas')?.textContent || '[]');
+
+if (ofertasData.length > 0) {
+    mostrarDetalle(ofertasData[0].id);
+}
+
+// 2. FUNCIONES PRINCIPALES DE VISTA
+function mostrarDetalle(id) {
+    const o = ofertasData.find(x => x.id == id);
+    if (!o) return;
+
+    // Actualizar estados visuales de la lista
+    document.querySelectorAll('.card-mini').forEach(c => c.classList.remove('seleccionada'));
+    document.querySelector(`.card-mini[data-id="${id}"]`)?.classList.add('seleccionada');
+    
+    // Conmutar contenedores de contenido
+    document.getElementById('detalle-vacio').style.display = 'none';
+    const cont = document.getElementById('detalle-contenido');
+    cont.style.display = '';
+
+    // Renderizar imagen o HTML según corresponda
+    if (o.ruta_imagen) {
+        cont.innerHTML = `
+            <div class="text-center p-2 bg-light cursor-zoom" style="border-radius:10px; cursor:zoom-in;" onclick="ampliarImagen(${o.id})">
+                <img src="${o.ruta_imagen}" alt="Imagen de la oferta" class="img-fluid" style="max-height:300px; object-fit:contain; border-radius:6px;">
+                <div class="text-muted small mt-1"><i class="bi bi-zoom-in me-1"></i>Clic para ampliar y ver detalles</div>
+            </div>`;
+    } else {
+        cont.innerHTML = renderDetalleCompleto(o);
+    }
+}
+
+function ampliarImagen(id) {
+    const o = ofertasData.find(x => x.id == id);
+    if (!o) return;
+
+    let modal = document.getElementById('modal-imagen-oferta');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'modal-imagen-oferta';
+        modal.style.cssText = 'display:flex; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:2000; align-items:flex-start; justify-content:center; padding:30px 20px; overflow-y:auto;';
+        document.body.appendChild(modal);
+    }
+
+    modal.innerHTML = `
+        <div style="background:#f8fafc; border-radius:12px; max-width:700px; width:100%; overflow:hidden;">
+            <div class="p-2 text-end">
+                <button onclick="document.getElementById('modal-imagen-oferta').style.display='none'" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-x-lg"></i> Cerrar
+                </button>
+            </div>
+            <img src="${o.ruta_imagen}" style="width:100%; max-height:90vh; object-fit:contain;">
+            <div class="p-3">
+                ${renderDetalleCompleto(o)}
+            </div>
+        </div>`;
+    modal.style.display = 'flex';
+}
+
+// 3. RENDERIZADORES DE PLANTILLAS (HTML)
+function renderDetalleCompleto(o) { 
+    // Simplificación de verificación de información adicional
+    const tieneCampos = [o.descripcion, o.funciones, o.requisitos, o.jornada, o.remuneracion, o.telefono, o.ubicacion, o.modalidad].some(Boolean);
+    
+    return `
+        <div class="p-4">
+            <!-- Encabezado -->
+            <div class="d-flex align-items-start gap-3 mb-3">
+                <div class="rounded-circle bg-primary bg-opacity-10 p-3">
+                    <i class="bi bi-briefcase-fill text-primary fs-4"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold mb-1">${o.titulo}</h5>
+                    <div class="text-muted small"><i class="bi bi-building me-1"></i>${o.empresa}</div>
+                </div>
+            </div>
+            
+            <!-- Bloque Condicional de Detalles -->
+            ${tieneCampos ? `
+                <hr>
+                <p class="text-primary fw-bold small text-uppercase mb-3">Condiciones</p>
+                <div class="row g-2 mb-3">
+                    ${fila('Jornada',      o.jornada)}
+                    ${fila('Remuneración', o.remuneracion)}
+                    ${fila('Teléfono',     o.telefono)}
+                    ${fila('Publicación',  o.fecha_publicacion)}
+                    ${fila('Vence',        o.fecha_vencimiento)}
+                    ${fila('Lugar',        o.ubicacion)}
+                    ${fila('Modalidad',    o.modalidad)}
+                    ${fila('Tipo',         o.tipo_oferta || 'Empleo')}
+                </div>
+                
+                ${(o.descripcion || o.funciones) ? `
+                    <hr>
+                    <p class="text-primary fw-bold small text-uppercase mb-2">Descripción del puesto</p>
+                    ${o.descripcion ? `<p class="small">${o.descripcion}</p>` : ''}
+                    ${o.funciones ? `<p class="small"><strong>Funciones:</strong><br>${o.funciones.replace(/\n/g,'<br>')}</p>` : ''}
+                ` : ''}
+                
+                ${o.requisitos ? `
+                    <hr>
+                    <p class="text-primary fw-bold small text-uppercase mb-2">Requisitos</p>
+                    <p class="small">${o.requisitos.replace(/\n/g,'<br>')}</p>
+                ` : ''}
+            ` : ''}
+            
+            <!-- Enlace externo -->
+            ${o.url_original ? `
+                <div class="text-center mt-3">
+                    <a href="${o.url_original}" target="_blank" class="btn btn-primary btn-sm px-4">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>Ver más información
+                    </a>
+                </div>` : ''}
+        </div>`;
+}
+
+function fila(label, valor) {
+    if (!valor) return '';
+    return `
+        <div class="col-6">
+            <div class="text-muted" style="font-size:.72rem; text-transform:uppercase;">${label}</div>
+            <div class="fw-semibold small">${valor}</div>
+        </div>`;
+}
+</script>
+{% endblock %}

@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% block titulo %}Observatorio institucional · UNDAC{% endblock %}
+{% block subtitulo %}Observatorio / Panorama institucional{% endblock %}
+{% block contenido %}
+<style>
+/* OBSERVATORIO / dashboard: composición editorial sin banner ni tarjetas KPI */
+.obs-dashboard { --obs-ink:#182a35; --obs-muted:#6c7d85; --obs-line:#dfe6e3; --obs-accent:#087e80; --obs-warm:#c5674d; --obs-cream:#efe9dc; color:var(--obs-ink); }
+.obs-dashboard * { box-sizing:border-box; }
+.obs-kicker { font-size:.69rem; letter-spacing:.18em; font-weight:820; text-transform:uppercase; color:var(--obs-accent); }
+.obs-heading { display:grid; grid-template-columns:minmax(0,1.65fr) minmax(280px,.75fr); gap:35px; align-items:stretch; margin-bottom:32px; }
+.obs-heading-copy { padding:21px 0 18px; }
+.obs-heading h1 { max-width:780px; font-family:Georgia,'Times New Roman',serif; font-size:clamp(2.5rem,4.4vw,4.55rem); line-height:1.035; letter-spacing:-.047em; font-weight:normal; margin:17px 0 17px; }
+.obs-heading h1 em { color:var(--obs-accent); font-weight:normal; }
+.obs-heading p { font-size:.95rem; line-height:1.75; color:#61727d; max-width:620px; margin:0 0 24px; }
+.obs-heading-actions { display:flex; gap:11px; flex-wrap:wrap; }
+.obs-action { display:inline-flex; gap:10px; align-items:center; justify-content:center; min-height:42px; padding:11px 15px; border:1px solid #1f3641; border-radius:4px; text-decoration:none; color:#fff; background:#1b333e; font-size:.81rem; font-weight:730; }
+.obs-action:hover { background:#0c6f70; border-color:#0c6f70; color:#fff; }
+.obs-action-alt { background:transparent; color:#203a47; border-color:#aebfbe; }
+.obs-action-alt:hover { color:#fff; }
+.obs-coverage { background:#e4eee9; padding:27px; display:flex; flex-direction:column; justify-content:space-between; min-height:272px; position:relative; overflow:hidden; }
+.obs-coverage::before { content:''; width:220px; height:220px; border:1px solid rgba(7,102,106,.13); position:absolute; border-radius:50%; right:-85px; top:-95px; }
+.obs-coverage-title { display:flex; justify-content:space-between; align-items:center; font-size:.68rem; text-transform:uppercase; letter-spacing:.14em; font-weight:800; color:#446363; }
+.obs-coverage-middle { display:flex; align-items:center; gap:17px; margin:21px 0; }
+.obs-ring { flex:none; width:118px; height:118px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--obs-accent) var(--pct), #d0ddda var(--pct)); position:relative; }
+.obs-ring::before { content:''; position:absolute; width:94px; height:94px; background:#e4eee9; border-radius:50%; }
+.obs-ring strong { position:relative; z-index:1; font-size:1.45rem; letter-spacing:-.06em; }
+.obs-coverage-copy strong { display:block; font-size:1.13rem; line-height:1.35; }
+.obs-coverage-copy span { display:block; font-size:.76rem; line-height:1.55; color:#63817b; margin-top:7px; }
+.obs-coverage-footer { border-top:1px solid rgba(21,90,91,.18); padding-top:13px; display:flex; justify-content:space-between; font-size:.74rem; color:#557b74; gap:8px; }
+.obs-filter { border-top:1px solid var(--obs-line); border-bottom:1px solid var(--obs-line); background:#fff; padding:18px 22px; margin-bottom:30px; }
+.obs-filter-top { display:flex; justify-content:space-between; align-items:center; gap:15px; }
+.obs-filter-top strong { font-size:.79rem; }
+.obs-filter-form { display:grid; grid-template-columns:1fr 1fr auto; gap:12px; align-items:end; margin-top:14px; }
+.obs-filter label { display:block; margin-bottom:6px; font-size:.7rem; font-weight:700; color:#526871; }
+.obs-filter select { width:100%; min-height:41px; border:1px solid #cddbd8; border-radius:4px; background:#fafbf9; padding:8px 11px; color:#24414b; font-size:.8rem; }
+.obs-filter button { min-height:41px; background:#16353d; color:#fff; border:0; padding:0 19px; font-weight:700; border-radius:4px; }
+.obs-filter button:hover { background:#087e80; }
+.obs-filter a { font-size:.75rem; color:#067b80; }
+.obs-filter-note { color:#6b7a80; font-size:.81rem; margin:0; }
+.obs-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; border-top:1px solid #cbd8d4; border-bottom:1px solid #cbd8d4; margin-bottom:44px; }
+.obs-metric { padding:22px 22px 25px 0; position:relative; }
+.obs-metric:not(:first-child) { padding-left:23px; border-left:1px solid #cbd8d4; }
+.obs-metric-num { font-family:Georgia,'Times New Roman',serif; font-size:clamp(2.3rem,4vw,3.6rem); line-height:1; letter-spacing:-.07em; margin:12px 0 10px; }
+.obs-metric-label { font-weight:770; font-size:.83rem; }
+.obs-metric-help { color:#798990; font-size:.73rem; line-height:1.55; margin-top:5px; }
+.obs-section { margin-top:29px; }
+.obs-section-head { display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:18px; }
+.obs-section-head h2 { font-family:Georgia,'Times New Roman',serif; font-weight:normal; letter-spacing:-.035em; font-size:clamp(1.65rem,2.6vw,2.2rem); margin:4px 0 0; }
+.obs-section-label { color:var(--obs-accent); text-transform:uppercase; font-size:.67rem; font-weight:780; letter-spacing:.17em; }
+.obs-section-aside { font-size:.77rem; color:#71848c; }
+.obs-data-grid { display:grid; grid-template-columns:minmax(0,1.9fr) minmax(270px,.86fr); gap:17px; }
+.obs-surface { background:#fff; border:1px solid #e1e7e3; padding:26px; min-width:0; }
+.obs-surface h3 { font-size:1rem; font-weight:800; margin:0; letter-spacing:-.025em; }
+.obs-surface p { color:#77878d; font-size:.77rem; margin:5px 0 0; }
+.obs-surface-head { display:flex; justify-content:space-between; align-items:center; gap:14px; flex-wrap:wrap; }
+.obs-select { padding:9px 10px; font-size:.75rem; border:1px solid #d5dfdb; background:#fbfcfa; border-radius:4px; max-width:180px; color:#26414c; }
+.obs-chart { height:285px; margin-top:21px; position:relative; }
+.obs-chart-short { height:226px; }
+.obs-empty { height:100%; background:repeating-linear-gradient(0deg,#f9faf8 0,#f9faf8 43px,#ebefec 44px); display:flex; align-items:center; justify-content:center; text-align:center; }
+.obs-empty-inner { max-width:260px; background:rgba(255,255,255,.96); padding:18px 20px; }
+.obs-empty-mark { color:#96aaa6; font-family:Georgia,serif; font-size:2rem; line-height:1; }
+.obs-empty strong { font-size:.84rem; display:block; margin:9px 0 5px; }
+.obs-empty span { font-size:.75rem; color:#78908a; line-height:1.5; display:block; }
+.obs-insight { background:#1b333e; color:#fff; padding:27px; display:flex; flex-direction:column; justify-content:space-between; min-height:340px; }
+.obs-insight-kicker { color:#94cfc2; font-size:.68rem; text-transform:uppercase; letter-spacing:.15em; font-weight:800; }
+.obs-insight h3 { font-family:Georgia,serif; font-size:1.85rem; line-height:1.19; margin:18px 0; font-weight:normal; }
+.obs-insight p { color:#c6d6d8; font-size:.82rem; line-height:1.7; }
+.obs-insight-link { color:#f0c58b; font-size:.83rem; text-decoration:none; font-weight:700; border-top:1px solid rgba(255,255,255,.21); padding-top:16px; display:flex; justify-content:space-between; }
+.obs-insight-link:hover { color:#fff; }
+.obs-compare { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px; }
+.obs-compare .obs-surface { min-height:318px; }
+.obs-compare .obs-chart { height:216px; margin-top:16px; }
+.obs-footnote { display:flex; align-items:flex-start; gap:12px; color:#71838a; font-size:.78rem; border-top:1px solid #dfe6e3; padding-top:18px; margin-top:29px; line-height:1.6; }
+.obs-footnote i { color:var(--obs-accent); }
+@media(max-width:1100px){ .obs-heading { grid-template-columns:1fr; } .obs-coverage { min-height:200px; } .obs-data-grid { grid-template-columns:1fr; } .obs-insight { min-height:230px; } .obs-compare { grid-template-columns:repeat(2,1fr); } .obs-compare .obs-surface:last-child { grid-column:1 / -1; } }
+@media(max-width:700px){ .obs-heading h1 { font-size:2.55rem; } .obs-heading { gap:15px; } .obs-coverage { padding:20px; } .obs-metrics { grid-template-columns:repeat(2,1fr); } .obs-metric:nth-child(3) { border-left:0; padding-left:0; border-top:1px solid #cbd8d4; } .obs-metric:nth-child(4) { border-top:1px solid #cbd8d4; } .obs-filter-form { grid-template-columns:1fr; } .obs-compare { grid-template-columns:1fr; } .obs-compare .obs-surface:last-child { grid-column:auto; } .obs-surface { padding:20px; } .obs-section-head { align-items:flex-start; flex-direction:column; } }
+@media(prefers-reduced-motion:reduce){ .obs-dashboard * { scroll-behavior:auto; } }
+</style>
+
+<div class="obs-dashboard">
+    {% set pct_cobertura = ((registrados / total * 100) | round(0) | int) if total else 0 %}
+    <section class="obs-heading" aria-label="Presentación institucional">
+        <div class="obs-heading-copy">
+            <div class="obs-kicker">Observatorio institucional / UNDAC</div>
+            <h1>{% if rol_activo == 'coordinador' %}Seguimiento de <em>tu facultad.</em>{% elif rol_activo == 'docente_responsable' %}Tu programa y sus <em>egresados.</em>{% elif rol_activo == 'utsag' %}Panorama de <em>seguimiento institucional.</em>{% else %}Comprender a nuestros <em>egresados.</em>{% endif %}</h1>
+            <p>{% if rol_activo == "administrador" %}Supervisa la integridad del padrón, las asignaciones y la operación de la plataforma.{% elif rol_activo == "utsag" %}Analiza la trayectoria académica y laboral de la institución mediante datos reportados.{% elif rol_activo == "coordinador" %}Consulta las promociones y resultados de las facultades bajo tu responsabilidad.{% else %}Acompaña a los egresados de tus programas con información académica y laboral actualizada.{% endif %}</p>
+            <div class="obs-heading-actions">
+                <a class="obs-action" href="{{ url_for('admin.egresados') }}"><i class="bi bi-people" aria-hidden="true"></i>Explorar padrón</a> <a class="obs-action obs-action-alt" href="{{ url_for('admin.empleabilidad') }}"><i class="bi bi-graph-up-arrow" aria-hidden="true"></i>KPI laborales</a>
+                <a class="obs-action obs-action-alt" href="{{ url_for('admin.informe_pdf', id_facultad=id_facultad, id_programa=id_programa) }}"><i class="bi bi-download" aria-hidden="true"></i>Informe institucional</a>
+            </div>
+        </div>
+        <aside class="obs-coverage" aria-label="Cobertura del padrón">
+            <div class="obs-coverage-title"><span>Cobertura del padrón</span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></div>
+            <div class="obs-coverage-middle">
+                <div class="obs-ring" style="--pct:{{ pct_cobertura }}%"><strong>{{ pct_cobertura }}%</strong></div>
+                <div class="obs-coverage-copy"><strong>Participación<br>registrada</strong><span>Cuentas activadas en relación con los egresados incorporados.</span></div>
+            </div>
+            <div class="obs-coverage-footer"><span>{{ registrados or 0 }} con cuenta</span><span>{{ total or 0 }} en padrón</span></div>
+        </aside>
+    </section>
+
+    <section class="v9-role-hub" aria-label="Accesos de trabajo según rol">
+      <div class="v9-role-hub-title"><span>RUTAS DE TRABAJO</span><h2>Tu espacio de gestión</h2></div>
+      <div class="v9-role-links">
+      {% if rol_activo == 'administrador' %}
+        <a href="{{ url_for('admin.personal') }}"><i class="bi bi-person-gear"></i><strong>Cuentas y permisos</strong><span>Gestionar accesos y asignaciones</span></a>
+        <a href="{{ url_for('admin.catalogos') }}"><i class="bi bi-mortarboard"></i><strong>Estructura académica</strong><span>Facultades, programas y currículas</span></a>
+        <a href="{{ url_for('admin.empresas') }}"><i class="bi bi-buildings"></i><strong>Directorio de empresas</strong><span>Validar organizaciones y publicaciones</span></a>
+      {% elif rol_activo == 'utsag' %}
+        <a href="{{ url_for('admin.egresados') }}"><i class="bi bi-people"></i><strong>Padrón institucional</strong><span>Revisar información de egresados</span></a>
+        <a href="{{ url_for('admin.encuestas') }}"><i class="bi bi-clipboard-data"></i><strong>Encuestas de seguimiento</strong><span>Evaluar participación y resultados</span></a>
+        <a href="{{ url_for('admin.empleabilidad') }}"><i class="bi bi-graph-up-arrow"></i><strong>Indicadores laborales</strong><span>Ver reportes y resultados declarados</span></a>
+      {% elif rol_activo == 'coordinador' %}
+        <a href="{{ url_for('admin.egresados') }}"><i class="bi bi-diagram-3"></i><strong>Mis facultades</strong><span>Consultar egresados bajo tu alcance</span></a>
+        <a href="{{ url_for('admin.encuestas') }}"><i class="bi bi-clipboard-data"></i><strong>Resultados académicos</strong><span>Analizar encuestas de tus programas</span></a>
+        <a href="{{ url_for('admin.empleabilidad') }}"><i class="bi bi-pie-chart"></i><strong>Vinculación laboral</strong><span>Resultados de egresados asignados</span></a>
+      {% else %}
+        <a href="{{ url_for('admin.egresados') }}"><i class="bi bi-person-lines-fill"></i><strong>Mis egresados</strong><span>Padrón de programas asignados</span></a>
+        <a href="{{ url_for('admin.encuestas') }}"><i class="bi bi-clipboard-check"></i><strong>Encuestas</strong><span>Participación de tu programa</span></a>
+        <a href="{{ url_for('admin.empleabilidad') }}"><i class="bi bi-activity"></i><strong>Trayectoria profesional</strong><span>Indicadores con alcance limitado</span></a>
+      {% endif %}
+      </div>
+    </section>
+
+    {% if rol_activo != 'docente_responsable' %}
+    <section class="obs-filter" aria-label="Filtros académicos">
+        <div class="obs-filter-top">
+            <strong><i class="bi bi-sliders me-2"></i>Ámbito de análisis</strong>
+            {% if id_facultad or id_programa %}<a href="{{ url_for('admin.dashboard') }}">Quitar filtros</a>{% endif %}
+        </div>
+        {% if facultades %}
+        <form method="get" class="obs-filter-form" id="filtros-obs">
+            <div><label for="obs-facultad">Facultad</label><select name="id_facultad" id="obs-facultad">
+                <option value="">{{ 'Todas mis facultades' if rol_activo == 'coordinador' else 'Todas las facultades' }}</option>
+                {% for f in facultades %}<option value="{{ f.id_facultad }}" {% if f.id_facultad == id_facultad %}selected{% endif %}>{{ f.nombre }}</option>{% endfor %}
+            </select></div>
+            <div><label for="obs-programa">Programa de estudio</label><select name="id_programa" id="obs-programa">
+                <option value="">Todos los programas</option>
+                {% for p in programas %}<option value="{{ p.id_programa }}" {% if p.id_programa == id_programa %}selected{% endif %}>{{ p.nombre }}</option>{% endfor %}
+            </select></div>
+            <button type="submit">Aplicar filtros</button>
+        </form>
+        {% else %}
+        <p class="obs-filter-note" style="margin-top:9px">Aún no hay facultades cargadas. Podrás segmentar los indicadores cuando incorporemos el catálogo académico institucional.</p>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <div class="v9-integrity-note"><i class="bi bi-info-circle"></i> Los registros vacíos representan información no declarada. Un empleo no registrado no equivale a desempleo.</div>
+    <section aria-label="Resumen de indicadores" class="obs-metrics">
+        <article class="obs-metric"><div class="obs-kicker">01 / Padrón</div><div class="obs-metric-num">{{ '{:,}'.format(total or 0) }}</div><div class="obs-metric-label">Egresados incorporados</div><div class="obs-metric-help">Registros del padrón institucional</div></article>
+        <article class="obs-metric"><div class="obs-kicker">02 / Acceso</div><div class="obs-metric-num">{{ '{:,}'.format(registrados or 0) }}</div><div class="obs-metric-label">Cuentas registradas</div><div class="obs-metric-help">Personas que activaron su perfil</div></article>
+        <article class="obs-metric"><div class="obs-kicker">03 / Empleo</div><div class="obs-metric-num">{{ '{:,}'.format(con_empleo_actual or 0) }}</div><div class="obs-metric-label">Empleos actuales reportados</div><div class="obs-metric-help">No equivale a tasa oficial de empleo</div></article>
+        <article class="obs-metric"><div class="obs-kicker">04 / Activación</div><div class="obs-metric-num">{{ '{:,}'.format([total - registrados, 0] | max) }}</div><div class="obs-metric-label">Pendientes de cuenta</div><div class="obs-metric-help">Diferencia entre padrón y cuentas</div></article>
+    </section>
+
+    {% if rol_activo in ['administrador','utsag','coordinador'] %}
+    <section class="obs-section" aria-label="Vinculación empresarial">
+      <div class="obs-section-head"><div><div class="obs-section-label">Vinculación / Empleo</div><h2>Vinculación y oportunidades</h2></div><span class="obs-section-aside">Registros existentes en MySQL, incluidos datos DEMO cuando estén cargados</span></div>
+      <div class="row g-3 mb-3">
+        {% if empresas_total is not none %}<div class="col-md-4"><div class="obs-surface h-100"><div class="obs-kicker">Empresas activas</div><div class="obs-metric-num">{{ empresas_total }}</div><a href="{{ url_for('admin.empresas') }}">Administrar empresas</a></div></div>{% endif %}
+        <div class="col-md-4"><div class="obs-surface h-100"><div class="obs-kicker">Vacantes vigentes {{ 'publicadas por ti' if rol_activo == 'coordinador' else '' }}</div><div class="obs-metric-num">{{ ofertas_activas }}</div><a href="{{ url_for('admin.ofertas') }}">Ver convocatorias</a></div></div>
+        <div class="col-md-4"><div class="obs-surface h-100"><div class="obs-kicker">Postulaciones internas</div><div class="obs-metric-num">{{ postulaciones_total if postulaciones_total is not none else '—' }}</div><a href="{{ url_for('admin.ver_postulaciones') }}">{{ 'Consultar postulaciones' if migracion_v8 else 'Activar seguimiento (migración SQL)' }}</a></div></div>
+      </div>
+      {% if empresas_labels %}
+      <div class="obs-surface"><h3>Ofertas registradas por empresa</h3><p>Distribución de las empresas activas disponibles en el directorio. No equivale a empleos conseguidos.</p><div class="obs-chart obs-chart-short"><canvas id="v8-empresas-chart" aria-label="Ofertas por empresa"></canvas></div></div>
+      {% elif empresas_total is not none %}
+      <div class="obs-surface"><p>Registra empresas y publica convocatorias para visualizar la comparación empresarial.</p><a class="obs-action" href="{{ url_for('admin.empresas') }}">Crear primera empresa</a></div>
+      {% endif %}
+    </section>
+    {% endif %}
+
+    <section class="obs-section" aria-label="Evolución de promociones">
+        <div class="obs-section-head">
+            <div><div class="obs-section-label">Análisis / 01</div><h2>Trayectoria por promociones</h2></div>
+            <span class="obs-section-aside">Evolución anual según registros disponibles</span>
+        </div>
+        <div class="obs-data-grid">
+            <div class="obs-surface">
+                <div class="obs-surface-head"><div><h3>Panorama histórico</h3><p>Egresados y grados académicos por año de egreso</p></div>
+                    <select class="obs-select" id="obs-serie" aria-label="Cambiar serie académica">
+                        <option value="egresados">Egresados</option><option value="bachiller">Bachilleres</option><option value="titulado">Titulados</option><option value="maestria">Maestría</option><option value="doctorado">Doctorado</option><option value="phd">PhD</option>
+                    </select></div>
+                <div class="obs-chart">
+                    {% if anios %}<canvas id="obs-chart-anio" role="img" aria-label="Evolución de egresados por año"></canvas>
+                    {% else %}<div class="obs-empty"><div class="obs-empty-inner"><div class="obs-empty-mark">∿</div><strong>La serie todavía no tiene registros</strong><span>Se mostrará automáticamente al incorporar los datos académicos.</span></div></div>{% endif %}
+                </div>
+            </div>
+            <aside class="obs-insight">
+                <div><div class="obs-insight-kicker">Lectura institucional</div><h3>Los datos cobran valor cuando se pueden comparar.</h3><p>Filtra por facultad o programa, revisa promociones y contrasta los datos disponibles. Los campos sin información no se interpretan como resultados negativos.</p></div>
+                <a class="obs-insight-link" href="{{ url_for('admin.egresados') }}">Examinar el padrón <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>
+            </aside>
+        </div>
+    </section>
+
+    <section class="obs-section" aria-label="Composición del padrón">
+        <div class="obs-section-head"><div><div class="obs-section-label">Análisis / 02</div><h2>Composición del padrón</h2></div><span class="obs-section-aside">Distribución según los datos reportados</span></div>
+        <div class="obs-compare">
+            <section class="obs-surface"><h3>Grado académico</h3><p>Máximo nivel académico registrado</p><div class="obs-chart obs-chart-short">
+                {% if niveles_data | sum > 0 %}<canvas id="obs-chart-niveles" role="img" aria-label="Distribución por nivel académico"></canvas>{% else %}<div class="obs-empty"><div class="obs-empty-inner"><div class="obs-empty-mark">◌</div><strong>Sin distribución disponible</strong><span>Aún no hay niveles registrados.</span></div></div>{% endif %}
+            </div></section>
+            <section class="obs-surface"><h3>Género registrado</h3><p>Distribución de la información declarada</p><div class="obs-chart obs-chart-short">
+                {% if genero_data | sum > 0 %}<canvas id="obs-chart-genero" role="img" aria-label="Distribución por género"></canvas>{% else %}<div class="obs-empty"><div class="obs-empty-inner"><div class="obs-empty-mark">◌</div><strong>Sin distribución disponible</strong><span>Aún no hay datos para comparar.</span></div></div>{% endif %}
+            </div></section>
+            <section class="obs-surface"><h3>Sectores de trabajo</h3><p>Empleos actuales agrupados por sector</p><div class="obs-chart obs-chart-short">
+                {% if sector_data | sum > 0 %}<canvas id="obs-chart-sector" role="img" aria-label="Empleos por sector económico"></canvas>{% else %}<div class="obs-empty"><div class="obs-empty-inner"><div class="obs-empty-mark">◌</div><strong>Sin registros laborales</strong><span>El gráfico aparecerá al reportarse empleos actuales.</span></div></div>{% endif %}
+            </div></section>
+        </div>
+    </section>
+
+    <div class="obs-footnote"><i class="bi bi-info-circle" aria-hidden="true"></i><span>La ausencia de un empleo registrado no permite concluir que una persona está desempleada. Las cifras reflejan únicamente los registros disponibles y pueden no representar la totalidad de egresados de la UNDAC.</span></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+(() => {
+    const filtroFacultad = document.getElementById('obs-facultad');
+    const filtroPrograma = document.getElementById('obs-programa');
+    if (filtroFacultad && filtroPrograma) {
+        filtroFacultad.addEventListener('change', () => {
+            filtroPrograma.value = '';
+            document.getElementById('filtros-obs').submit();
+        });
+    }
+    if (typeof Chart === 'undefined') return;
+    Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+    Chart.defaults.color = '#647b82';
+    const chartEmpresas = document.getElementById('v8-empresas-chart');
+    if (chartEmpresas) new Chart(chartEmpresas, {
+       type:'bar',
+       data:{labels:{{ empresas_labels | tojson }},datasets:[{label:'Ofertas',data:{{ empresas_ofertas | tojson }},backgroundColor:'#087e80',borderRadius:5}]},
+       options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}}}}
+    });
+    const palette = ['#087e80','#e0ab70','#ba7158','#436e8a','#90a7a1','#8c84a4'];
+    const donut = (id, labels, values) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+        new Chart(element, {
+            type:'doughnut',
+            data:{labels, datasets:[{data:values, backgroundColor:palette, borderColor:'#fff', borderWidth:4}]},
+            options:{responsive:true,maintainAspectRatio:false,cutout:'70%',plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:11}}}}}
+        });
+    };
+    donut('obs-chart-niveles', {{ niveles_labels | tojson }}, {{ niveles_data | tojson }});
+    donut('obs-chart-genero', {{ genero_labels | tojson }}, {{ genero_data | tojson }});
+    const sectors = document.getElementById('obs-chart-sector');
+    if (sectors) new Chart(sectors, {
+        type:'bar', data:{labels:{{ sector_labels | tojson }},datasets:[{data:{{ sector_data | tojson }},backgroundColor:'#087e80',borderRadius:3,maxBarThickness:18}]},
+        options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}},y:{grid:{display:false}}}}
+    });
+    const annual = document.getElementById('obs-chart-anio');
+    if (annual) {
+        const series = {{ datos_anio | tojson }};
+        const chart = new Chart(annual, {
+            type:'line',
+            data:{labels:{{ anios | tojson }},datasets:[{label:'Egresados',data:series.egresados || [],borderColor:'#087e80',backgroundColor:'rgba(8,126,128,.09)',borderWidth:3,pointRadius:4,pointBackgroundColor:'#fff',pointBorderColor:'#087e80',tension:.3,fill:true}]},
+            options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{beginAtZero:true,ticks:{precision:0},grid:{color:'#e9eeee'}}}}
+        });
+        const select = document.getElementById('obs-serie');
+        select.addEventListener('change', () => {
+            chart.data.datasets[0].data = series[select.value] || [];
+            chart.data.datasets[0].label = select.selectedOptions[0].text;
+            chart.update();
+        });
+    }
+})();
+</script>
+{% endblock %}
